@@ -1,0 +1,2 @@
+# AERRDM
+The title of the project: Automatic Emergency Rescue Resource Deployment in Metropolis. This project is for CSIT321. The project requires the development of  a mobile application and web application. The web application is used to simulate the emergency events and the mobile application is act as the resources. e.g. police car, ambulance. The potential users will be the emergency service departments, police force, fire station and hospital.
