@@ -1,0 +1,155 @@
+.map_container
+{
+	height: 100%;
+	width: 100%;
+	position: relative;
+	overflow-y: hidden;
+}
+
+	#map {
+        height: 100%;
+      }
+
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+	  
+      #description {
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+      }
+
+      #infowindow-content .title {
+        font-weight: bold;
+      }
+
+      #infowindow-content {
+        display: none;
+      }
+
+      #map #infowindow-content {
+        display: inline;
+      }
+
+      .pac-card {
+        margin: 10px 10px 0 0;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        font-family: Roboto;
+      }
+
+      #pac-container {
+        padding-bottom: 12px;
+        margin-right: 12px;
+      }
+
+      .pac-controls {
+        display: inline-block;
+        padding: 5px 11px;
+      }
+
+      .pac-controls label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+		margin-top: 30px;
+        margin-left: 50px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 300px;
+		height: 25px;
+      }
+
+      #pac-input:focus {
+		outline: none;
+      }
+
+      #title {
+        color: #fff;
+        background-color: #4d90fe;
+        font-size: 25px;
+        font-weight: 500;
+        padding: 6px 12px;
+      }
+	  
+      #target {
+        width: 345px;
+      }
+	  
+	  i.icon-black {
+			color: black;
+			padding-top 10%;
+	  }
+
+	.search-icon {
+		position: absolute;
+		z-index: 1;
+		left: 350px;
+		top: 33px;
+		color: rgba(160, 156, 156, 0.87);
+		
+	}
+	
+	#hamburger {
+		top: 75px !important;
+		left: 9px;
+	}
+	
+	#hamburger-icon {
+		color: black;
+		background-color: white;
+		width: 30px;
+		height: 27px;
+		border-width: 1px;
+        border-color: #a9a9a9;
+		border-left-style: solid;
+		border-top-style: solid;
+		border-bottom-style: solid;
+	}
+	
+	#pin {
+		top: 75px !important;
+		left: 360px;
+	}
+	
+	#pin-icon {
+		color: white;
+		background-color: #304ffe;
+		width: 30px;
+		height: 27px;
+		border-width: 1px;
+        border-color: #a9a9a9;
+		border-style: solid;
+	}
+	.sub-menu {
+		display: none;
+	}
+	
+	.sub-item {
+		display: none;
+	}
+	
+	ul,li { 
+		list-style-type: none;
+		list-style-position:inside;
+		margin:0;
+		padding:0; 
+	}
+		
+	.form_menu{
+		margin-left:50px;
+	}

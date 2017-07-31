@@ -1,12 +1,19 @@
 {
-    "name": "MeanMapsApp",
-    "main": "server.js",
-    "dependencies": {
-        "express": "~4.7.2",
-        "mongoose": "~4.1.0",
-        "morgan": "~1.2.2",
-        "body-parser": "~1.5.2",
-        "jsonwebtoken": "^5.0.2",
-        "method-override": "~2.1.2"
-    }
+  "name": "321-project",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "jade": "~1.11.0",
+    "mongodb": "^2.2.30",
+    "morgan": "~1.8.1",
+    "request": "^2.81.0",
+    "serve-favicon": "~2.4.2"
+  }
 }

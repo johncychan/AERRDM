@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Automatic Emergency Resource Rescue</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="/stylesheets/prototype.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+	<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+	<script src="javascripts/prototype.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0&libraries=places&callback=initAutocomplete"
+         async defer></script> 
+  </head>
+  <body>
+	<div class="mdl-layout mdl-js-layout">
+		<header class="mdl-layout__header	">
+			<div class="mdl-layout__header-row">
+			  <span class="mdl-layout-title">Automatic Emergency Rescue Resource</span>
+			  <div class="mdl-layout-spacer"></div>
+			  <nav class="mdl-navigation mdl-layout--large-screen-only">
+				<a class="mdl-navigation__link" href="">Event</a>
+				<a class="mdl-navigation__link" href="">Facility</a>
+				<a class="mdl-navigation__link" href=""><i class="material-icons">settings</i></a>
+			  </nav>
+			</div>
+		</header>
+		<div class="mdl-layout__drawer">
+			<span class="mdl-layout-title">Settings</span>
+			<nav class="mdl-navigation">
+				<ul id="main-menu">
+					<li id="main1" class="main mdl-navigation__link">Emergency Events</li>
+					<li id="main2" class="main mdl-navigation__link">Facility</li>
+					<li id="main3" class="main mdl-navigation__link">Simulation Settings</li>
+				</ul>
+				<ul id="sub1" class="sub-menu">
+					<li id="sub1-1" class="sub mdl-navigation__link">Events</li>
+					<form id="sub1-item1" class="sub-item" onsubmit="event.preventDefault(); specifiedMarker();">
+						<p class="form_menu">Longitute:</p>
+						<input type="text" name="long" class="form_menu">
+						<p class="form_menu">Latitute:</p>
+						<input type="text" name="lat" class="form_menu">
+						<input type="Submit" value="Create" class="form_menu">
+					</form>
+					<li id="sub1-2" class="sub mdl-navigation__link">submenu2</li>
+					<li id="sub1-3" class="sub mdl-navigation__link">submenu3</li>
+					<li class="back mdl-navigation__link">Back</li>
+				</ul>
+				<ul id="sub2" class="sub-menu">
+					<li id="sub2-1" class="sub mdl-navigation__link" onclick="searchFacilities()">Search</li>
+					<li id="sub2-2" class="sub mdl-navigation__link">Navigation</li>
+					<li class="back mdl-navigation__link">Back</li>
+				</ul>
+			</nav>
+		</div>
+		<div id="hamburger" class="mdl-layout__drawer-button">
+			<i id="hamburger-icon" class="material-icons">menu</i>
+		</div>
+		<div id="pin" class="mdl-layout__drawer-button">
+			<i id="pin-icon" class="material-icons" onclick="centerMarker()">location_on</i>
+		</div>
+		<div class="map_container">
+			<i class="search-icon material-icons">search</i>
+			<input id="pac-input" class="controls" type="text" placeholder="Search Location">
+			<div id="map"></div>
+		</div> 
+	</div>
+</body>
+</html>
