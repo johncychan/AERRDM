@@ -21,7 +21,7 @@ describe('classes', function() {
         var result = name.indexOf('no-') === -1;
         name = name.replace(/no-/, '');
         it(name + ' is correctly ' + result + ' in the classes and object', function() {
-          if (_.includes(name, '-')) {
+          if (_.contains(name, '-')) {
 
             if (name.replace('-', '') in Modernizr) {
               name = name.replace('-', '');

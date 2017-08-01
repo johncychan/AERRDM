@@ -7,15 +7,15 @@
   "notes": [
     {
       "name": "CSS Tricks Article",
-      "href": "https://css-tricks.com/image-under-text/"
+      "href": "http://css-tricks.com/image-under-text/"
     },
     {
       "name": "MDN Docs",
-      "href": "https://developer.mozilla.org/en-US/docs/Web/CSS/background-clip"
+      "href": "http://developer.mozilla.org/en/CSS/background-clip"
     },
     {
       "name": "Related Github Issue",
-      "href": "https://github.com/Modernizr/Modernizr/issues/199"
+      "href": "http://github.com/Modernizr/Modernizr/issues/199"
     }
   ]
 }

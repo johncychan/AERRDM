@@ -5,10 +5,10 @@
   "aliases": ["input-formtarget"],
   "notes": [{
     "name": "WHATWG Spec",
-    "href": "https://html.spec.whatwg.org/multipage/forms.html#attr-fs-formtarget"
+    "href": "http://www.whatwg.org/specs/web-apps/current-work/multipage/association-of-controls-and-forms.html#attr-fs-formtarget"
   }, {
     "name": "Wufoo demo",
-    "href": "https://www.wufoo.com/html5/attributes/15-formtarget.html"
+    "href": "http://www.wufoo.com/html5/attributes/15-formtarget.html"
   }],
   "polyfills": [
     "html5formshim"

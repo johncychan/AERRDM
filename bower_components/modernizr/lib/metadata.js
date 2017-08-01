@@ -1,12 +1,11 @@
 var fs = require('fs');
 var file = require('file');
-var Remarkable = require('remarkable');
+var marked = require('marked');
 var polyfills = require('./polyfills.json');
 var viewRoot = fs.realpathSync(__dirname + '/../feature-detects');
 
 function metadata(cb) {
   var tests = [];
-  var md = new Remarkable();
   file.walkSync(viewRoot, function(start, dirs, files) {
     files.forEach(function(file) {
       if (file === '.DS_Store') {
@@ -37,7 +36,7 @@ function metadata(cb) {
       var docs = null;
 
       if (docmatches && docmatches[1]) {
-        docs = md.render(docmatches[1].trim());
+        docs = marked(docmatches[1].trim());
       }
 
       metadata.doc = docs;
@@ -113,7 +112,7 @@ function metadata(cb) {
 
       // If you want markdown parsed code minus the docs and metadata, this'll do it.
       // Off by default for now.
-      // metadata.code =  md.render('```javascript\n' + test.replace(metaRE, '').replace(docRE, '') + '\n```');
+      // metadata.code =  marked('```javascript\n' + test.replace(metaRE, '').replace(docRE, '') + '\n```');
 
       if (!metadata.tags) {
         metadata.tags = [];

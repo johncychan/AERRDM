@@ -30,9 +30,8 @@ define(['Modernizr', 'createElement', 'docElement', 'testStyles'], function(Mode
 
     // Prevent form from being submitted
     form.addEventListener('submit', function(e) {
-      // Old Presto based Opera does not validate form, if submit is prevented
-      // although Opera Mini servers use newer Presto.
-      if (!window.opera || window.operamini) {
+      //Opera does not validate form, if submit is prevented
+      if (!window.opera) {
         e.preventDefault();
       }
       e.stopPropagation();
@@ -41,7 +40,7 @@ define(['Modernizr', 'createElement', 'docElement', 'testStyles'], function(Mode
     // Calling form.submit() doesn't trigger interactive validation,
     // use a submit button instead
     //older opera browsers need a name attribute
-    form.innerHTML = '<input name="modTest" required="required" /><button></button>';
+    form.innerHTML = '<input name="modTest" required><button></button>';
 
     testStyles('#modernizr form{position:absolute;top:-99999em}', function(node) {
       node.appendChild(form);

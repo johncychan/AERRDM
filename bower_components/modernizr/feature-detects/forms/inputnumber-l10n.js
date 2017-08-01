@@ -9,7 +9,7 @@
     "href": "https://bugs.webkit.org/show_bug.cgi?id=42484"
   },{
     "name": "Based on This",
-    "href": "https://trac.webkit.org/browser/trunk/LayoutTests/fast/forms/script-tests/input-number-keyoperation.js?rev=80096#L9"
+    "href": "http://trac.webkit.org/browser/trunk/LayoutTests/fast/forms/script-tests/input-number-keyoperation.js?rev=80096#L9"
   }],
   "knownBugs": ["Only ever returns true if the browser/OS is configured to use comma as a decimal separator. This is probably fine for most use cases."]
 }
@@ -36,15 +36,12 @@ define(['Modernizr', 'createElement', 'docElement', 'getBody', 'test/inputtypes'
     root.appendChild(el);
     input.focus();
     try {
-      document.execCommand('SelectAll', false); // Overwrite current input value, rather than appending text
       document.execCommand('InsertText', false, '1,1');
     } catch (e) { // prevent warnings in IE
     }
     diff = input.type === 'number' && input.valueAsNumber === 1.1 && input.checkValidity();
     root.removeChild(el);
-    if (body.fake) {
-      root.parentNode.removeChild(root);
-    }
+    body.fake && root.parentNode.removeChild(root);
     return diff;
   });
 

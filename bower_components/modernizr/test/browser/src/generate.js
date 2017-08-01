@@ -81,7 +81,6 @@ describe('generate', function() {
     var output = generate({});
     var stashedRequire = window.require;
     window.require = function() {};
-    // eslint-disable-next-line
     expect(function() {eval(output);}).to.not.throwError();
     window.require = stashedRequire;
   });
@@ -90,15 +89,8 @@ describe('generate', function() {
     var output = generate({minify: true});
     var stashedRequire = window.require;
     window.require = function() {};
-    // eslint-disable-next-line
     expect(function() {eval(output);}).to.not.throwError();
     window.require = stashedRequire;
-  });
-
-  it('does not modify options', function() {
-    var config = {'options': ['setClasses']};
-    generate(config);
-    expect(config.options).to.eql(['setClasses']);
   });
 
   after(function() {

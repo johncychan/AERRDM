@@ -2,19 +2,11 @@
 {
   "name": "Hidden Scrollbar",
   "property": "hiddenscroll",
-  "authors": ["Oleg Korsunsky"],
-  "tags": ["overlay"],
-  "notes": [{
-    "name": "Overlay Scrollbar description",
-    "href": "https://developer.apple.com/library/mac/releasenotes/MacOSX/WhatsNewInOSX/Articles/MacOSX10_7.html#//apple_ref/doc/uid/TP40010355-SW39"
-  },{
-    "name": "Video example of overlay scrollbars",
-    "href": "https://gfycat.com/FoolishMeaslyAtlanticsharpnosepuffer"
-  }]
+  "authors": ["Oleg Korsunsky"]
 }
 !*/
 /* DOC
-Detects overlay scrollbars (when scrollbars on overflowed blocks are visible). This is found most commonly on mobile and OS X.
+Detects whether scrollbars on overflowed blocks are hidden (a-la iPhone)
 */
 define(['Modernizr', 'testStyles'], function(Modernizr, testStyles) {
   Modernizr.addTest('hiddenscroll', function() {

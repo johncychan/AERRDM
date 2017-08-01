@@ -1,9 +1,4 @@
 describe('setClasses', function() {
-  /*
-    eslint no-unused-vars: [ "error", {
-      "varsIgnorePattern": "setClasses"
-    }]
-   */
   var setClasses;
   var cleanup;
   var elm;

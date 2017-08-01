@@ -1,57 +1,37 @@
-var express = require('express');
-var router = express.Router();
-var path = require('path');
-var mongo = require('mongodb').MongoClient;
-var assert = require('assert');
-var request = require('request');
-var Promise = require('promise');
+// Dependencies
+var express 	= require('express');
+var router 	= express.Router();
+var path 	= require('path');
+var mongo 	= require('mongodb').MongoClient;
+var assert 	= require('assert');
+var Promise 	= require('promise');
+var gplace	= require('./gplace.js');
 
+// Variables
 var url = 'mongodb://localhost:27017/dbname';
 var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=_LOCATION&radius=_RADIUS&type=_TYPE&key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
+var public_dir = __dirname.replace("/routes", "/public")
 
-// Move function locations
-function Place(p, type) {
-	this.name = p.name;
-	this.icon = p.icon;
-	this.location = p.geometry.location;
-	this.type = type;
-}
+/* GET home page. */
+router.get('/index.html', function(req, res, next) {
+    res.sendFile(path.join(public_dir + '/index.html'));
+});
 
-function requestPlace(place_request, type) {
-	return new Promise(function(resolve, reject) {
-		place_request = place_request.replace('_TYPE',type);
-		type = type.replace('_', ' ');
-		request(place_request, function(error, response, body) {
-			if(error) {
-				return reject(error);
-			}
-
-			rtval = JSON.parse(body);
-			facility = [];
-			for(var j=0;j<rtval.results.length; j++)
-			{
-				var name = rtval.results[j].name.toLowerCase();
-				if(name.includes(type)) {
-					console.log(name);
-					facility.push(new Place(rtval.results[j], type));
-				}
-			}
-
-			return resolve(facility);
-		});
-	});
-} 
+/* GET map page. */
+router.get('/map.html', function(req, res, next) {
+    res.sendFile(path.join(public_dir + '/map.html'));
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    var location = __dirname.replace("/routes", "/public");
-    res.sendFile(path.join(location + '/Prototype.html'));
+    res.sendFile(path.join(public_dir + '/Prototype.html'));
 });
 
 /* POST Google Places. */
 router.post('/Simulate', function(req, res, next) {
 
 	console.log(req.body);
+	console.log(gplace.Test);
 	var lat = req.body.lat;
 	var lng = req.body.lng;
 	var radius = req.body.radius;
@@ -62,7 +42,7 @@ router.post('/Simulate', function(req, res, next) {
 	var promises = [];
 	for(var i = 0; i < types.length; i++)
 	{
-		promises.push(requestPlace(place_request, types[i]));
+		promises.push(gplace.RequestPlace(place_request, types[i]));
 	}
 
 	Promise.all(promises).then(function(allData) {

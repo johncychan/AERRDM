@@ -1,14 +1,11 @@
-# Modernizr [![Build Status](https://api.travis-ci.org/Modernizr/Modernizr.svg?branch=master)](https://travis-ci.org/Modernizr/Modernizr) [![Inline docs](https://inch-ci.org/github/Modernizr/Modernizr.svg?branch=master)](https://inch-ci.org/github/Modernizr/Modernizr)
+# Modernizr [![Build Status](http://img.shields.io/travis/Modernizr/Modernizr/master.svg)](http://travis-ci.org/Modernizr/Modernizr) [![Inline docs](http://inch-ci.org/github/Modernizr/Modernizr.svg?branch=master)](http://inch-ci.org/github/Modernizr/Modernizr)
 
 ##### Modernizr is a JavaScript library that detects HTML5 and CSS3 features in the user’s browser.
 
-- [Website](https://modernizr.com)
-- [Documentation](https://modernizr.com/docs/)
+- [Website](http://www.modernizr.com)
+- [Documentation](http://www.modernizr.com/docs/)
 
 Modernizr tests which native CSS3 and HTML5 features are available in the current UA and makes the results available to you in two ways: as properties on a global `Modernizr` object, and as classes on the `<html>` element. This information allows you to progressively enhance your pages with a granular level of control over the experience.
-
-This project adheres to the [Open Code of Conduct][code-of-conduct]. By participating, you are expected to honor this code.
-[code-of-conduct]: http://todogroup.org/opencodeofconduct/#Modernizr/conduct@modernizr.com
 
 ## New Asynchronous Event Listeners
 
@@ -18,7 +15,7 @@ supported. Synchronous tests should be handled synchronously to improve speed an
 
 The new API looks like this:
 
-```js
+```javascript
 // Listen to a test, give it a callback
 Modernizr.on('testname', function( result ) {
   if (result) {
@@ -41,21 +38,21 @@ a method for exposing the `trigger` functionality. Instead, if you'd like to hav
 
 ## Test suite
 
-Run the [test suite](https://modernizr.github.io/Modernizr/test/)
+Run the [test suite](http://modernizr.github.com/Modernizr/test/)
 
 ## Building Modernizr v3
 
 ### To generate everything in 'config-all.json':
 
-```shell
+```js
 npm install
-./bin/modernizr -c lib/config-all.json
+./bin/modernizr
 //outputs to ./modernizr.js
 ```
 
 ### To run tests (in phantom):
 
-```shell
+```js
 grunt test
 ```
 
@@ -74,7 +71,7 @@ serve the root dir, `<url>/test/modular.html`
 ### To see the build tool:
 
 * checkout the modernizr.com code
-* install all your gems and bundles and jekyll
+* install all your gems and bundles and jekyll and shit
 * `jekyll`
 * `serve ./_sites`
 * visit <url>/download
@@ -84,7 +81,7 @@ serve the root dir, `<url>/test/modular.html`
 
 Modernizr can be used programmatically via npm:
 
-```js
+```javascript
 var modernizr = require("modernizr");
 ```
 
@@ -106,4 +103,4 @@ The second parameter is a function invoked on task completion.
 
 ## License
 
-[MIT License](https://opensource.org/licenses/MIT)
+[MIT License](http://opensource.org/licenses/MIT)

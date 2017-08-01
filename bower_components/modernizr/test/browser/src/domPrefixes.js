@@ -1,10 +1,4 @@
 describe('domPrefixes', function() {
-  /*
-    eslint no-unused-vars: [ "error", {
-      "varsIgnorePattern": "domPrefixes"
-    }]
- */
-
   var req;
 
   var setup = function(done, bool) {

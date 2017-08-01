@@ -14,19 +14,14 @@ define(['Modernizr', 'addTest', 'prefixed', 'test/indexeddb'], function(Moderniz
   // For speed, we don't test the legacy (and beta-only) indexedDB
 
   Modernizr.addAsyncTest(function() {
-    var indexeddb;
+    /* jshint -W053 */
+    var indexeddb = prefixed('indexedDB', window);
     var dbname = 'detect-blob-support';
     var supportsBlob = false;
-    var openRequest;
+    var request;
     var db;
-    var putRequest;
 
-    try {
-      indexeddb = prefixed('indexedDB', window);
-    } catch (e) {
-    }
-
-    if (!(Modernizr.indexeddb && Modernizr.indexeddb.deletedatabase)) {
+    if (!(Modernizr.indexeddb && Modernizr.indexeddb.deleteDatabase)) {
       return false;
     }
 
@@ -34,20 +29,15 @@ define(['Modernizr', 'addTest', 'prefixed', 'test/indexeddb'], function(Moderniz
     // will throw a `SecurityError`
     try {
       indexeddb.deleteDatabase(dbname).onsuccess = function() {
-        openRequest = indexeddb.open(dbname, 1);
-        openRequest.onupgradeneeded = function() {
-          openRequest.result.createObjectStore('store');
+        request = indexeddb.open(dbname, 1);
+        request.onupgradeneeded = function() {
+          request.result.createObjectStore('store');
         };
-        openRequest.onsuccess = function() {
-          db = openRequest.result;
+        request.onsuccess = function() {
+          db = request.result;
           try {
-            putRequest = db.transaction('store', 'readwrite').objectStore('store').put(new Blob(), 'key');
-            putRequest.onsuccess = function() {
-              supportsBlob = true;
-            };
-            putRequest.onerror = function() {
-              supportsBlob = false;
-            };
+            db.transaction('store', 'readwrite').objectStore('store').put(new Blob(), 'key');
+            supportsBlob = true;
           }
           catch (e) {
             supportsBlob = false;

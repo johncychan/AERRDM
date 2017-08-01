@@ -8,10 +8,10 @@
   "authors": ["Krister Kari", "@amandeep", "Rich Bradshaw", "Ryan Seddon", "Paul Irish"],
   "notes": [{
     "name": "Webp Info",
-    "href": "https://developers.google.com/speed/webp/"
+    "href": "http://code.google.com/speed/webp/"
   }, {
     "name": "Chormium blog - Chrome 32 Beta: Animated WebP images and faster Chrome for Android touch input",
-    "href": "https://blog.chromium.org/2013/11/chrome-32-beta-animated-webp-images-and.html"
+    "href": "http://blog.chromium.org/2013/11/chrome-32-beta-animated-webp-images-and.html"
   }, {
     "name": "Webp Lossless Spec",
     "href": "https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification"
@@ -20,7 +20,7 @@
     "href": "http://www.wope-framework.com/en/2013/06/24/webp-support-on-android-browsers/"
   }, {
     "name": "Chormium WebP announcement",
-    "href": "https://blog.chromium.org/2011/11/lossless-and-transparency-encoding-in.html?m=1"
+    "href": "http://blog.chromium.org/2011/11/lossless-and-transparency-encoding-in.html?m=1"
   }]
 }
 !*/
@@ -65,9 +65,8 @@ define(['Modernizr', 'addTest'], function(Modernizr, addTest) {
         var result = event && event.type === 'load' ? image.width == 1 : false;
         var baseTest = name === 'webp';
 
-        // if it is the base test, and the result is false, just set a literal false
-        // rather than use the Boolean contrsuctor
-        addTest(name, (baseTest && result) ? new Boolean(result) : result);
+        /* jshint -W053 */
+        addTest(name, baseTest ? new Boolean(result) : result);
 
         if (cb) {
           cb(event);

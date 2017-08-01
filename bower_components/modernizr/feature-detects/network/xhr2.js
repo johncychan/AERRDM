@@ -6,10 +6,10 @@
   "builderAliases": ["network_xhr2"],
   "notes": [{
     "name": "W3 Spec",
-    "href": "https://www.w3.org/TR/XMLHttpRequest2/"
+    "href": "http://www.w3.org/TR/XMLHttpRequest2/"
   },{
     "name": "Details on Related Github Issue",
-    "href": "https://github.com/Modernizr/Modernizr/issues/385"
+    "href": "http://github.com/Modernizr/Modernizr/issues/385"
   }]
 }
 !*/

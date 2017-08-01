@@ -8,7 +8,7 @@
   "authors": ["@mathias"],
   "notes": [{
     "name": "Mathias' Original",
-    "href": "https://mathiasbynens.be/notes/html5-details-jquery#comment-35"
+    "href": "http://mths.be/axh"
   }]
 }
 !*/

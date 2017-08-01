@@ -7,7 +7,7 @@
   "builderAliases": ["a_download"],
   "notes": [{
     "name": "WhatWG Reference",
-    "href": "https://developers.whatwg.org/links.html#downloading-resources"
+    "href": "http://developers.whatwg.org/links.html#downloading-resources"
   }]
 }
 !*/

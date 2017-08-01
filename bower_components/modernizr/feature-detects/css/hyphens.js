@@ -165,15 +165,15 @@ define(['Modernizr', 'prefixes', 'createElement', 'testAllProps', 'addTest'], fu
           }
 
           /* try to find the doubled testword, without the delimiter */
-          try {
-            if (window.find) {
-              result = window.find(testword + testword);
-            } else {
+          if (window.find) {
+            result = window.find(testword + testword);
+          } else {
+            try {
               textrange = window.self.document.body.createTextRange();
               result = textrange.findText(testword + testword);
+            } catch (e) {
+              result = false;
             }
-          } catch (e) {
-            result = false;
           }
 
           document.body.removeChild(div);

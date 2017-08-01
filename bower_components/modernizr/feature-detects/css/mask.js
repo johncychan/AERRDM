@@ -8,19 +8,19 @@
   "notes": [
     {
       "name": "Webkit blog on CSS Masks",
-      "href": "https://webkit.org/blog/181/css-masks/"
+      "href": "http://www.webkit.org/blog/181/css-masks/"
     },
     {
       "name": "Safari Docs",
-      "href": "https://developer.apple.com/library/safari/#documentation/InternetWeb/Conceptual/SafariVisualEffectsProgGuide/Masks/Masks.html"
+      "href": "http://developer.apple.com/library/safari/#documentation/InternetWeb/Conceptual/SafariVisualEffectsProgGuide/Masks/Masks.html"
     },
     {
-      "name": "CSS SVG mask",
-      "href": "https://developer.mozilla.org/en-US/docs/Web/CSS/mask"
+      "name": "Mozilla css svg mask (not this)",
+      "href": "http://developer.mozilla.org/en/CSS/mask"
     },
     {
       "name": "Combine with clippaths for awesomeness",
-      "href": "https://generic.cx/for/webkit/test.html"
+      "href": "http://generic.cx/for/webkit/test.html"
     }
   ]
 }

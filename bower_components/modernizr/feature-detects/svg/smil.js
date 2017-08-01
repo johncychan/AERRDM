@@ -6,7 +6,7 @@
   "tags": ["svg"],
   "notes": [{
   "name": "W3C Synchronised Multimedia spec",
-  "href": "https://www.w3.org/AudioVideo/"
+  "href": "http://www.w3.org/AudioVideo/"
   }]
 }
 !*/

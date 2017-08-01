@@ -95,8 +95,8 @@
   },
   "css3multicolumnjs": {
     "name": "css3-multi-column.js",
-    "authors": ["Betley Whitehorne Image", "Cdric Savarese"],
-    "href": "https://github.com/BetleyWhitehorne/CSS3MultiColumn",
+    "authors": ["Cdric Savarese"],
+    "href": "http://www.csscripting.com/css-multi-column/",
     "licenses": ["CC-GNU LGPL"],
     "notes": [
       "Supported Properties: column-count, column-width, column-gap, column-rule.",
@@ -176,8 +176,8 @@
   },
   "jquery-contextmenu": {
     "name": "jQuery-contextMenu",
-    "authors": ["Rodney Rehm", "Björn Brala"],
-    "href": "https://github.com/swisnl/jQuery-contextMenu",
+    "authors": ["Rodney Rehm"],
+    "href": "https://github.com/medialize/jQuery-contextMenu",
     "licenses": ["MIT", "GPL3"]
   },
   "pmxdr": {
@@ -443,14 +443,8 @@
   "cupcake": {
     "name": "CupCake.js",
     "authors": ["Rivindu Perera"],
-    "href": "https://github.com/rivindu/cupcakejs",
+    "href": "http://www.rivindu.com/p/cupcakejs.html",
     "licenses": ["MIT"]
-  },
-  "customelements": {
-    "name": "Custom Elements",
-    "authors": ["Webcomponents"],
-    "href": "https://github.com/webcomponents/custom-elements",
-    "licenses": ["BSD"]
   },
   "storagepolyfill": {
     "name": "Storage Polyfill",
@@ -704,12 +698,6 @@
     "href": "http://remysharp.com/2008/06/30/maxlength-plugin/",
     "licenses": ["CC SA"]
   },
-  "weakmap": {
-    "name": "ES6 WeakMap",
-    "authors": ["Google Inc."],
-    "href": "https://github.com/Polymer/WeakMap",
-    "licenses": ["BSD"]
-  },
   "eventlistener": {
     "name": "EventListener",
     "authors": ["Jonathan Neal"],
@@ -757,23 +745,5 @@
     "href": "https://github.com/github/fetch",
     "licenses": ["MIT"],
     "name": "window.fetch polyfill"
-  },
-  "base64js": {
-    "authors": ["David Chambers"],
-    "href": "https://github.com/davidchambers/Base64.js",
-    "licenses": ["Apache2", "WTFPL"],
-    "name": "window.atob and window.btoa polyfill"
-  },
-  "scrollsnap": {
-    "authors": ["Clemens Krack"],
-    "href": "https://github.com/ckrack/scrollsnap-polyfill",
-    "licenses": ["MIT"],
-    "name": "scrollsnap-polyfill.js"
-  },
-  "pep": {
-    "authors": ["jQuery Foundation and other contributors"],
-    "href": "https://github.com/jquery/PEP",
-    "licenses": ["MIT"],
-    "name": "pep.js"
   }
 }

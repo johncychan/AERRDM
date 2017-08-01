@@ -6,7 +6,7 @@
   "builderAliases": ["css_backgroundsizecover"],
   "notes": [{
     "name" : "MDN Docs",
-    "href": "https://developer.mozilla.org/en/CSS/background-size"
+    "href": "http://developer.mozilla.org/en/CSS/background-size"
   }]
 }
 !*/

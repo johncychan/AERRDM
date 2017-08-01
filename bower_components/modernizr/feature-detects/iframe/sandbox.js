@@ -7,7 +7,7 @@
   "notes": [
   {
     "name": "WhatWG Spec",
-    "href": "https://html.spec.whatwg.org/multipage/embedded-content.html#attr-iframe-sandbox"
+    "href": "http://www.whatwg.org/specs/web-apps/current-work/multipage/the-iframe-element.html#attr-iframe-sandbox"
   }],
   "knownBugs": [ "False-positive on Firefox < 29" ]
 }

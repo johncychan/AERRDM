@@ -5,8 +5,8 @@
   "authors": ["Diego Perini", "Mat Marquis"],
   "tags": ["css"],
   "knownBugs": [
-    "False Positive: WebOS https://github.com/Modernizr/Modernizr/issues/342",
-    "False Postive: WP7 https://github.com/Modernizr/Modernizr/issues/538"
+    "False Positive: WebOS http://github.com/Modernizr/Modernizr/issues/342",
+    "False Postive: WP7 http://github.com/Modernizr/Modernizr/issues/538"
   ],
   "notes": [{
     "name": "@font-face detection routine by Diego Perini",
@@ -19,7 +19,7 @@
     "href": "https://docs.google.com/spreadsheet/ccc?key=0Ag5_yGvxpINRdHFYeUJPNnZMWUZKR2ItMEpRTXZPdUE#gid=0"
   },{
     "name": "CSS fonts on Android",
-    "href": "https://stackoverflow.com/questions/3200069/css-fonts-on-android"
+    "href": "http://stackoverflow.com/questions/3200069/css-fonts-on-android"
   },{
     "name": "@font-face and Android",
     "href": "http://archivist.incutio.com/viewlist/css-discuss/115960"
@@ -29,9 +29,11 @@
 define(['Modernizr', 'testStyles'], function(Modernizr, testStyles) {
   var blacklist = (function() {
     var ua = navigator.userAgent;
+    var wkvers = ua.match(/applewebkit\/([0-9]+)/gi) && parseFloat(RegExp.$1);
     var webos = ua.match(/w(eb)?osbrowser/gi);
     var wppre8 = ua.match(/windows phone/gi) && ua.match(/iemobile\/([0-9])+/gi) && parseFloat(RegExp.$1) >= 9;
-    return webos || wppre8;
+    var oldandroid = wkvers < 533 && ua.match(/android/gi);
+    return webos || oldandroid || wppre8;
   }());
   if (blacklist) {
     Modernizr.addTest('fontface', false);

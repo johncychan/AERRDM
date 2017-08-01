@@ -5,7 +5,7 @@
   "tags": ["network"],
   "notes": [{
     "name": "XMLHttpRequest Living Standard",
-    "href": "https://xhr.spec.whatwg.org/#the-responsetype-attribute"
+    "href": "http://xhr.spec.whatwg.org/#the-responsetype-attribute"
   }]
 }
 !*/

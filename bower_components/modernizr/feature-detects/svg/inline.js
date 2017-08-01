@@ -6,10 +6,10 @@
   "tags": ["svg"],
   "notes": [{
     "name": "Test page",
-    "href": "https://paulirish.com/demo/inline-svg"
+    "href": "http://paulirish.com/demo/inline-svg"
   }, {
     "name": "Test page and results",
-    "href": "https://codepen.io/eltonmesquita/full/GgXbvo/"
+    "href": "http://codepen.io/eltonmesquita/full/GgXbvo/"
   }],
   "polyfills": ["inline-svg-polyfill"],
   "knownBugs": ["False negative on some Chromia browsers."]

@@ -1,9 +1,4 @@
 describe('prefixes', function() {
-  /*
-    eslint no-unused-vars: [ "error", {
-      "varsIgnorePattern": "prefixes"
-    }]
- */
   var setup = function(done, bool) {
     return (function() {
       define('ModernizrProto', [], function() {return {_config: {usePrefixes: bool}};});
@@ -65,7 +60,7 @@ describe('prefixes', function() {
     it('returns no prefixes', function(done) {
       req(['prefixes'], function(prefixes) {
         expect(prefixes).to.be.an('array');
-        expect(prefixes).to.have.length(2);
+        expect(prefixes).to.have.length(0);
         done();
       });
     });

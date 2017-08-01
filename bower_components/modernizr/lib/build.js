@@ -1,13 +1,15 @@
 // this file configures require.js based on enviroment
 'use strict';
 
+/* jshint -W117 */
 var inBrowser = typeof define == 'function' && typeof define.amd == 'object';
+/* jshint -W117 */
 
 var _extend = function(a, b) {
   for (var prop in b) {
     var supplied = b[prop];
-    if (Object.prototype.toString.call(supplied) === '[object Object]') {
-      a[prop] = a[prop] || {};
+    if (typeof supplied === 'object') {
+      a[prop] == a[prop] || {};
       _extend(a[prop], supplied);
     } else {
       a[prop] = b[prop];
@@ -15,7 +17,8 @@ var _extend = function(a, b) {
   }
 };
 
-var baseRequireConfig = {
+
+var requireConfig = {
   optimize: 'none',
   generateSourceMaps: false,
   optimizeCss: 'none',
@@ -39,7 +42,7 @@ var baseRequireConfig = {
       contents = contents.replace(/\}\);\s*?$/, '');
 
       if (!contents.match(/Modernizr\.add(Async)?Test\(/)) {
-      // remove last return statement and trailing })
+        // remove last return statement and trailing })
         contents = contents.replace(/return.*[^return]*$/, '');
       }
     } else if ((/require\([^\{]*?\{/).test(contents)) {
@@ -55,12 +58,9 @@ var baseRequireConfig = {
 
 function build(generate, generateBanner, pkg) {
   return function build(config, cb) {
-    var requireConfig = {};
-    var banner;
     config = config || {};
     cb = cb || function noop() {};
-
-    _extend(requireConfig, baseRequireConfig);
+    var banner;
 
     requireConfig.rawText = {
       'modernizr-init': generate(config)
@@ -106,8 +106,8 @@ if (inBrowser) {
   var suppliedConfig = self._modernizrConfig;
   var metadataUrl = 'i/js/metadata.json';
   var packageUrl = 'i/js/modernizr-git/package.json';
-  baseRequireConfig.baseUrl = '/i/js/modernizr-git/src';
-  baseRequireConfig.paths = {
+  requireConfig.baseUrl = '/i/js/modernizr-git/src';
+  requireConfig.paths = {
     text: '/i/js/requirejs-plugins/lib/text',
     lib: '/i/js/modernizr-git/lib',
     json: '/i/js/requirejs-plugins/src/json',
@@ -118,7 +118,7 @@ if (inBrowser) {
   if (suppliedConfig) {
     metadataUrl = suppliedConfig.metadataUrl || metadataUrl;
     packageUrl = suppliedConfig.packageUrl || packageUrl;
-    _extend(baseRequireConfig, suppliedConfig);
+    _extend(requireConfig, suppliedConfig);
   }
 
   if (self._modernizrMetadata) {
@@ -135,15 +135,15 @@ if (inBrowser) {
   requirejs.define('metadata', [], function() {return metadata;});
   requirejs.define('package', function() {return pkg;});
 
-  baseRequireConfig.baseUrl = __dirname + '/../src';
-  baseRequireConfig.paths = {
-    lodash: __dirname + '/../node_modules/lodash/lodash',
+  requireConfig.baseUrl = __dirname + '/../src';
+  requireConfig.paths = {
+    lodash: __dirname + '/../node_modules/lodash/index',
     test: __dirname + '/../feature-detects',
     lib: __dirname
   };
 }
 
-requirejs.config(baseRequireConfig);
+requirejs.config(requireConfig);
 
 if (inBrowser) {
   define('build', ['generate', 'lib/generate-banner', 'package'], build);

@@ -6,7 +6,7 @@
   "warnings": ["Android won't return correct height for anything below 7px #738"],
   "notes": [{
     "name": "W3C CSS Selectors Level 3 spec",
-    "href": "https://www.w3.org/TR/css3-selectors/#gen-content"
+    "href": "http://www.w3.org/TR/css3-selectors/#gen-content"
   },{
     "name": "MDN article on :before",
     "href": "https://developer.mozilla.org/en-US/docs/Web/CSS/::before"
@@ -18,7 +18,6 @@
 !*/
 define(['Modernizr', 'testStyles'], function(Modernizr, testStyles) {
   testStyles('#modernizr{font:0/0 a}#modernizr:after{content:":)";visibility:hidden;font:7px/1 a}', function(node) {
-    // See bug report on why this value is 6 crbug.com/608142
-    Modernizr.addTest('generatedcontent', node.offsetHeight >= 6);
+    Modernizr.addTest('generatedcontent', node.offsetHeight >= 7);
   });
 });

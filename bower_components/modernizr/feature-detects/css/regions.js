@@ -8,11 +8,11 @@
   "builderAliases": ["css_regions"],
   "notes": [{
     "name": "W3C Specification",
-    "href": "https://www.w3.org/TR/css3-regions/"
+    "href": "http://www.w3.org/TR/css3-regions/"
   }]
 }
 !*/
-define(['Modernizr', 'createElement', 'docElement', 'isSVG', 'prefixed'], function(Modernizr, createElement, docElement, isSVG, prefixed) {
+define(['Modernizr', 'createElement', 'docElement', 'isSVG'], function(Modernizr, createElement, docElement, isSVG) {
   // We start with a CSS parser test then we check page geometry to see if it's affected by regions
   // Later we might be able to retire the second part, as WebKit builds with the false positives die out
 
@@ -26,8 +26,8 @@ define(['Modernizr', 'createElement', 'docElement', 'isSVG', 'prefixed'], functi
 
     /* Get the 'flowFrom' property name available in the browser. Either default or vendor prefixed.
        If the property name can't be found we'll get Boolean 'false' and fail quickly */
-    var flowFromProperty = prefixed('flowFrom');
-    var flowIntoProperty = prefixed('flowInto');
+    var flowFromProperty = Modernizr.prefixed('flowFrom');
+    var flowIntoProperty = Modernizr.prefixed('flowInto');
     var result = false;
 
     if (!flowFromProperty || !flowIntoProperty) {

@@ -8,11 +8,12 @@ define(['isSVG'], function(isSVG) {
   var html5;
   if (!isSVG) {
     /**
-     * @preserve HTML5 Shiv 3.7.3 | @afarkas @jdalton @jon_neal @rem | MIT/GPL2 Licensed
+     * @preserve HTML5 Shiv 3.7.2 | @afarkas @jdalton @jon_neal @rem | MIT/GPL2 Licensed
      */
     ;(function(window, document) {
+      /*jshint evil:true */
       /** version */
-      var version = '3.7.3';
+      var version = '3.7.2';
 
       /** Preset options */
       var options = window.html5 || {};
@@ -129,7 +130,7 @@ define(['isSVG'], function(isSVG) {
        * returns a shived element for the given nodeName and document
        * @memberOf html5
        * @param {String} nodeName name of the element
-       * @param {Document|DocumentFragment} ownerDocument The context document.
+       * @param {Document} ownerDocument The context document.
        * @returns {Object} The shived element.
        */
       function createElement(nodeName, ownerDocument, data){
@@ -214,10 +215,10 @@ define(['isSVG'], function(isSVG) {
                                                         'h.shivMethods&&(' +
                                                         // unroll the `createElement` calls
                                                         getElements().join().replace(/[\w\-:]+/g, function(nodeName) {
-                                                          data.createElem(nodeName);
-                                                          data.frag.createElement(nodeName);
-                                                          return 'c("' + nodeName + '")';
-                                                        }) +
+          data.createElem(nodeName);
+          data.frag.createElement(nodeName);
+          return 'c("' + nodeName + '")';
+        }) +
           ');return n}'
                                                        )(html5, data.frag);
       }
@@ -327,11 +328,7 @@ define(['isSVG'], function(isSVG) {
       // shiv the document
       shivDocument(document);
 
-      if(typeof module == 'object' && module.exports){
-        module.exports = html5;
-      }
-
-    }(typeof window !== 'undefined' ? window : this, document));
+    }(this, document));
   }
-  return html5;
+return html5;
 });

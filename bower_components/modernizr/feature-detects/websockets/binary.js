@@ -13,11 +13,10 @@ define(['Modernizr'], function(Modernizr) {
 
   Modernizr.addTest('websocketsbinary', function() {
     var protocol = 'https:' == location.protocol ? 'wss' : 'ws',
-      protoBin;
+    protoBin;
 
     if ('WebSocket' in window) {
-      protoBin = 'binaryType' in WebSocket.prototype
-      if (protoBin) {
+      if (protoBin = 'binaryType' in WebSocket.prototype) {
         return protoBin;
       }
       try {

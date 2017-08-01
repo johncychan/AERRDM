@@ -1,11 +1,11 @@
 define(function() {
   /**
-   * If the browsers follow the spec, then they would expose vendor-specific styles as:
+   * If the browsers follow the spec, then they would expose vendor-specific style as:
    *   elem.style.WebkitBorderRadius
-   * instead of something like the following (which is technically incorrect):
+   * instead of something like the following, which would be technically incorrect:
    *   elem.style.webkitBorderRadius
 
-   * WebKit ghosts their properties in lowercase but Opera & Moz do not.
+   * Webkit ghosts their properties in lowercase but Opera & Moz do not.
    * Microsoft uses a lowercase `ms` instead of the correct `Ms` in IE8+
    *   erik.eae.net/archives/2008/03/10/21.48.10/
 

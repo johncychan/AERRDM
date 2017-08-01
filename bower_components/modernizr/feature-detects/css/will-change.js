@@ -4,7 +4,7 @@
   "property": "willchange",
   "notes": [{
     "name": "Spec",
-    "href": "https://drafts.csswg.org/css-will-change/"
+    "href": "http://tabatkins.github.io/specs/css-will-change/"
   }]
 }
 !*/

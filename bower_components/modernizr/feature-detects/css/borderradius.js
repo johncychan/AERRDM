@@ -7,7 +7,7 @@
   "tags": ["css"],
   "notes": [{
     "name": "Comprehensive Compat Chart",
-    "href": "https://muddledramblings.com/table-of-css3-border-radius-compliance"
+    "href": "http://muddledramblings.com/table-of-css3-border-radius-compliance"
   }]
 }
 !*/

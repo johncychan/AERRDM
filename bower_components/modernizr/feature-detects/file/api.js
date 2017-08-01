@@ -5,7 +5,7 @@
   "caniuse": "fileapi",
   "notes": [{
     "name": "W3C Working Draft",
-    "href": "https://www.w3.org/TR/FileAPI/"
+    "href": "http://www.w3.org/TR/FileAPI/"
   }],
   "tags": ["file"],
   "builderAliases": ["file_api"],

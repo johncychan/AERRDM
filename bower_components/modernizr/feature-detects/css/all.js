@@ -4,7 +4,7 @@
   "property": "cssall",
   "notes": [{
     "name": "Spec",
-    "href": "https://drafts.csswg.org/css-cascade/#all-shorthand"
+    "href": "http://dev.w3.org/csswg/css-cascade/#all-shorthand"
   }]
 }
 !*/

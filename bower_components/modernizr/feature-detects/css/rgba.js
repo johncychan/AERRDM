@@ -6,7 +6,7 @@
   "tags": ["css"],
   "notes": [{
     "name": "CSSTricks Tutorial",
-    "href": "https://css-tricks.com/rgba-browser-support/"
+    "href": "http://css-tricks.com/rgba-browser-support/"
   }]
 }
 !*/

@@ -5,7 +5,7 @@
   "caniuse": "contenteditable",
   "notes": [{
     "name": "WHATWG spec",
-    "href": "https://html.spec.whatwg.org/multipage/interaction.html#contenteditable"
+    "href": "http://www.whatwg.org/specs/web-apps/current-work/multipage/editing.html#contenteditable"
   }]
 }
 !*/

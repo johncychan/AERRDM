@@ -1,12 +1,11 @@
 /*global module */
 
 var browsers = require('./test/browser/sauce-browsers.json');
-var serveStatic = require('serve-static');
 
 module.exports = function(grunt) {
   'use strict';
 
-  // load grunt dependencies
+  // Load grunt dependencies
   require('load-grunt-tasks')(grunt);
 
   var browserTests = grunt.file.expand([
@@ -50,12 +49,8 @@ module.exports = function(grunt) {
         ]
       }
     },
-    eslint: {
-      target: [
-        '<%= env.nodeTests%>',
-        '<%= env.browserTests %>',
-        'test/browser/setup.js',
-        'test/browser/integration/*.js',
+    jscs: {
+      src: [
         'Gruntfile.js',
         'src/*.js',
         'lib/*.js',
@@ -65,9 +60,34 @@ module.exports = function(grunt) {
         '!test/coverage/**/*.js',
         '!test/js/lib/**/*.js',
         '!src/html5shiv.js'
-      ],
+      ]
+    },
+    jshint: {
       options: {
-        rulePaths: ['test/eslint/rules']
+        jshintrc: true,
+        ignores: [
+          'src/html5printshiv.js',
+          'src/html5shiv.js'
+        ]
+      },
+      files: [
+        'Gruntfile.js',
+        'src/*.js',
+        'lib/*.js',
+        'feature-detects/**/*.js'
+      ],
+      tests: {
+        options: {
+          jshintrc: true
+        },
+        files: {
+          src: [
+            '<%= env.nodeTests%>',
+            '<%= env.browserTests %>',
+            'test/browser/setup.js',
+            'test/browser/integration/*.js'
+          ]
+        }
       }
     },
     clean: {
@@ -96,7 +116,7 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          middleware: function() {
+          middleware: function(connect, options) {
             return [
               function(req, res, next) {
                 // catchall middleware used in testing
@@ -126,9 +146,10 @@ module.exports = function(grunt) {
 
                 next();
               },
-              serveStatic(__dirname)
+              connect.static(options.base)
             ];
           },
+          base: '',
           port: 9999
         }
       }
@@ -155,8 +176,7 @@ module.exports = function(grunt) {
     mochaTest: {
       test: {
         options: {
-          reporter: 'dot',
-          timeout: 5000
+          reporter: 'dot'
         },
         src: ['<%= env.nodeTests%>']
       }
@@ -211,9 +231,11 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', ['clean', 'generate']);
 
-  grunt.registerTask('default', ['eslint', 'build']);
+  grunt.registerTask('lint', ['jshint', 'jscs']);
 
-  var tests = ['clean', 'eslint', 'jade', 'instrument', 'env:coverage', 'nodeTests'];
+  grunt.registerTask('default', ['lint', 'build']);
+
+  var tests = ['clean', 'lint', 'jade', 'instrument', 'env:coverage', 'nodeTests'];
 
   if (process.env.APPVEYOR) {
     grunt.registerTask('test', tests);

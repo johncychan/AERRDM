@@ -27,11 +27,7 @@ define(['Modernizr', 'docElement', 'isSVG'], function(Modernizr, docElement, isS
     if (Modernizr._config.enableClasses) {
       // Add the new classes
       className += ' ' + classPrefix + classes.join(' ' + classPrefix);
-      if (isSVG) {
-        docElement.className.baseVal = className;
-      } else {
-        docElement.className = className;
-      }
+      isSVG ? docElement.className.baseVal = className : docElement.className = className;
     }
 
   }

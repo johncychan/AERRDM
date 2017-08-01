@@ -11,12 +11,12 @@ define(['Modernizr', 'testAllProps'], function(Modernizr, testAllProps) {
 
   (function() {
 
+    /* jshint -W053 */
     Modernizr.addTest('csscolumns', function() {
       var bool = false;
       var test = testAllProps('columnCount');
       try {
-        bool = !!test
-        if (bool) {
+        if (bool = !!test) {
           bool = new Boolean(bool);
         }
       } catch (e) {}
