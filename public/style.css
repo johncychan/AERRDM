@@ -1,5 +1,12 @@
       #map {
+        padding: 0;
+        display: block;
+        margin: 0 auto;
+      }
+
+      ng-map{
         height: 100%;
+        width: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
@@ -23,8 +30,9 @@
         font-family: Roboto;
         font-size: 15px;
         font-weight: 300;
-        margin-left: 12px;
-        padding: 0 11px 0 13px;
+        margin-left: 110px;
+        margin-bottom: 10px;
+        padding: 0 10px 0 13px;
         text-overflow: ellipsis;
         width: 300px;
         position: absolute;
@@ -53,3 +61,68 @@
       #target {
         width: 345px;
       }
+
+      /* header CSS */
+      #header{
+        top: 0;
+        left: 0;
+        margin: 0 auto;
+        width: 100%;
+        max-height: 60px;
+        background: #00008B;
+      }
+
+      #titleName{
+        padding: 15px 0 15px 25px;
+        float: left;
+        color: #FFFFFF;
+        font-size: 18px;
+      }
+
+      @media only screen and (max-width: 430px) {
+         #titleName { 
+            font-size: 14px; 
+         }
+
+      }
+
+      nav{
+        margin:0 auto;
+        padding: 5px 15px 0 0;
+        /*float:right;*/
+        right: 0;
+        position: absolute;
+
+      }
+      nav ul{
+        padding:0;
+        margin: 0;
+        list-style-type: none;
+      }
+      nav ul li{
+        margin: 0 auto;
+        padding: 0 0 0 8px;
+        float:left;
+        font-size: 80%;
+      }
+
+      nav ul li span{
+        display: block;
+        padding: 8px 20px;
+        color: #FFFFFF;
+        text-decoration: none;
+      }
+      nav ul li span:hover{
+        color: #F5F5F5;
+        text-decoration: none;
+      }
+      /* end header CSS*/
+
+      .clearfix:after {
+         content: " "; /* Older browser do not support empty content */
+         visibility: hidden;
+         display: block;
+         height: 0;
+         clear: both;
+      }
+

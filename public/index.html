@@ -1,38 +1,51 @@
 <!doctype html>
 <!-- Declares meanMapApp as the starting Angular module -->
 <html class="no-js" ng-app="meanMapApp">
-<head>
-    <meta charset="utf-8">
-    <title>AERRDM</title>
-    <meta name="description" content="An example demonstrating Google Map integration with MEAN Apps">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- CSS -->
-    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
-    <link rel="stylesheet" href="style.css"/>
-    <!-- Holder JS -->
-    <script src="../bower_components/holderjs/holder.js"></script>
-    <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyTWcfHcUgPhrfGWOxT9AAhZxD0DIFRQo"></script>
-    <!-- Modernizr -->
-    <script src="../bower_components/modernizr/bin/modernizr"></script>
-    <!-- JS Source -->
-    <script src="../bower_components/jquery/jquery.js"></script>
-    <script src="../bower_components/angular/angular.js"></script>
-    <script src="../bower_components/angular-route/angular-route.js"></script>
-    <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
-    <script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
-    <!-- Angular Scripts -->
-    <script src="js/app.js"></script>
-    <script src="js/addCtrl.js"></script>
-    <script src="js/gservice.js"></script>
-</head>
-<body ngApp = "meanMapApp" ng-controller = "GetCurr as vm">
-    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-    
-    <ng-map  id="map" center='current-position'
-    geo-fallback-center="[40.74, -74.18]"
-    geo-callback="vm.callbackFunc('you')"
-    ></ng-map>
+    <head>
+        <meta charset="utf-8">
+        <title>AERRDM</title>
+        <meta name="description" content="An example demonstrating Google Map integration with MEAN Apps">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- CSS -->
+        <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
+        <link rel="stylesheet" href="style.css"/>
+        <!-- Holder JS -->
+        <script src="../bower_components/holderjs/holder.js"></script>
+        <!-- Google Maps API -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyTWcfHcUgPhrfGWOxT9AAhZxD0DIFRQo"></script>
+        <!-- Modernizr -->
+        <script src="../bower_components/modernizr/bin/modernizr"></script>
+        <!-- JS Source -->
+        <script src="../bower_components/jquery/jquery.js"></script>
+        <script src="../bower_components/angular/angular.js"></script>
+        <script src="../bower_components/angular-route/angular-route.js"></script>
+        <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
+        <script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
+        <!-- Angular Scripts -->
+        <script src="js/app.js"></script>
+        <script src="js/addCtrl.js"></script>
+        <script src="js/gservice.js"></script>
+    </head>
+    <body ngApp = "meanMapApp" ng-controller = "GetCurr as vm">
+            <div id="header" class="clearfix">
+              <div id="titleName">
+                Automatic Emergency Rescue Resource
+              </div>
+              <nav>
+                <ul class="clearfix">
+                    <li>
+                        <span style="font-size:20px;cursor:pointer" onclick="openNav()">&#9776;</span>
+                    </li>
+                </ul>
+              </nav>
+            </div>
 
-</body>
+            <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+            
+            <ng-map  id="map" center='current-position'
+            geo-fallback-center="[40.74, -74.18]"
+            geo-callback="vm.callbackFunc('you')"
+            ></ng-map>
+            <h1>fuck</h1>
+    </body>
 </html>

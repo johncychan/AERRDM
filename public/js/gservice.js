@@ -120,6 +120,13 @@ var initialize = function(latitude, longitude) {
 
 };
 
+// listen for the window resize event & trigger Google Maps to update too
+window.onresize = function() {
+  var currCenter = map.getCenter();
+  google.maps.event.trigger(map, 'resize');
+  map.setCenter(currCenter);
+};
+
 // Refresh the page upon window load. Use the initial latitude and longitude
 google.maps.event.addDomListener(window, 'load',
     googleMapService.refresh(selectedLat, selectedLong));
