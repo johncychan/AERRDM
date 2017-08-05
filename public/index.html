@@ -16,23 +16,21 @@
     <!-- Modernizr -->
     <script src="../bower_components/modernizr/bin/modernizr"></script>
     <!-- JS Source -->
-    <script src="../bower_components/jquery/jquery.js"></script>
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../bower_components/angular-route/angular-route.js"></script>
     <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
     <script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
     <!-- Angular Scripts -->
     <script src="js/app.js"></script>
-    <script src="js/addCtrl.js"></script>
-    <script src="js/gservice.js"></script>
 </head>
-<body ngApp = "meanMapApp" ng-controller = "GetCurr as vm">
-    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-    
-    <ng-map  id="map" center='current-position'
-    geo-fallback-center="[40.74, -74.18]"
-    geo-callback="vm.callbackFunc('you')"
-    ></ng-map>
+<body ngApp = "meanMapApp" ng-controller = "mainContrl as vm">
+    <form id="pac-input" name="searchLocation" novalidate ng-submit="search()">
+        <input class="controls" type="text" placeholder="Search Box" ng-submit="search()">
+        <button ng-disable="searchForm.$invalid">Search</button>
+    </form>
+    <ng-map  id="map" center='current-position' on-click="vm.placeMarker()">
+        
+    </ng-map>
 
 </body>
 </html>

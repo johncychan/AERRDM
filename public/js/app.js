@@ -20,27 +20,38 @@ var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'n
 
 	});
 
-app.controller('MyController', function(NgMap) {
-  NgMap.getMap().then(function(map) {
-    console.log(map.getCenter());
-    console.log('markers', map.markers);
-    console.log('shapes', map.shapes);
-  });
-});
 
 
+angular.module('meanMapApp', ['ngMap']).controller('mainContrl', function(NgMap){
 
-angular.module('meanMapApp', ['ngMap']).controller('GetCurr', function(NgMap){
+	//map initialization
 	var vm = this;
-	vm.message = 'You can not hide';
 	NgMap.getMap("map").then(function(map){
 		vm.map = map;
 	});
+
+	//array store markers
+	var markers = [];
+	var id;
+
+	//put a marker by clicking mouse
+	vm.placeMarker = function(e){
+		var marker = new google.maps.Marker({position: e.latLng, map:vm.map});
+		vm.map.panTo(e.latLng);	
+		id = marker.__gm_id
+		markers[id] = marker;
 	
-	vm.callbackFunc = function(param){
-		console.log('I know where ' + param + 'are. ' + vm.message);
-		console.log('You are at' + vm.map.getCenter());
-	};
+		google.maps.event.addListener(marker, "rightclick", function(point){
+			id = this.__gm_id;
+			delMarker(id)
+		});
+	}
+
+	var delMarker = function(id){
+		marker = markers[id];
+		marker.setMap(null);
+	}
+
 });
 
 
