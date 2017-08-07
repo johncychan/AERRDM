@@ -167,7 +167,7 @@ function searchFacilities()
 		  }
 		});
 
-		xhr.open("POST", "http://localhost:8081/Simulate");
+		xhr.open("POST", "http://localhost:3000/Simulate");
 		xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
 		xhr.send(data);
 
