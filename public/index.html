@@ -28,8 +28,9 @@
         <input class="controls" type="text" placeholder="Search Box" ng-submit="search()">
         <button ng-disable="searchForm.$invalid">Search</button>
     </form>
+   <!--  <button class="single-event" type="button" placeholder="Single Event" ng-submit="single-event-init()">Single event</button> -->
     <ng-map  id="map" center='current-position' on-click="vm.placeMarker()">
-        
+        <marker></marker>
     </ng-map>
 
 </body>

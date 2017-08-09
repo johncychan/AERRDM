@@ -1,5 +1,5 @@
 // Declares the initial angular module "meanMapApp". Module grabs other controllers and services.
-var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'ngMap']);
+var app = angular.module('meanMapApp', ['ngMap']);
 	app.service('mapService', function(){
 		var map;
 		this.setMap = function (myMap){
@@ -21,8 +21,7 @@ var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'n
 	});
 
 
-
-angular.module('meanMapApp', ['ngMap']).controller('mainContrl', function(NgMap){
+app.controller('mapCrl', function(NgMap, $compile, $scope){
 
 	//map initialization
 	var vm = this;
@@ -30,29 +29,38 @@ angular.module('meanMapApp', ['ngMap']).controller('mainContrl', function(NgMap)
 		vm.map = map;
 	});
 
-	//array store markers
-	var markers = [];
-	var id;
-
 	//put a marker by clicking mouse
 	vm.placeMarker = function(e){
-		var marker = new google.maps.Marker({position: e.latLng, map:vm.map});
-		vm.map.panTo(e.latLng);	
-		id = marker.__gm_id
-		markers[id] = marker;
-	
-		google.maps.event.addListener(marker, "rightclick", function(point){
-			id = this.__gm_id;
-			delMarker(id)
+		if(vm.marker){
+			vm.marker.setMap(null);
+		}else{
+			vm.marker = new google.maps.Marker({
+				position: e.latLng,
+				map: vm.map
+			});
+		}
+		//display the marker info
+		var htmlElement = "<div><h1><button ng-click=\"vm.startSingleEvent()\">" + "Start simulation" + "</button></h1></div>"
+		var compiled = $compile(htmlElement)($scope)
+		vm.marker.infoWin = new google.maps.InfoWindow({
+			// content: "<div><h1><button id=\"singleEvent\" ng-click=\"vm.startSingleEvent()\">" + "Start simulation" + "</button></h1></div>"
+			content: compiled[0]
+		});
+		//show the infomation window
+		vm.marker.addListener('click', function(){
+			vm.marker.infoWin.open(vm.map, vm.marker);
 		});
 	}
 
-	var delMarker = function(id){
-		marker = markers[id];
-		marker.setMap(null);
-	}
+	//now start the simulation
+	vm.startSingleEvent = function(){
+		vm.map.setZoom(16);
+		vm.map.setCenter(vm.marker.position);
+	} 
 
 });
 
-
+function myFunction(){
+	document.getElementById("singleEvent").inneHTML = "Fuck";
+}
 
