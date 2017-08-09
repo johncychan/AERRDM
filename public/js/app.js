@@ -1,5 +1,5 @@
 // Declares the initial angular module "meanMapApp". Module grabs other controllers and services.
-var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'ngMap','ngMaterial']);
+var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'ngMap']);
 	app.service('mapService', function(){
 		var map;
 		this.setMap = function (myMap){
@@ -28,16 +28,12 @@ app.controller('MyController', function(NgMap) {
   });
 });
 
-angular.module('meanMapApp', ['ngMaterial']).controller('sideNavController', sideNavController);
-     function sideNavController ($scope, $mdSidenav) {
-        $scope.openLeftMenu = function() {
-           $mdSidenav('left').toggle();
-        };
-         
-        $scope.openRightMenu = function() {
-           $mdSidenav('right').toggle();
-        };
-     }    
+var app = angular.module('meanMapApp', ['ngMaterial']);
+        app.controller('sideNav', function($scope, $mdSidenav) {
+          $scope.openLeftMenu = function() {
+            $mdSidenav('left').toggle();
+          };
+        });
 
 
 angular.module('meanMapApp', ['ngMap']).controller('GetCurr', function(NgMap){

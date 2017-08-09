@@ -98,7 +98,7 @@
                     </div>
                 </li>
                 <li class="menu-btn-group">
-                    <span style="font-size:16px;cursor:pointer;" onclick="" class="glyphicon glyphicon-wrench" id="setting-menu"></span>
+                    <span style="font-size:16px;cursor:pointer;" onclick="openRightNav()" class="glyphicon glyphicon-wrench" id="setting-menu"></span>
                     <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-option-vertical" id="events-facilities-container"></span>
                 </li>
             </ul>
@@ -109,21 +109,27 @@
 
         <div class="search-container" >
             <div class="searchbox-hamburger" >
-                <md-button ng-click = "openLeftMenu()"><span class="hamburger-menu controls" onclick="openNav()">&#9776;</span></md-buttton>
+                <md-button ng-click = "openLeftMenu()"><span class="hamburger-menu controls" onclick="openLeftNav()">&#9776;</span></md-buttton>
                 <input id="pac-input" class="controls" type="text" placeholder="Search Box">
             </div>
         </div>
 
-        <div id="mySidenav" class="sidenav clearfix">
-          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div id="leftSideNav" class="leftSideNav clearfix">
+          <a href="javascript:void(0)" class="closebtn" onclick="closeLeftNav()">&times;</a>
+          <a href="#">About</a>
+          <a href="#">Services</a>
+          <a href="#">Clients</a>
+          <a href="#">Contact</a>
+        </div>
+
+        <div id="rightSideNav" class="rightSideNav clearfix">
+          <a href="javascript:void(0)" class="closebtn" onclick="closeRightNav()">&times;</a>
           <a href="#">About</a>
           <a href="#">Services</a>
           <a href="#">Clients</a>
           <a href="#">Contact</a>
         </div>
         
-
-
         <ng-map  id="map" center='current-position'
         geo-fallback-center="[40.74, -74.18]"
         geo-callback="vm.callbackFunc('you')"
@@ -132,16 +138,19 @@
 
     </body>
     <script>
-      function openNav() {
-          document.getElementById("mySidenav").style.width = "250px";
-          document.getElementById("main").style.marginLeft = "250px";
-          document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+      function openLeftNav() {
+          document.getElementById("leftSideNav").style.width = "250px";
       }
 
-      function closeNav() {
-          document.getElementById("mySidenav").style.width = "0";
-          document.getElementById("main").style.marginLeft= "0";
-          document.body.style.backgroundColor = "white";
+      function closeLeftNav() {
+          document.getElementById("leftSideNav").style.width = "0";
+      }
+      function openRightNav() {
+          document.getElementById("rightSideNav").style.width = "250px";
+      }
+
+      function closeRightNav() {
+          document.getElementById("rightSideNav").style.width = "0";
       }
     </script>
 </html>
