@@ -1,5 +1,7 @@
 // Declares the initial angular module "meanMapApp". Module grabs other controllers and services.
-var app = angular.module('meanMapApp', ['ngMap']);
+
+var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'ngMap','ngMaterial']);
+
 	app.service('mapService', function(){
 		var map;
 		this.setMap = function (myMap){
@@ -21,6 +23,15 @@ var app = angular.module('meanMapApp', ['ngMap']);
 	});
 
 
+app.controller('MyController', function(NgMap) {
+  NgMap.getMap().then(function(map) {
+    console.log(map.getCenter());
+    console.log('markers', map.markers);
+    console.log('shapes', map.shapes);
+  });
+});
+
+
 app.controller('mainContrl', function(NgMap, $compile, $scope){
 
 	//map initialization
@@ -28,6 +39,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
 	NgMap.getMap("map").then(function(map){
 		vm.map = map;
 	});
+
 
 	//put a marker by clicking mouse
 	vm.placeMarker = function(e){
@@ -67,4 +79,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
 function myFunction(){
 	document.getElementById("singleEvent").inneHTML = "Fuck";
 }
+
+
 

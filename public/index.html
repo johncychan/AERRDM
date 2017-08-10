@@ -1,37 +1,148 @@
 <!doctype html>
 <!-- Declares meanMapApp as the starting Angular module -->
-<html class="no-js" ng-app="meanMapApp">
-<head>
-    <meta charset="utf-8">
-    <title>AERRDM</title>
-    <meta name="description" content="An example demonstrating Google Map integration with MEAN Apps">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- CSS -->
-    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
-    <link rel="stylesheet" href="style.css"/>
-    <!-- Holder JS -->
-    <script src="../bower_components/holderjs/holder.js"></script>
-    <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyTWcfHcUgPhrfGWOxT9AAhZxD0DIFRQo"></script>
-    <!-- Modernizr -->
-    <script src="../bower_components/modernizr/bin/modernizr"></script>
-    <!-- JS Source -->
-    <script src="../bower_components/angular/angular.js"></script>
-    <script src="../bower_components/angular-route/angular-route.js"></script>
-    <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
-    <script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
-    <!-- Angular Scripts -->
-    <script src="js/app.js"></script>
-</head>
-<body ngApp = "meanMapApp" ng-controller = "mainContrl as vm">
-    <form id="pac-input" name="searchLocation" novalidate ng-submit="search()">
-        <input class="controls" type="text" placeholder="Search Box" ng-submit="search()">
-        <button ng-disable="searchForm.$invalid">Search</button>
-    </form>
-   <!--  <button class="single-event" type="button" placeholder="Single Event" ng-submit="single-event-init()">Single event</button> -->
-    <ng-map  id="map" center='current-position' on-click="vm.placeMarker()">
-        <marker></marker>
-    </ng-map>
+<html class="no-js" >
+    <head>
+        <meta charset="utf-8">
+        <title>AERRDM</title>
+        <meta name="description" content="An example demonstrating Google Map integration with MEAN Apps">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- CSS -->
+        <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
+        <link rel="stylesheet" href="style.css"/>
+        <!-- Holder JS -->
+        <script src="../bower_components/holderjs/holder.js"></script>
+        <!-- Google Maps API -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyTWcfHcUgPhrfGWOxT9AAhZxD0DIFRQo"></script>
+        <!-- Modernizr -->
+        <script src="../bower_components/modernizr/bin/modernizr"></script>
+        <!-- JS Source -->
+        <script src="../bower_components/jquery/jquery.js"></script>
+        <script src="../bower_components/angular/angular.js"></script>
+        <script src="../bower_components/angular-route/angular-route.js"></script>
+        <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
+        <script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
+        <!-- Angular Scripts -->
+        <script src="js/app.js"></script>
+        <script src="js/addCtrl.js"></script>
+        <script src="js/gservice.js"></script>
 
-</body>
+        <!-- Dropdown menu script -->
+        <script src="js/jQueryDropDown.js"></script>
+        <script src="js/bootstrapDropdown.js"></script>
+
+
+        <!-- Angular material -->
+        <link rel = "stylesheet" href = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+        <!--<script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+        <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+        <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script> -->
+        <script src = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+        <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons" />
+   
+    </head>
+    
+    <body ng-app="meanMapApp" ng-controller = "GetCurr as vm">
+        
+        <div id="header" class="clearfix">
+          <div id="titleName">
+            <p id="standard-title">Automatic Emergency Rescue Resource</p>
+            <p id="mobile-title">AERRDM</p>
+          </div>
+          <nav>
+            <ul class="clearfix">
+                <li class="dropdownList">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Events
+                        <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                          <li>
+                              <a href="#"><h2>Event 1</h2>
+                              <p>Details</p>
+                              <p>Details</p></a>
+                          </li>
+                          <li>
+                              <a href="#"><h2>Event 2</h2>
+                              <p>Details</p>
+                              <p>Details</p></a>
+                          </li>
+                          <li>
+                              <a href="#"><h2>Event 3</h2>
+                              <p>Details</p>
+                              <p>Details</p></a>
+                          </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="dropdownList">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Facilities
+                        <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                          <li>
+                              <a href="#"><h2>Facility 1</h2>
+                              <p>Details</p>
+                              <p>Details</p></a>
+                          </li>
+                          <li>
+                              <a href="#"><h2>Facility 2</h2>
+                              <p>Details</p>
+                              <p>Details</p></a>
+                          </li>
+                          <li>
+                              <a href="#"><h2>Facility 3</h2>
+                              <p>Details</p>
+                              <p>Details</p></a>
+                          </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="menu-btn-group">
+                    <span style="font-size:16px;cursor:pointer;" onclick="" class="glyphicon glyphicon-wrench" id="setting-menu"></span>
+                    <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-option-vertical" id="events-facilities-container"></span>
+                </li>
+            </ul>
+          </nav>
+        </div>
+
+
+
+        <div class="search-container" >
+            <div class="searchbox-hamburger" >
+                <md-button ng-click = "openLeftMenu()"><span class="hamburger-menu controls" onclick="openNav()">&#9776;</span></md-buttton>
+                <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+            </div>
+        </div>
+
+        <div id="mySidenav" class="sidenav clearfix">
+          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+          <a href="#">About</a>
+          <a href="#">Services</a>
+          <a href="#">Clients</a>
+          <a href="#">Contact</a>
+        </div>
+        
+
+
+        <ng-map  id="map" center='current-position'
+        geo-fallback-center="[40.74, -74.18]"
+        geo-callback="vm.callbackFunc('you')"
+        map-type-control="false"
+        ></ng-map>
+
+    </body>
+    <script>
+      function openNav() {
+          document.getElementById("mySidenav").style.width = "250px";
+          document.getElementById("main").style.marginLeft = "250px";
+          document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+      }
+
+
+      function closeNav() {
+          document.getElementById("mySidenav").style.width = "0";
+          document.getElementById("main").style.marginLeft= "0";
+          document.body.style.backgroundColor = "white";
+      }
+    </script>
 </html>
