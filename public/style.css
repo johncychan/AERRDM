@@ -155,7 +155,7 @@
         padding: 7px 10px;
       }
 
-      @media only screen and (max-width: 870px) {
+      @media only screen and (max-width: 945px) {
          #titleName #standard-title{ 
           display: none;
          }
@@ -164,9 +164,9 @@
          }
       }
 
-      @media only screen and (max-width: 768px) {
+      @media only screen and (max-width: 945px) {
         nav{
-          width: 300px;
+          width: 320px;
         }
       }
       @media only screen and (max-width: 414px) {
@@ -182,7 +182,7 @@
         display: none;
       }
 
-      @media only screen and (max-width: 660px) {
+      @media only screen and (max-width: 700px) {
         nav ul .dropdownList{
           display: none;
         } 
@@ -392,7 +392,7 @@
       }
 
       .modal-header .close{
-        color: #FFF;
+        color: #FFFq;
       }
 
       .modal-title{
