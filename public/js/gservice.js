@@ -86,7 +86,8 @@ var initialize = function(latitude, longitude) {
         // Create a new map and place in the index.html page
         var map = new google.maps.Map(document.getElementById('map'), {
             zoom: 3,
-            center: myLatLng
+            center: myLatLng,
+            mapTypeControl: false
         });
     }
 
@@ -118,6 +119,13 @@ var initialize = function(latitude, longitude) {
     });
     lastMarker = marker;
 
+};
+
+// listen for the window resize event & trigger Google Maps to update too
+window.onresize = function() {
+  var currCenter = map.getCenter();
+  google.maps.event.trigger(map, 'resize');
+  map.setCenter(currCenter);
 };
 
 // Refresh the page upon window load. Use the initial latitude and longitude
