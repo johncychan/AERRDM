@@ -9,14 +9,11 @@
         <!-- CSS -->
         <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
         <link rel="stylesheet" href="style.css"/>
-        <!-- Holder JS -->
-        <script src="../bower_components/holderjs/holder.js"></script>
         <!-- Google Maps API -->
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyTWcfHcUgPhrfGWOxT9AAhZxD0DIFRQo"></script>
         <!-- Modernizr -->
         <script src="../bower_components/modernizr/bin/modernizr"></script>
         <!-- JS Source -->
-        <script src="../bower_components/jquery/jquery.js"></script>
         <script src="../bower_components/angular/angular.js"></script>
         <script src="../bower_components/angular-route/angular-route.js"></script>
         <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
@@ -30,19 +27,10 @@
         <script src="js/jQueryDropDown.js"></script>
         <script src="js/bootstrapDropdown.js"></script>
 
-
-        <!-- Angular material -->
-        <link rel = "stylesheet" href = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
-        <!--<script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-        <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
-        <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
-        <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script> -->
-        <script src = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
-        <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons" />
    
     </head>
     
-    <body ng-app="meanMapApp" ng-controller = "GetCurr as vm">
+    <body ng-app="meanMapApp" ng-controller = "mainContrl as vm">
         
         <div id="header" class="clearfix">
           <div id="titleName">
@@ -121,13 +109,10 @@
           <a href="#">Clients</a>
           <a href="#">Contact</a>
         </div>
-        
-
 
         <ng-map  id="map" center='current-position'
         geo-fallback-center="[40.74, -74.18]"
-        geo-callback="vm.callbackFunc('you')"
-        map-type-control="false"
+        map-type-control="false" on-click="vm.placeMarker()"
         ></ng-map>
 
     </body>
