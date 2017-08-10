@@ -92,10 +92,10 @@
         margin: 0 auto;
         width: 100%;
         max-height: 60px;
-        background: #00008B;
+        background-color: #2c343a;
         position: absolute;
         z-index: 10;
-        opacity: 0.8;
+        opacity: 0.9;
         box-shadow: 1px 1px 1px #000000;
       }
 
@@ -155,7 +155,7 @@
         padding: 7px 10px;
       }
 
-      @media only screen and (max-width: 430px) {
+      @media only screen and (max-width: 870px) {
          #titleName #standard-title{ 
           display: none;
          }
@@ -198,26 +198,28 @@
 
 
       nav ul .btn-event-adjust{
-        background-color: #00006d;
+        background-color: #21272c;
         box-shadow: 1px 1px 1px #000000;
         font-size: 15px;
+        border-color: #424e57;
       }
 
       nav ul .btn-event-adjust:hover{
-        background-color: #000080;
+        background-color: #161a1d;
         color: #F5F5F5;
+        border-color: #424e57;
       }
 
       .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary{
-        background-color: #000080;
+        background-color: #161a1d;
       }
 
       .open > .dropdown-toggle.btn-primary:focus{
-        background-color: #000080;
+        background-color: #161a1d;
       }
 
       .dropdown-menu{
-        background-color: #00001a;
+        background-color: #161a1d;
       }
 
       .dropdown-menu li{
@@ -230,13 +232,13 @@
       }
 
       .dropdown-menu li a:hover{
-        background-color: #000033;
+        background-color: #2c343a;
         color: #f5f5f5;
       }
 
       .dropdown-toggle:focus {
         outline: 0;
-        background-color: #00008B;
+        background-color: #161a1d;
       } 
       /* End drop down menu */
       /* end header CSS*/
@@ -249,24 +251,29 @@
           z-index: 1003;
           top: 0;
           left: 0;
-          background-color: #00001a;
+          background-color: #161a1d;
           overflow-x: hidden;
           transition: 0.5s;
           padding-top: 60px;
-          opacity: 0.95;
+          opacity: 0.99;
           box-shadow: 0 2px 6px #000000;
       }
 
-      .leftSideNav a {
+      .leftSideNav .leftSideOpen{
+        width: 250px;
+      }
+
+      .leftSideNav span {
           padding: 8px 8px 8px 32px;
           text-decoration: none;
           font-size: 25px;
           color: #818181;
           display: block;
           transition: 0.3s;
+          cursor:pointer;
       }
 
-      .leftSideNav a:hover, .offcanvas a:focus{
+      .leftSideNav span:hover, .offcanvas span :focus{
           color: #f1f1f1;
       }
 
@@ -323,6 +330,114 @@
       }
       /*end hamburger menu */
 
+      /* factor menu */
+
+      .modal{
+        text-align: center;
+      }
+
+      .modal-dialog{
+        display: inline-block;
+        text-align: left;
+        vertical-align: middle;
+        margin: 300px auto;
+      }
+
+      .modal-content{
+        width:400px;
+        height:100%;
+        margin: 0 auto;
+        box-shadow: 0 5px 18px rgba(0, 0, 0, .3);
+      }
+
+      .modal.fade .modal-dialog {
+        opacity: 0;
+        -webkit-transform: scale(0.1);
+          -ms-transform: scale(0.1);
+           -o-transform: scale(0.1);
+            transform: scale(0.1);
+        -webkit-transition: all 0.3s ease;
+           -moz-transition: all 0.3s ease;
+           -o-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+      }
+
+      .modal.fade.in .modal-dialog {
+        opacity: 1;
+        -webkit-transform: scale(1);
+          -ms-transform: scale(1);
+           -o-transform: scale(1);
+            transform: scale(1);
+        -webkit-transform: translate3d(0%, 0, 0);
+          -ms-transform: translate3d(0%, 0, 0);
+           -o-transform: translate3d(0%, 0, 0);
+            transform: translate3d(0%, 0, 0);
+      }
+
+      /* DIALOG CONTENT */
+      .modal-content {
+        border: none;
+        border-radius: 2px;
+        -webkit-box-shadow: 0 40px 77px rgba(0, 0, 0, 0.22), 0 27px 24px rgba(0, 0, 0, 0.2);
+           -moz-box-shadow: 0 40px 77px rgba(0, 0, 0, 0.22), 0 27px 24px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 40px 77px rgba(0, 0, 0, 0.22), 0 27px 24px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-header{
+        font-size: 14px;
+        background: #2c343a;
+        padding: 5px 15px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+      }
+
+      .modal-header .close{
+        color: #FFF;
+      }
+
+      .modal-title{
+        color: #FFF;
+        text-shadow: 1px 1px 8px #000000;
+        padding: 0 130px;
+      }
+
+      .modal-footer {
+        margin-top: 24px;
+        padding: 8px 0 0 0;
+        border-top: none;
+      }
+
+      .modal-footer .btn {
+        height: 36px;
+        margin-right: 8px;
+        padding: 8px 10px;
+        border: none;
+        border-radius: 0;
+        text-transform: uppercase;
+        font-weight: 500;
+        color: #009688;
+        background-color: #fff;
+      }
+
+      .modal-footer .btn:focus {
+        outline: none;
+        box-shadow: none;
+      }
+
+      .modal-footer .btn:focus,
+      .modal-footer .btn:hover {
+        color: #00796B;
+      }
+
+      .modal-footer .btn + .btn {
+        margin-left: 0;
+      }
+
+      .modal-footer .btn + .btn:last-child {
+        margin-left: -4px;
+      }
+
+      /* end factor menu */
 
       .clearfix:after {
          content: " "; /* Older browser do not support empty content */

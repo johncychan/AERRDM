@@ -28,13 +28,12 @@ app.controller('MyController', function(NgMap) {
   });
 });
 
-var app = angular.module('meanMapApp', ['ngMaterial']);
-        app.controller('sideNav', function($scope, $mdSidenav) {
-          $scope.openLeftMenu = function() {
-            $mdSidenav('left').toggle();
-          };
-        });
 
+// app.controller("meanMapApp", function($scope){
+// 	$scope.openLeftNav = function(){
+// 		$scope.
+// 	};
+// });
 
 angular.module('meanMapApp', ['ngMap']).controller('GetCurr', function(NgMap){
 	var vm = this;
