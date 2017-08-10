@@ -21,7 +21,7 @@ var app = angular.module('meanMapApp', ['ngMap']);
 	});
 
 
-app.controller('mapCrl', function(NgMap, $compile, $scope){
+app.controller('mainContrl', function(NgMap, $compile, $scope){
 
 	//map initialization
 	var vm = this;
@@ -52,8 +52,12 @@ app.controller('mapCrl', function(NgMap, $compile, $scope){
 		});
 	}
 
+	// vm.setData = function{
+	// 	var htmlElement = 
+	// }
 	//now start the simulation
 	vm.startSingleEvent = function(){
+
 		vm.map.setZoom(16);
 		vm.map.setCenter(vm.marker.position);
 	} 
