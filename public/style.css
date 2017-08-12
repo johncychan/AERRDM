@@ -41,6 +41,7 @@
         cursor:pointer;
         height: 24px;
         font-size: 16px;
+        margin: 0 5px 0 0;
       }
 
     
@@ -250,7 +251,8 @@
           position: absolute;
           z-index: 1003;
           top: 0;
-          left: 0;
+          /*left: 0;*/
+          width: 250px;
           background-color: #161a1d;
           overflow-x: hidden;
           transition: 0.5s;
@@ -283,6 +285,7 @@
           right: 25px;
           font-size: 36px;
           margin-left: 50px;
+          outline: none;
       }
 
       .rightSideNav {
@@ -332,15 +335,23 @@
 
       /* factor menu */
 
-      .modal{
+      .modal {
         text-align: center;
+        padding: 0!important;
       }
 
-      .modal-dialog{
+      .modal:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+        margin-right: -4px;
+      }
+
+      .modal-dialog {
         display: inline-block;
         text-align: left;
         vertical-align: middle;
-        margin: 300px auto;
       }
 
       .modal-content{
