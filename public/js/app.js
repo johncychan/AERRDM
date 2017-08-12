@@ -1,7 +1,5 @@
 // Declares the initial angular module "meanMapApp". Module grabs other controllers and services.
-
-
-var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'ngMap']);
+var app = angular.module('meanMapApp', ['ngMap', 'ngMaterial']);
 
 
 
