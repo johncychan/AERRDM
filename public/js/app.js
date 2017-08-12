@@ -38,29 +38,6 @@ app.controller('GetCurr', function(NgMap){
 	
 });
 
-// app.controller('GetCurr', ["$rootScope", "$scope", "$filter", "$modal", function ($rootScope, $scope, $filter, $modal) {
-
-//     $scope.checkItem = "";
-
-//     $scope.loadEditForm = function () {
-//         $scope.checkItem = "yes";
-//         $modal.open({
-//             templateUrl: 'factorModal.html',
-//             controller: 'modalController',
-//             scope: $scope
-//         })
-//         .result.then(function() {
-//             alert('closed');
-//         }, function() {
-//             alert('canceled');
-//         });
-//     };
-
-// }]);
-
-// angular.module('meanMapApp').controller('modalController', ['$scope', function($scope) {
-    
-// }]);
 
 app.controller('testing', function($scope) {
     $scope.firstName = "John";
