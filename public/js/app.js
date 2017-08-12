@@ -1,15 +1,8 @@
 // Declares the initial angular module "meanMapApp". Module grabs other controllers and services.
 
+
 var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'ngMap']);
 
-
-app.controller('MyController', function(NgMap) {
-  NgMap.getMap().then(function(map) {
-    console.log(map.getCenter());
-    console.log('markers', map.markers);
-    console.log('shapes', map.shapes);
-  });
-});
 
 
 app.controller('mainContrl', function(NgMap, $compile, $scope){
@@ -19,6 +12,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
 	NgMap.getMap("map").then(function(map){
 		vm.map = map;
 	});
+
 
 	//put a marker by clicking mouse
 	vm.placeMarker = function(e){
@@ -65,4 +59,26 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
 
 });
 
+// angular.module('meanMapApp').controller('modalController', ['$scope', function($scope) {
+    
+// }]);
+
+app.controller('testing', function($scope) {
+    $scope.firstName = "John";
+    $scope.lastName = "Doe";
+    $scope.fullName = function() {
+        return $scope.firstName + " " + $scope.lastName;
+    };
+});
+
+app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
+    $scope.toggleLeft = buildToggler('left');
+    $scope.toggleRight = buildToggler('right');
+
+    function buildToggler(componentId) {
+      return function() {
+        $mdSidenav(componentId).toggle();
+      };
+    }
+  });
 
