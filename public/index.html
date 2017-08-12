@@ -107,14 +107,14 @@
 
 
 
-        <!--   <div class="search-container" >
+          <div class="search-container" >
               <div class="searchbox-hamburger" >
                 <div ng-controller="AppCtrl">
                   <span class="hamburger-menu controls" ng-click="toggleLeft()">&#9776;</span>
                   <input id="pac-input" class="controls" type="text" placeholder="Search Box">
                 </div>
               </div>
-          </div> -->
+          </div>
 
           
           <!-- <md-sidenav class="md-sidenav-left" md-component-id="left"
@@ -204,22 +204,15 @@
 
 
 
-        <div class="search-container" >
+        <!-- <div class="search-container" >
             <div class="searchbox-hamburger" >
                 <md-button ng-click = "openLeftMenu()"><span class="hamburger-menu controls" onclick="openNav()">&#9776;</span></md-buttton>
                 <input id="pac-input" class="controls" type="text" placeholder="Search Box">
 
             </div>
-          </div>
+          </div> -->
 
 
-        <div id="mySidenav" class="sidenav clearfix">
-          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-          <a href="#">About</a>
-          <a href="#">Services</a>
-          <a href="#">Clients</a>
-          <a href="#">Contact</a>
-        </div>
         <ng-map  id="map" center='current-position'
         geo-fallback-center="[40.74, -74.18]"
         map-type-control="false" on-click="vm.placeMarker()"
