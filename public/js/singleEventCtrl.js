@@ -1,6 +1,4 @@
-// Declares the initial angular module "meanMapApp". Module grabs other controllers and services.
-
-var app = angular.module('meanMapApp', ['ngMap', 'ngMaterial']);
+var app = angular.module('meanMapApp', ['ngRoute', 'ngMap']);
 
 
 app.controller('mainContrl', function(NgMap, $compile, $scope){
@@ -10,7 +8,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
 	NgMap.getMap("map").then(function(map){
 		vm.map = map;
 	});
-
 
 	//put a marker by clicking mouse
 	vm.placeMarker = function(e){
@@ -23,11 +20,12 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
 			});
 		}
 		//display the marker info
-		var htmlElement = "<div><h1><button ng-click=\"vm.setDataField()\">" + "Start simulation" + "</button></h1></div>"
+		var htmlElement = "<div><h1><button ng-click=\"vm.setDataField()\">" + "Set data" + "</button></h1></div>"
+		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
 		var compiled = $compile(htmlElement)($scope)
 		vm.marker.infoWin = new google.maps.InfoWindow({
-			// content: "<div><h1><button id=\"singleEvent\" ng-click=\"vm.startSingleEvent()\">" + "Start simulation" + "</button></h1></div>"
+			// content: "<showTag></showTag>"
 			content: compiled[0]
 		});
 		//show the infomation window
@@ -50,27 +48,24 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
 
 	// now start the simulation
 	vm.startSingleEvent = function(){
-
+		
 		vm.map.setZoom(16);
 		vm.map.setCenter(vm.marker.position);
 	} 
 
 });
 
+app.directive("showForm", function(){
+	return {
+		restrict: 'E',
+		templateUrl: 'setDataForm.html'
+	}
+});
 
-// angular.module('meanMapApp').controller('modalController', ['$scope', function($scope) {
-    
-// }]);
-
-
-app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
-    $scope.toggleLeft = buildToggler('left');
-    $scope.toggleRight = buildToggler('right');
-
-    function buildToggler(componentId) {
-      return function() {
-        $mdSidenav(componentId).toggle();
-      };
-    }
-  });
+app.directive("showTag", function(){
+	return{
+		template: "<div><h1><button ng-click=vm.setDataField()>" + "Start simulation" + "</button></h1></div>"
+		// template: "<p><p>"
+	};
+});
 
