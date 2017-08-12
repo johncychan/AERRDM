@@ -2,7 +2,6 @@
 var app = angular.module('meanMapApp', ['ngMap', 'ngMaterial']);
 
 
-
 app.controller('mainContrl', function(NgMap, $compile, $scope){
 
 	//map initialization
@@ -61,13 +60,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
     
 // }]);
 
-app.controller('testing', function($scope) {
-    $scope.firstName = "John";
-    $scope.lastName = "Doe";
-    $scope.fullName = function() {
-        return $scope.firstName + " " + $scope.lastName;
-    };
-});
 
 app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
     $scope.toggleLeft = buildToggler('left');

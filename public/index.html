@@ -39,132 +39,129 @@
 
     </head>
     
-    <body ng-app="meanMapApp">
-        <div ng-controller = "mainContrl as vm">
+    <body ng-app="meanMapApp" ng-controller = "mainContrl as vm">
 
-        <div id="header" class="clearfix">
-          <div id="titleName">
-            <p id="standard-title">Automatic Emergency Rescue Resource Deployment in Metropolis</p>
-            <p id="mobile-title">AERRDM</p>
-          </div>
-          <nav>
-            <ul class="clearfix">
-                <li class="dropdownList">
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Events
-                        <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                          <li>
-                              <a href="#"><h2>Event 1</h2>
-                              <p>Details</p>
-                              <p>Details</p></a>
-                          </li>
-                          <li>
-                              <a href="#"><h2>Event 2</h2>
-                              <p>Details</p>
-                              <p>Details</p></a>
-                          </li>
-                          <li>
-                              <a href="#"><h2>Event 3</h2>
-                              <p>Details</p>
-                              <p>Details</p></a>
-                          </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="dropdownList">
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Facilities
-                        <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                          <li>
-                              <a href="#"><h2>Facility 1</h2>
-                              <p>Details</p>
-                              <p>Details</p></a>
-                          </li>
-                          <li>
-                              <a href="#"><h2>Facility 2</h2>
-                              <p>Details</p>
-                              <p>Details</p></a>
-                          </li>
-                          <li>
-                              <a href="#"><h2>Facility 3</h2>
-                              <p>Details</p>
-                              <p>Details</p></a>
-                          </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="menu-btn-group">
-                      <span style="font-size:16px;cursor:pointer;" onclick="openRightNav()" class="glyphicon glyphicon-wrench" id="setting-menu"></span>
-                    <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-option-vertical" id="events-facilities-container"></span>
-                </li>
-            </ul>
-          </nav>
-        </div>
-
-
-
-        <div class="search-container" >
-            <div class="searchbox-hamburger" >
-              <div ng-controller="AppCtrl">
-                <span class="hamburger-menu controls" ng-click="toggleLeft()">&#9776;</span>
-                <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-              </div>
+          <div id="header" class="clearfix">
+            <div id="titleName">
+              <p id="standard-title">Automatic Emergency Rescue Resource Deployment in Metropolis</p>
+              <p id="mobile-title">AERRDM</p>
             </div>
-        </div>
+            <nav>
+              <ul class="clearfix">
+                  <li class="dropdownList">
+                      <div class="dropdown">
+                          <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Events
+                          <span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                            <li>
+                                <a href="#"><h2>Event 1</h2>
+                                <p>Details</p>
+                                <p>Details</p></a>
+                            </li>
+                            <li>
+                                <a href="#"><h2>Event 2</h2>
+                                <p>Details</p>
+                                <p>Details</p></a>
+                            </li>
+                            <li>
+                                <a href="#"><h2>Event 3</h2>
+                                <p>Details</p>
+                                <p>Details</p></a>
+                            </li>
+                          </ul>
+                      </div>
+                  </li>
+                  <li class="dropdownList">
+                      <div class="dropdown">
+                          <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Facilities
+                          <span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                            <li>
+                                <a href="#"><h2>Facility 1</h2>
+                                <p>Details</p>
+                                <p>Details</p></a>
+                            </li>
+                            <li>
+                                <a href="#"><h2>Facility 2</h2>
+                                <p>Details</p>
+                                <p>Details</p></a>
+                            </li>
+                            <li>
+                                <a href="#"><h2>Facility 3</h2>
+                                <p>Details</p>
+                                <p>Details</p></a>
+                            </li>
+                          </ul>
+                      </div>
+                  </li>
+                  <li class="menu-btn-group">
+                        <span style="font-size:16px;cursor:pointer;" onclick="openRightNav()" class="glyphicon glyphicon-wrench" id="setting-menu"></span>
+                      <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-option-vertical" id="events-facilities-container"></span>
+                  </li>
+              </ul>
+            </nav>
+          </div>
 
-        
-        <!-- <md-sidenav class="md-sidenav-left" md-component-id="left"
-                      md-disable-backdrop md-whiteframe="4"> -->
-        <div ng-controller="AppCtrl">
-          <md-sidenav class="leftSideNav clearfix" md-component-id="left" >
-            <span class="closebtn" ng-click="toggleLeft()">&times;</span>
-            <span onclick="closeLeftNav()" data-toggle="modal" data-target="#factorForm">About</span>
-            <span href="#">Services</span>
-            <span href="#">Clients</span>
-            <span href="#">Contact</span>
-          </md-sidenav>
-        </div>
-        <!--</div>-->
 
 
-
-        <div id="rightSideNav" class="rightSideNav clearfix">
-          <a href="javascript:void(0)" class="closebtn" onclick="closeRightNav()">&times;</a>
-          <a href="#">About</a>
-          <a href="#">Services</a>
-          <a href="#">Clients</a>
-          <a href="#">Contact</a>
-        </div>
-
-
-        <div class="modal fade" id="factorForm" role="dialog">
-          <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <span class="modal-title">Factor Setting</span>
-                </div>
-                <div class="modal-body">
-                  <form role="form" id="newModalForm">
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-dialog" data-dismiss="modal">Cancel</button>
-                      <button type="button" class="btn btn-dialog">Ok</button>
-                    </div>
-                  </form>
+          <div class="search-container" >
+              <div class="searchbox-hamburger" >
+                <div ng-controller="AppCtrl">
+                  <span class="hamburger-menu controls" ng-click="toggleLeft()">&#9776;</span>
+                  <input id="pac-input" class="controls" type="text" placeholder="Search Box">
                 </div>
               </div>
+          </div>
+
+          
+          <!-- <md-sidenav class="md-sidenav-left" md-component-id="left"
+                        md-disable-backdrop md-whiteframe="4"> -->
+          <div ng-controller="AppCtrl">
+            <md-sidenav class="leftSideNav clearfix" md-component-id="left" >
+              <span class="closebtn" ng-click="toggleLeft()">&times;</span>
+              <span onclick="closeLeftNav()" data-toggle="modal" data-target="#factorForm">About</span>
+              <span href="#">Services</span>
+              <span href="#">Clients</span>
+              <span href="#">Contact</span>
+            </md-sidenav>
+          </div>
+          <!--</div>-->
+
+
+
+          <div id="rightSideNav" class="rightSideNav clearfix">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeRightNav()">&times;</a>
+            <a href="#">About</a>
+            <a href="#">Services</a>
+            <a href="#">Clients</a>
+            <a href="#">Contact</a>
+          </div>
+
+
+          <div class="modal fade" id="factorForm" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <span class="modal-title">Factor Setting</span>
+                  </div>
+                  <div class="modal-body">
+                    <form role="form" id="newModalForm">
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-dialog" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-dialog">Ok</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
             </div>
           </div>
-        </div>
 
 
-        <ng-map  id="map" center='current-position'
-        geo-fallback-center="[40.74, -74.18]"
-        map-type-control="false" on-click="vm.placeMarker()"
-        ></ng-map>
-      </div>
+
+          <ng-map  id="map" center='current-position'
+          map-type-control="false" on-click="vm.placeMarker()"
+          ></ng-map>
 
     </body>
 
