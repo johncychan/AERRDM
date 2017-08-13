@@ -18,7 +18,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog){
 		}else{
 			vm.marker = new google.maps.Marker({
 				position: e.latLng,
-				map: vm.map
+				map: vm.map,
+				draggable: true
 			});
 		}
 		//display the marker info
@@ -46,20 +47,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog){
 		vm.map.setZoom(18);
 		vm.map.setCenter(vm.marker.position);
 
-		// $scope.open = function(){
-			
-		// }
-		//pop a form ask user set the input field
 
 	}
-
-	// now start the simulation
-	vm.startSingleEvent = function(){
-
-		vm.map.setZoom(16);
-		vm.map.setCenter(vm.marker.position);
-	} 
-
 
 	//open factor dialog
 	vm.open = function(){
@@ -86,17 +75,65 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog){
 
 	// reset factor
 	$scope.reset = function () {
-		// generate function ().....
-
-		// $scope.factor = {
-		// 		.....
-		// }
-	}
+			
+	};
 
 	// close dialog
 	$scope.close = function () {
     	$mdDialog.cancel();
-  	}
+  	};
+	
+	// now start the simulation
+	vm.startSingleEvent = function(){
+
+		// vm.map.setZoom(16);
+		// vm.map.setCenter(vm.marker.position);
+		/***********
+		bug existed
+		***********/
+		// var circle = new google.maps.Circle({
+		// 	center: vm.marker,
+		// 	radius: 1000,
+		// 	stroerColor: "#E16D65",
+		// 	strokeOpacity: 1,
+		// 	strokeWeight: 3,
+		// 	fillColor: "#E16D65",
+		// 	fillOpacity: 0
+		// })
+		// circle.setMap(vm.map);
+		// var direction = 1;
+  //       var rMin = 150, rMax = 300;
+  //       setInterval(function() {
+  //           var radius = circle.getRadius();
+  //           if ((radius > rMax) || (radius < rMin)) {
+  //               direction *= -1;
+  //           }
+  //           circle.setRadius(radius + direction * 10);
+  //       }, 50);
+
+		var pyrmont = {lat: vm.marker.position.lat(), lng: vm.marker.position.lng()};
+		vm.service = new google.maps.places.PlacesService(vm.map);
+		vm.service.nearbySearch({
+			location: pyrmont,
+			radius: 1000,
+			type: ['hospital']
+		}, callback);
+
+		function callback(results, status){
+			if(status === google.maps.places.PlacesServiceStatus.OK){
+				for(var i = 0; i < results.length; i++){
+					createMarker(results[i]);
+				}
+			}
+		}
+		function createMarker(place){
+			var placeLoc = place.geometry.location;
+			var marker = new google.maps.Marker({
+				map: vm.map,
+				position: place.geometry.location
+			});
+		}
+	} 
 
 });
 
