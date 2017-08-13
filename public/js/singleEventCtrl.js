@@ -1,7 +1,7 @@
-var app = angular.module('meanMapApp', ['ngRoute', 'ngMap']);
+var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial']);
 
 
-app.controller('mainContrl', function(NgMap, $compile, $scope){
+app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog){
 
 	//map initialization
 	var vm = this;
@@ -20,7 +20,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
 			});
 		}
 		//display the marker info
-		var htmlElement = "<div><h1><button ng-click=\"vm.setDataField()\">" + "Set data" + "</button></h1></div>"
+		var htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div><div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
 		var compiled = $compile(htmlElement)($scope)
@@ -46,14 +46,97 @@ app.controller('mainContrl', function(NgMap, $compile, $scope){
 
 	}
 
+	var category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
+
+	vm.levelGenerator = function(){
+		return Math.floor((Math.random()*5)+1);
+	}
+	vm.categoryGenerator = function(){
+		var size = category_list.length;
+		return Math.floor((Math.random()*size));
+	}
+	vm.expenditureGenerator = function(){
+		var max = 70; 
+		var min = 30
+		return Math.floor((Math.random()*(max-min+1))+min);
+	}
+	vm.velocityGenerator = function(){
+		var max = 65;
+		var min = 30;
+		return Math.floor((Math.random()*(max-min+1))+min);
+	}
+	vm.deadlineGenerator = function(){
+		var max = 15;
+		var min = 5;
+		return Math.floor((Math.random()*(max-min+1))+min);
+	}
+
+	vm.factorGenerate = function(){
+  		var level = vm.levelGenerator();
+		var category = vm.categoryGenerator();
+		var expenditure = vm.expenditureGenerator();
+		var velocity = vm.velocityGenerator();
+		var deadline = vm.deadlineGenerator();
+
+		$scope.factor = {
+			'ID': 001,
+			'Severity Level': level,
+			'Category': category_list[category],
+			'Resource avg. expenditure': expenditure,
+			'Resource avg. velocity': velocity+" km/h",
+			'Deadline': deadline+" mins"
+		}
+  	}
+
 	// now start the simulation
 	vm.startSingleEvent = function(){
-		
+		// close factor menu
+		$mdDialog.cancel();
+
+		console.log($scope.factor);
 		vm.map.setZoom(16);
 		vm.map.setCenter(vm.marker.position);
 	} 
 
+	vm.setDataField = function(){
+		// generate factor
+		vm.factorGenerate();
+
+		$mdDialog.show(
+			{
+				templateUrl: "factorDialog.html",
+				clickOutsideToClose: true,
+		        scope: $scope,
+		        preserveScope: true,
+		        controller: function($scope) {
+			},
+		});
+	};
+
+	// reset factor
+	vm.reset = function () {
+		vm.factorGenerate();
+	}
+
+	// close dialog
+	vm.close = function () {
+    	$mdDialog.cancel();
+  	}
+
+  	
+
 });
+
+app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
+    $scope.toggleLeft = buildToggler('left');
+    $scope.toggleRight = buildToggler('right');
+
+    function buildToggler(componentId) {
+      return function() {
+        $mdSidenav(componentId).toggle();
+      };
+    }
+  });
 
 app.directive("showForm", function(){
 	return {

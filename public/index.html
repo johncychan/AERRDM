@@ -22,7 +22,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
         <!-- Angular Scripts -->
         <script src="js/app.js"></script>
-
+        <script src="js/singleEventCtrl.js"></script>
 
         <!-- Dropdown menu script -->
         <script src="js/jQueryDropDown.js"></script>
@@ -44,6 +44,7 @@
     
     <body ng-app="meanMapApp" ng-controller = "mainContrl as vm">
 
+      <!-- header -->
       <div id="header" class="clearfix">
         <div id="titleName">
           <p id="standard-title">Automatic Emergency Rescue Resource Deployment in Metropolis</p>
@@ -121,32 +122,20 @@
           </ul>
         </nav>
       </div>
-
-      <div class="search-container" >
-          <div class="searchbox-hamburger" >
-            <div ng-controller="AppCtrl">
-              <span class="hamburger-menu controls" ng-click="toggleLeft()">&#9776;</span>
-              <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-            </div>
-          </div>
-      </div>
-
+      <!-- header end -->
         
-      <!-- <md-sidenav class="md-sidenav-left" md-component-id="left"
-                    md-disable-backdrop md-whiteframe="4"> -->
+      <!-- Leftside nav (hamburger menu) -->
       <div ng-controller="AppCtrl">
         <md-sidenav class="leftSideNav clearfix" md-component-id="left" >
           <span class="closebtn" ng-click="toggleLeft()">&times;</span>
-          <!-- <span ng-click="toggleLeft()" data-toggle="modal" data-target="#factorForm">About</span> -->
           <span href="#">About</span>
           <span href="#">Services</span>
           <span href="#">Clients</span>
           <span href="#">Contact</span>
         </md-sidenav>
       </div>
-      <!--</div>-->
 
-
+      <!-- right side nav (Not necessary) -->
       <div id="rightSideNav" class="rightSideNav clearfix">
         <a href="javascript:void(0)" class="closebtn" onclick="closeRightNav()">&times;</a>
         <a href="#">About</a>
@@ -155,37 +144,7 @@
         <a href="#">Contact</a>
       </div>
 
-      <!-- <div ng-controller="dialogCtrl">
-        <div class="modal fade" id="factorForm" role="dialog">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <span class="modal-title">Factor Setting</span>
-              </div>
-              <div class="modal-body">
-                <div>
-                  <table>
-                    <tr>
-                      <td>level</td>
-                      <td>{{level}}</td>
-                    </tr>
-                    <tr>
-                      <td>Category</td>
-                      <td>{{category}}</td>
-                    </tr>
-                  </table>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-dialog" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-dialog">Ok</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
+      <!-- search box and hamburger menu -->
       <div class="search-container" >
           <div class="searchbox-hamburger" >
             <div ng-controller="AppCtrl">
