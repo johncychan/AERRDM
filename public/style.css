@@ -1,3 +1,4 @@
+
       #map {
         padding: 0;
         display: block;
@@ -67,6 +68,7 @@
         border-color: #4d90fe;
       }
 
+
       .pac-container {
         font-family: Roboto;
       }
@@ -76,6 +78,7 @@
         background-color: #4d90fe;
         padding: 5px 11px 0px 11px;
       }
+
 
       #type-selector label {
         font-family: Roboto;
@@ -118,14 +121,13 @@
       }
 
 
-
       nav{
         margin:0 auto;
         padding: 3px 15px 0 0;
         /*float:right;*/
         right: 0;
         position: absolute;
-        width: 390px;
+        width: 500px;
       }
       nav ul{
         padding:0;
@@ -161,18 +163,22 @@
           display: none;
          }
          #titleName #mobile-title{
+          font-size: 18px;
+          padding: 5px 0 5px 5px;
           display: block;
          }
       }
 
-      @media only screen and (max-width: 945px) {
-        nav{
-          width: 320px;
+      @media only screen and (max-width: 1080px) {
+        #titleName{
+          padding: 10px 0 8px 25px;
+          width: 330px;
+          font-size: 13px;
         }
       }
       @media only screen and (max-width: 414px) {
         nav{
-          width: 150px;
+          width: 190px;
           padding-right: 0;
         }
       }
@@ -220,6 +226,7 @@
       }
 
       .dropdown-menu{
+        z-index: 100003;
         background-color: #161a1d;
       }
 
@@ -409,7 +416,7 @@
       .modal-title{
         color: #FFF;
         text-shadow: 1px 1px 8px #000000;
-        padding: 0 130px;
+        padding: 0 0 0 150px;
       }
 
       .modal-footer {
@@ -448,6 +455,30 @@
         margin-left: -4px;
       }
 
+      .table-container{
+        padding: 10px 15px 0 15px;
+      }
+
+      #factorTable{
+        width: 100%;
+      }
+
+      #factorTable .factor-key{
+        text-align: right;
+        padding: 0 10px 0 0;
+        width: 55%;
+        border: 1px solid #000;
+      }
+
+      #factorTable .factor-value{
+        padding: 0 0 0 20px;
+        width: 45%;
+      }
+
+      #factorTable td{
+        height: 30px;
+      }
+
       /* end factor menu */
 
       .clearfix:after {
@@ -457,4 +488,5 @@
          height: 0;
          clear: both;
       }
+
 
