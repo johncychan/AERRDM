@@ -3,6 +3,7 @@
 var app = angular.module('meanMapApp', ['ngMap', 'ngMaterial']);
 
 
+
 app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog){
 
 	//map initialization
@@ -142,6 +143,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog){
 // }]);
 
 
+
 app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
     $scope.toggleLeft = buildToggler('left');
     $scope.toggleRight = buildToggler('right');
@@ -152,4 +154,9 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
       };
     }
   });
+
+// angular.module('meanMapApp').controller('modalController', ['$scope', function($scope) {
+    
+// }]);
+
 

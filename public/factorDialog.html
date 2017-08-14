@@ -2,7 +2,7 @@
   <md-dialog-content>
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" ng-click="close()">&times;</button>
+        <button type="button" class="close" ng-click="vm.close()">&times;</button>
         <span class="modal-title">Factor Setting</span>
       </div>
       <div class="modal-body">
@@ -15,8 +15,10 @@
           </table>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-dialog" ng-click="vm.reset()">Reset</button>
-          <button type="button" class="btn btn-dialog" ng-click="vm.startSingleEvent()">Ok</button>
+
+          <button type="button" class="button event-setting-reset ripple" ng-click="vm.reset()">Reset</button>
+          <button type="button" class="button event-start" ng-click="vm.startSingleEvent()">Ok</button>
+
         </div>
       </div>
     </div>
