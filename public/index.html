@@ -40,6 +40,9 @@
         <script src = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
         <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
 
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     </head>
     
     <body ng-app="meanMapApp" ng-controller = "mainContrl as vm">
@@ -116,7 +119,7 @@
                 </div>
               </li>
               <li class="menu-btn-group">
-                <span style="font-size:16px;cursor:pointer;" onclick="openRightNav()" class="glyphicon glyphicon-wrench" id="setting-menu"></span>
+                <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-wrench" id="setting-menu"></span>
                 <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-option-vertical" id="events-facilities-container"></span>
               </li>
           </ul>
@@ -137,7 +140,7 @@
 
       <!-- right side nav (Not necessary) -->
       <div id="rightSideNav" class="rightSideNav clearfix">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeRightNav()">&times;</a>
+        <a href="javascript:void(0)" class="closebtn" id="rightNavClose">&times;</a>
         <a href="#">About</a>
         <a href="#">Services</a>
         <a href="#">Clients</a>
@@ -156,7 +159,7 @@
 
     <ng-map  id="map" center='current-position'
     geo-fallback-center="[40.74, -74.18]"
-    map-type-control="false" on-click="vm.placeMarker()"
+    map-type-control="false" on-click="vm.placeMarker()" fullscreen-control="false"
     ></ng-map>
   </body>
 

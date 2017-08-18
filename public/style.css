@@ -203,6 +203,9 @@
         padding-top: 15px;
       }
 
+      nav ul #setting-menu{
+        padding-top: 2px;
+      }
 
       nav ul .btn-event-adjust{
         background-color: #21272c;
@@ -394,7 +397,14 @@
       }
 
       /* DIALOG CONTENT */
+
+      md-dialog{
+        min-width: 200px !important;
+      }
+
+
       .modal-content {
+        width: 100%;
         border: none;
         border-radius: 2px;
         -webkit-box-shadow: 0 40px 77px rgba(0, 0, 0, 0.22), 0 27px 24px rgba(0, 0, 0, 0.2);
@@ -411,13 +421,13 @@
       }
 
       .modal-header .close{
-        color: #FFFq;
+        color: #FFF;
       }
 
       .modal-title{
         color: #FFF;
         text-shadow: 1px 1px 8px #000000;
-        padding: 0 0 0 150px;
+        padding: 0 0 0 220px;
       }
 
       .modal-footer {
@@ -477,8 +487,60 @@
         width: 45%;
       }
 
+      #factorTable .non-input-adjust{
+        /*padding: 0 0 0 23px;*/
+      }
+
       #factorTable td{
         height: 30px;
+      }
+
+      #factorTable .factor-input{
+        width: 75%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        border-bottom: 1px solid #bfbfbf;
+      }
+
+      #factorTable .factor-cate-input{
+        width: 75%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+      }
+
+      #factorTable .factor-unit{
+        padding-left: 5px;
+        color: #4d4d4d;
+      }
+
+      #factorTable md-select{
+        margin: 0 !important;
+        /*border-bottom: 1px solid #bfbfbf;*/
+        outline: none;
+      }
+
+      .md-text{
+        font-size: 14px !important;
+      }
+
+      .md-select-menu-container{
+        width: 155px;
+      }
+
+      #factorTable md-select-menu md-option{
+        padding: 0 12px !important;
+      }
+
+      #factorTable md-select .md-select-value{
+        border-bottom: 1px solid #bfbfbf;
+        padding: 0;
+        outline: none;
+      }
+
+      #factorTable md-select:focus .md-select-value{
+        border-bottom: 1px solid #bfbfbf;
       }
 
       #event-setting-header{
@@ -525,6 +587,18 @@
       .event-setting-reset:hover, .event-start:hover{
         background-color: white;
         color: #007a6e;
+      }
+
+
+      .event-start[disabled], .event-start[disabled]:hover{
+        background-color: #f2f2f2;
+        border-color: #f2f2f2;
+        color: #cccccc;
+      }
+
+      form .ng-invalid
+      {
+          border-bottom:1px solid #f00 !important;
       }
 
       .event-setting-reset:active{

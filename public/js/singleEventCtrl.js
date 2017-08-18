@@ -46,13 +46,13 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog){
 
 	}
 
-	var category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
+	vm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
 
 	vm.levelGenerator = function(){
 		return Math.floor((Math.random()*5)+1);
 	}
 	vm.categoryGenerator = function(){
-		var size = category_list.length;
+		var size = vm.category_list.length;
 		return Math.floor((Math.random()*size));
 	}
 	vm.expenditureGenerator = function(){
@@ -72,28 +72,31 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog){
 	}
 
 	vm.factorGenerate = function(){
-  		var level = vm.levelGenerator();
-		var category = vm.categoryGenerator();
-		var expenditure = vm.expenditureGenerator();
-		var velocity = vm.velocityGenerator();
-		var deadline = vm.deadlineGenerator();
+  		vm.level = vm.levelGenerator();
+		vm.category = vm.categoryGenerator();
+		vm.expenditure = vm.expenditureGenerator();
+		vm.velocity = vm.velocityGenerator();
+		vm.deadline = vm.deadlineGenerator();
 
-		$scope.factor = {
-			'ID': 001,
-			'Severity Level': level,
-			'Category': category_list[category],
-			'Resource avg. expenditure': expenditure,
-			'Resource avg. velocity': velocity+" km/h",
-			'Deadline': deadline+" mins"
+		//Auto increment
+		vm.eId = 001;
+
+		vm.factor = {
+			'ID': vm.eId,
+			'Severity Level': vm.level,
+			'Category': vm.category_list[vm.category],
+			'Resource avg. expenditure': vm.expenditure,
+			'Resource avg. velocity': vm.velocity,
+			'Deadline': vm.deadline
 		}
   	}
 
 	// now start the simulation
 	vm.startSingleEvent = function(){
 		// close factor menu
-		$mdDialog.cancel();
+		$mdDialog.hide();
 
-		console.log($scope.factor);
+		console.log(vm.factor);
 		vm.map.setZoom(16);
 		vm.map.setCenter(vm.marker.position);
 	} 
