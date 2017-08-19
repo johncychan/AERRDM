@@ -399,12 +399,34 @@
       /* DIALOG CONTENT */
 
       md-dialog{
-        min-width: 200px !important;
+        min-width: 220px !important;
+        border-radius: 4px;
       }
 
+      md-dialog-content{
+        border-radius: 4px;
+      }
+
+      @media screen and (min-color-index:0) 
+      and(-webkit-min-device-pixel-ratio:0) { @media
+      {
+          .safari_radius{ 
+              border-radius: 0;
+          }
+      }}
+      @media screen and (min-color-index:0) 
+      and(-webkit-min-device-pixel-ratio:0) { @media
+      {
+          .safari_top_radius{
+            border-top-left-radius: 1px !important;
+            border-top-right-radius: 1px !important;
+          }
+      }}
+
+          
 
       .modal-content {
-        width: 100%;
+        /*width: 100%;*/
         border: none;
         border-radius: 2px;
         -webkit-box-shadow: 0 40px 77px rgba(0, 0, 0, 0.22), 0 27px 24px rgba(0, 0, 0, 0.2);
@@ -418,6 +440,8 @@
         padding: 5px 15px;
         border-top-left-radius: 2px;
         border-top-right-radius: 2px;
+        cursor: move;
+        text-align: center;
       }
 
       .modal-header .close{
@@ -427,7 +451,7 @@
       .modal-title{
         color: #FFF;
         text-shadow: 1px 1px 8px #000000;
-        padding: 0 0 0 220px;
+        padding: 0 0 0 40px;
       }
 
       .modal-footer {
@@ -478,13 +502,13 @@
       #factorTable .factor-key{
         text-align: right;
         padding: 0 10px 0 0;
-        width: 55%;
+        width: 52%;
         border: 1px solid #000;
       }
 
       #factorTable .factor-value{
         padding: 0 0 0 20px;
-        width: 45%;
+        width: 48%;
       }
 
       #factorTable .non-input-adjust{
@@ -541,6 +565,7 @@
 
       #factorTable md-select:focus .md-select-value{
         border-bottom: 1px solid #bfbfbf;
+        
       }
 
       #event-setting-header{

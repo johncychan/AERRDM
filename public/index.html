@@ -6,11 +6,16 @@
         <title>AERRDM</title>
         <meta name="description" content="An example demonstrating Google Map integration with MEAN Apps">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+
         <!-- CSS -->
         <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
         <link rel="stylesheet" href="style.css"/>
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
         <!-- Google Maps API -->
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyTWcfHcUgPhrfGWOxT9AAhZxD0DIFRQo&libraries=places"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyTWcfHcUgPhrfGWOxT9AAhZxD0DIFRQo"></script>
         <!-- Modernizr -->
         <script src="../bower_components/modernizr/bin/modernizr"></script>
         <!-- JS Source -->
@@ -18,11 +23,11 @@
         <script src="../bower_components/angular-route/angular-route.js"></script>
         <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
         <script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
         <!-- Angular Scripts -->
         <script src="js/app.js"></script>
-
         <script src="js/singleEventCtrl.js"></script>
-
+        <script src="js/directives.js"></script>
 
         <!-- Dropdown menu script -->
         <script src="js/jQueryDropDown.js"></script>
@@ -31,6 +36,7 @@
         <!-- sidenav script -->
         <script src="js/menu.js"></script>   
 
+        
         <!-- AngularJS material -->
         <link rel = "stylesheet" href = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
         <!--<script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>-->
@@ -41,7 +47,7 @@
         <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
 
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 
     </head>
     
@@ -147,9 +153,7 @@
         <a href="#">Contact</a>
       </div>
 
-
       <!-- search box and hamburger menu -->
-
       <div class="search-container" >
           <div class="searchbox-hamburger" >
             <div ng-controller="AppCtrl">
@@ -158,7 +162,6 @@
             </div>
           </div>
       </div>
-
 
     <ng-map  id="map" center='current-position'
     geo-fallback-center="[40.74, -74.18]"
