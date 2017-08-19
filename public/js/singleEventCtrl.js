@@ -1,7 +1,7 @@
 var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial']);
 
 
-app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http){
+app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout){
 
 	//map initialization
 	var vm = this;
@@ -10,10 +10,13 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http)
 	var stepDisplay;
 
 	var position;
+	var marker = [];
 	var polyline = [];
 	var poly2 = [];
 	var poly = null;
 	var timerHandle = [];
+	var timerHandle = [];
+
 	var speed = 0.000005, wait = 1;
 	var infowindow = null;
 	
@@ -171,6 +174,26 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http)
     	$mdDialog.cancel();
   	}
 
+ //  	function createMarker(latlng, label, html) {
+	// // alert("createMarker("+latlng+","+label+","+html+","+color+")");
+	//     var contentString = '<b>'+label+'</b><br>'+html;
+	//     var marker = new google.maps.Marker({
+	//         position: latlng,
+	//         map: map,
+	//         title: label,
+	//         zIndex: Math.round(latlng.lat()*-100000)<<5
+	//         });
+	//         marker.myname = label;
+
+
+	//     google.maps.event.addListener(marker, 'click', function() {
+	//         infowindow.setContent(contentString); 
+	//         infowindow.open(map,marker);
+	//         });
+	//     return marker;
+	// }  
+
+
   	function setRoutes(){
   		var directionDisplay = new Array();
   		var rendererOptions = {
@@ -220,18 +243,18 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http)
 
 
 	            disp = new google.maps.DirectionsRenderer(rendererOptions);     
-	            disp.setMap(map);
+	            disp.setMap(vm.map);
 	            disp.setDirections(response);
 
 	            for (i=0;i<legs.length;i++) {
 	              if (i == 0) { 
-	                startLocation[routeNum].latlng = legs[i].start_location;
-	                startLocation[routeNum].address = legs[i].start_address;
+	                vm.marker.location = legs[i].start_location;
+	                // vm.marker.location.address = legs[i].start_address;
 	                // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-	                marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
+	                // marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
 	              }
-	              endLocation[routeNum].latlng = legs[i].end_location;
-	              endLocation[routeNum].address = legs[i].end_address;
+	              vm.destinations[routeNum].latlng = legs[i].end_location;
+	              vm.destinations[routeNum].address = legs[i].end_address;
 	              var steps = legs[i].steps;
 
 	              for (j=0;j<steps.length;j++) {
@@ -246,7 +269,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http)
 	              }
             	}
 
-            	polyline[routeNum].setMap(map);
+            	polyline[routeNum].setMap(vm.map);
 		         
 		        //map.fitBounds(bounds);
 		        startAnimation(routeNum);  
@@ -256,17 +279,50 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http)
   	}
   	}
 
-  	
+  	var eol = [];
+
+
+  	function updatePoly(i,d) {
+	 // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
+	    if (poly2[i].getPath().getLength() > 20) {
+	          poly2[i]=new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
+	          // map.addOverlay(poly2)
+	        }
+
+	    if (polyline[i].GetIndexAtDistance(d) < lastVertex+2) {
+	        if (poly2[i].getPath().getLength()>1) {
+	            poly2[i].getPath().removeAt(poly2[i].getPath().getLength()-1)
+	        }
+	            poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
+	    } else {
+	        poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),endLocation[i].latlng);
+	    }
+	 }
+  	function animate(index,d) {
+	   if (d>eol[index]) {
+
+	      marker[index].setPosition(endLocation[index].latlng);
+	      return;
+	   }
+	    var p = polyline[index].GetPointAtDistance(d);
+
+	    //map.panTo(p);
+	    marker[index].setPosition(p);
+	    updatePoly(index,d);
+	    // timerHandle[index] = setTimeout("animate("+index+","+(d+step)+")", tick);
+	    $timeout(animate(index, (d + step)), tick);
+	}
 
   	function startAnimation(index){
-  		if(timeHandle[index])
-  			clearTimeout(timeHandle[index]); 
+  		if(timerHandle[index])
+  			clearTimeout(timerHandle[index]); 
   		eol[index] = polyline[index].Distance();
   		vm.map.setCenter(polyline[index].getPath().getAt(0));
 
   		poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
   						strokeColor:"#FFFF00", strokeWeight:3});
-		timeHandle[index] = setTimeout("animate("+index+",50)", 2000);
+		// timerHandle[index] = setTimeout("animate("+index+",50)", 2000);
+		$timeout(animate(index, 50), 2000);
   	}
 
 });
