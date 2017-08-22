@@ -1,4 +1,4 @@
-var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial']);
+var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog']);
 
 
 app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout){
@@ -163,7 +163,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		        scope: $scope,
 		        preserveScope: true,
 		        controller: function($scope) {
-			},
+			}
 		});
 	};
 
@@ -218,68 +218,68 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		}
   		
   		function makeRouteCallback(routeNum, dip){
-  		if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
-  			startAnimation(routeNum);
-  			return;
+	  		if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
+	  			startAnimation(routeNum);
+	  			return;
+	  		}
+	  		return function(response, status){
+	  			if(status == google.maps.DirectionsStatus.OK){
+	  				var bounds = new google.maps.LatLngBounds();
+	  				var route = response.routes[0];
+	  				vm.marker.position = new Object();
+	  				vm.destinations[routeNum] = new Object();
+
+	  				polyline[routeNum] = new google.maps.Polyline({
+	  				path: [],
+	            	strokeColor: '#FFFF00',
+	            	strokeWeight: 3 
+	            	});
+	  				poly2[routeNum] = new google.maps.Polyline({
+		            path: [],
+		            strokeColor: '#FFFF00',
+		            strokeWeight: 3
+		            });    
+
+		            //fir each route, display summary information
+	  				var path = response.routes[0].overview_path;
+		            var legs = response.routes[0].legs;
+
+
+		            disp = new google.maps.DirectionsRenderer(rendererOptions);     
+		            disp.setMap(vm.map);
+		            disp.setDirections(response);
+
+		            for (i=0;i<legs.length;i++) {
+		              if (i == 0) { 
+		                vm.marker.location = legs[i].start_location;
+		                // vm.marker.location.address = legs[i].start_address;
+		                // marker = google.maps.Marker({map:map,position: startLocation.latlng});
+		                // marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
+		              }
+		              vm.destinations[routeNum].latlng = legs[i].end_location;
+		              vm.destinations[routeNum].address = legs[i].end_address;
+		              var steps = legs[i].steps;
+
+		              for (j=0;j<steps.length;j++) {
+		                var nextSegment = steps[j].path;                
+		                var nextSegment = steps[j].path;
+
+		                for (k=0;k<nextSegment.length;k++) {
+		                    polyline[routeNum].getPath().push(nextSegment[k]);
+		                    //bounds.extend(nextSegment[k]);
+		                }
+
+		              }
+	            	}
+
+	            	polyline[routeNum].setMap(vm.map);
+			         
+			        //map.fitBounds(bounds);
+			        startAnimation(routeNum);  
+
+	  			}
+	  		}
   		}
-  		return function(response, status){
-  			if(status == google.maps.DirectionsStatus.OK){
-  				var bounds = new google.maps.LatLngBounds();
-  				var route = response.routes[0];
-  				vm.marker.position = new Object();
-  				vm.destinations[routeNum] = new Object();
-
-  				polyline[routeNum] = new google.maps.Polyline({
-  				path: [],
-            	strokeColor: '#FFFF00',
-            	strokeWeight: 3 
-            	});
-  				poly2[routeNum] = new google.maps.Polyline({
-	            path: [],
-	            strokeColor: '#FFFF00',
-	            strokeWeight: 3
-	            });    
-
-	            //fir each route, display summary information
-  				var path = response.routes[0].overview_path;
-	            var legs = response.routes[0].legs;
-
-
-	            disp = new google.maps.DirectionsRenderer(rendererOptions);     
-	            disp.setMap(vm.map);
-	            disp.setDirections(response);
-
-	            for (i=0;i<legs.length;i++) {
-	              if (i == 0) { 
-	                vm.marker.location = legs[i].start_location;
-	                // vm.marker.location.address = legs[i].start_address;
-	                // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-	                // marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
-	              }
-	              vm.destinations[routeNum].latlng = legs[i].end_location;
-	              vm.destinations[routeNum].address = legs[i].end_address;
-	              var steps = legs[i].steps;
-
-	              for (j=0;j<steps.length;j++) {
-	                var nextSegment = steps[j].path;                
-	                var nextSegment = steps[j].path;
-
-	                for (k=0;k<nextSegment.length;k++) {
-	                    polyline[routeNum].getPath().push(nextSegment[k]);
-	                    //bounds.extend(nextSegment[k]);
-	                }
-
-	              }
-            	}
-
-            	polyline[routeNum].setMap(vm.map);
-		         
-		        //map.fitBounds(bounds);
-		        startAnimation(routeNum);  
-
-  			}
-  		}
-  	}
   	}
 
   	var eol = [];
@@ -319,6 +319,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	function startAnimation(index){
   		if(timerHandle[index])
   			clearTimeout(timerHandle[index]); 
+
+  		console.log(polyline[index]);
   		eol[index] = polyline[index].Distance();
   		vm.map.setCenter(polyline[index].getPath().getAt(0));
 
@@ -340,6 +342,15 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
       };
     }
   });
+
+app.controller('dialogCtrl', function ($scope, ngDialog) {
+    $scope.clickToOpen = function () {
+        ngDialog.open({ 
+        	template: 'templateId', 
+        	className: 'ngdialog-theme-default'
+        });
+    };
+});
 
 app.directive("showForm", function(){
 	return {
