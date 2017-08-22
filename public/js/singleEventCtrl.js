@@ -119,20 +119,24 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// console.log($scope.factor);
 		vm.map.setZoom(16);
 		vm.map.setCenter(vm.marker.position);
-		//post Json 
-		// $http({
-		//   method  : 'POST',
-		//   url     : '/root',
-		//     // set the headers so angular passing info as form data (not request payload)
-		//   headers : { 'Content-Type': 'application/json' },
-		//   data    :  {
-		//               type:'root',
-		//               username:$scope.rEmail,
-		//               password:$scope.rPassword
-		//             }
 
-		//  })
+		// post data to back-end
+		var eventData = {
+			location: vm.marker.position,
+			eventId: vm.eId,
+			SeverityLevel: vm.level
+		}
+		$http.post('/singleEvent', eventData)
+			.success(function(data){
+				console.log("success");
+			})
+			.error(function(data){
+				console.log('Error: ' + data);
+			})
+
 		//receive facilities location from server and put markers on map
+		//using fake data right now
+		//wait back end implementation
 		vm.facilities = [];
 		vm.destinations  = [];
 		var facility1 = {lat: -34.4105585, lng: 150.8783824};
@@ -177,24 +181,24 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
     	$mdDialog.cancel();
   	}
 
- //  	function createMarker(latlng, label, html) {
-	// // alert("createMarker("+latlng+","+label+","+html+","+color+")");
-	//     var contentString = '<b>'+label+'</b><br>'+html;
-	//     var marker = new google.maps.Marker({
-	//         position: latlng,
-	//         map: map,
-	//         title: label,
-	//         zIndex: Math.round(latlng.lat()*-100000)<<5
-	//         });
-	//         marker.myname = label;
+  	function createMarker(latlng, label, html) {
+	// alert("createMarker("+latlng+","+label+","+html+","+color+")");
+	    var contentString = '<b>'+label+'</b><br>'+html;
+	    var marker = new google.maps.Marker({
+	        position: latlng,
+	        map: vm.map,
+	        title: label,
+	        zIndex: Math.round(latlng.lat()*-100000)<<5
+	        });
+	        marker.myname = label;
 
 
-	//     google.maps.event.addListener(marker, 'click', function() {
-	//         infowindow.setContent(contentString); 
-	//         infowindow.open(map,marker);
-	//         });
-	//     return marker;
-	// }  
+	    google.maps.event.addListener(marker, 'click', function() {
+	        infowindow.setContent(contentString); 
+	        infowindow.open(map,marker);
+	        });
+	    return marker;
+	}  
 
 
   	function setRoutes(){
@@ -252,9 +256,9 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	            for (i=0;i<legs.length;i++) {
 	              if (i == 0) { 
 	                vm.marker.location = legs[i].start_location;
-	                // vm.marker.location.address = legs[i].start_address;
+	                vm.marker.location.address = legs[i].start_address;
 	                // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-	                // marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
+	                marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
 	              }
 	              vm.destinations[routeNum].latlng = legs[i].end_location;
 	              vm.destinations[routeNum].address = legs[i].end_address;
@@ -283,7 +287,10 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	}
 
   	var eol = [];
-
+  	var lastVertex = 1;
+  	var stepnum=0;
+    var step = 5; // 5; // metres
+    var tick = 100; // milliseconds
 
   	function updatePoly(i,d) {
 	 // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
@@ -298,19 +305,21 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	        }
 	            poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
 	    } else {
-	        poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),endLocation[i].latlng);
+	        poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),vm.destinations[i].latlng);
 	    }
 	 }
   	function animate(index,d) {
 	   if (d>eol[index]) {
 
-	      marker[index].setPosition(endLocation[index].latlng);
+	      // marker[index].setPosition(endLocation[index].latlng);
+	      vm.marker.setPosition(vm.destinations[index].latlng);
 	      return;
 	   }
 	    var p = polyline[index].GetPointAtDistance(d);
 
 	    //map.panTo(p);
-	    marker[index].setPosition(p);
+	    // marker[index].setPosition(p);
+	    vm.marker.setPosition(vm.destinations[index].latlng);
 	    updatePoly(index,d);
 	    // timerHandle[index] = setTimeout("animate("+index+","+(d+step)+")", tick);
 	    $timeout(animate(index, (d + step)), tick);
@@ -319,6 +328,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	function startAnimation(index){
   		if(timerHandle[index])
   			clearTimeout(timerHandle[index]); 
+  		// console.log(polyline[index]);
   		eol[index] = polyline[index].Distance();
   		vm.map.setCenter(polyline[index].getPath().getAt(0));
 
