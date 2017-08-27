@@ -5,10 +5,13 @@ var path 	= require('path');
 var assert 	= require('assert');
 var Promise 	= require('promise');
 var gplace	= require('./gplace.js');
+var dbquery	= require('./dbquery.js');
+
 
 
 // Variables
 var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=_LOCATION&radius=_RADIUS&type=_TYPE&key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
+//var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
 var public_dir = __dirname.replace("/routes", "/public");
 
 var isAuthenticated = function (req, res, next) {
@@ -23,8 +26,13 @@ var isAuthenticated = function (req, res, next) {
 
 module.exports = function(passport){
 
-	/* GET login page. */
+	/* GET index page. */
 	router.get('/', function(req, res) {
+	    res.sendFile(path.join(public_dir + '/index.html'));
+	});
+
+	/* GET login page. */
+	router.get('/login', function(req, res) {
     	// Display the Login page with any flash message, if any
 		res.render('index', { message: req.flash('message') });
 	});
@@ -32,7 +40,7 @@ module.exports = function(passport){
 	/* Handle Login POST */
 	router.post('/login', passport.authenticate('login', {
 		successRedirect: '/home',
-		failureRedirect: '/',
+		failureRedirect: '/login',
 		failureFlash : true  
 	}));
 
@@ -56,7 +64,7 @@ module.exports = function(passport){
 	/* Handle Logout */
 	router.get('/signout', function(req, res) {
 		req.logout();
-		res.redirect('/');
+		res.redirect('/login');
 	});
 
 	router.get('/index.html', function(req, res, next) {
@@ -72,7 +80,6 @@ module.exports = function(passport){
 	router.post('/Simulate', function(req, res, next) {
 
 		console.log(req.body);
-		console.log(gplace.Test);
 		var lat = req.body.lat;
 		var lng = req.body.lng;
 		var radius = req.body.radius;
@@ -92,6 +99,31 @@ module.exports = function(passport){
 			res.write(JSON.stringify(rtval));
 			return res.end();
 		});	
+	});
+
+	// Single Event Initiate
+	router.post('/singleEvent', function(req, res, next) {
+		console.log(req.body);
+		var resources = dbquery.RequiredResources(req.body.Category, req.body.Severity);
+		var url = gplace.PlaceQuery(req.body.Location, 5000, 'hospital');
+		var promises = [];
+		for(var i = 0; i < 2; i++)
+		{
+			promises.push(gplace.FacilitiesSearch(url, 'hospital'));
+		}
+
+		Promise.all(promises).then(function(allData) {
+			var rtval = allData[0];
+			console.log("all" + allData);
+			console.log("rtval" + rtval);
+			res.writeHead(200, {'Content-Type': 'text/html'});
+			res.write(JSON.stringify(rtval));
+			return res.end();
+		});
+	});
+
+	router.post('/test', function(req, res, next) {
+		console.log("Mobile");
 	});
 
 	return router;
