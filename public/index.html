@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
         <!-- Google Maps API -->
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyTWcfHcUgPhrfGWOxT9AAhZxD0DIFRQo"></script>
+        <script type ="text/javascript" src="http://www.geocodezip.com/scripts/v3_epoly.js"></script>
         <!-- Modernizr -->
         <script src="../bower_components/modernizr/bin/modernizr"></script>
         <!-- JS Source -->
@@ -68,15 +69,15 @@
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Simulation Setting
                     <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" id="option-container">
                       <li>
-                          <a href="#"><h2>Single Event</h2></a>
+                          <a href="#" class="event-option">Single Event</a>
                       </li>
                       <li>
-                          <a href="#"><h2>Multi Events</h2></a>
+                          <a href="#" class="event-option">Multiple Events</a>
                       </li>
                       <li>
-                          <a href="#"><h2>Dynamic Events</h2></a>
+                          <a href="#" class="event-option">Dynamic Events</a>
                       </li>
                     </ul>
                 </div>
@@ -127,8 +128,8 @@
                     </ul>
                 </div>
               </li>
-              <li class="menu-btn-group" ng-controller="dialogCtrl">
-                <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-wrench" id="setting-menu" ng-click="clickToOpen()"></span>
+              <li class="menu-btn-group" >
+                <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-wrench" id="setting-menu" ></span>
                 <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-option-vertical" id="events-facilities-container"></span>
               </li>
           </ul>
@@ -138,7 +139,7 @@
         
       <!-- Leftside nav (hamburger menu) -->
       <div ng-controller="AppCtrl">
-        <md-sidenav class="leftSideNav clearfix" md-component-id="left" >
+        <md-sidenav md-disable-backdrop class="leftSideNav" md-component-id="left">
           <span class="closebtn" ng-click="toggleLeft()">&times;</span>
           <span href="#">About</span>
           <span href="#">Services</span>
@@ -165,11 +166,6 @@
             </div>
           </div>
       </div>
-
-      <script type="text/ng-template" id="templateId">
-          <h1>Template heading</h1>
-          <p>Content goes here</p>
-      </script>
 
     <ng-map  id="map" center='current-position'
     geo-fallback-center="[40.74, -74.18]"

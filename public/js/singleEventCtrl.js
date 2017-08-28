@@ -1,7 +1,7 @@
 var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog']);
 
 
-app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout){
+app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, ngDialog){
 
 	//map initialization
 	var vm = this;
@@ -40,7 +40,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 			});
 		}
 		//display the marker info
-		var htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div><div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
+		var htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div> " + 
+		"<div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
 		var compiled = $compile(htmlElement)($scope)
@@ -52,6 +53,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		vm.marker.addListener('click', function($scope){
 			vm.marker.infoWin.open(vm.map, vm.marker);
 		});
+		//clear onclick event in marker
 		google.maps.event.clearListeners(vm.map, 'click');
 	}
 
@@ -116,23 +118,29 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// close factor menu
 		$mdDialog.hide();
 
+		vm.progrssMenuOpen();
+
 		// console.log($scope.factor);
 		vm.map.setZoom(16);
 		vm.map.setCenter(vm.marker.position);
-		//post Json 
-		// $http({
-		//   method  : 'POST',
-		//   url     : '/root',
-		//     // set the headers so angular passing info as form data (not request payload)
-		//   headers : { 'Content-Type': 'application/json' },
-		//   data    :  {
-		//               type:'root',
-		//               username:$scope.rEmail,
-		//               password:$scope.rPassword
-		//             }
 
-		//  })
+		// post data to back-end
+		var eventData = {
+			location: vm.marker.position,
+			eventId: vm.eId,
+			SeverityLevel: vm.level
+		}
+		$http.post('/singleEvent', eventData)
+			.success(function(data){
+				console.log("success");
+			})
+			.error(function(data){
+				console.log('Error: ' + data);
+			})
+
 		//receive facilities location from server and put markers on map
+		//using fake data right now
+		//wait back end implementation
 		vm.facilities = [];
 		vm.destinations  = [];
 		var facility1 = {lat: -34.4105585, lng: 150.8783824};
@@ -143,7 +151,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		for(var i = 0; i < vm.facilities.length; ++i){
 			vm.destinations[i] = new google.maps.Marker({
 				position: vm.facilities[i],
-				map: vm.map,
+				map: vm.map, 
 				animation: google.maps.Animation.DROP
 			});
 		}
@@ -177,24 +185,34 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
     	$mdDialog.cancel();
   	}
 
- //  	function createMarker(latlng, label, html) {
-	// // alert("createMarker("+latlng+","+label+","+html+","+color+")");
-	//     var contentString = '<b>'+label+'</b><br>'+html;
-	//     var marker = new google.maps.Marker({
-	//         position: latlng,
-	//         map: map,
-	//         title: label,
-	//         zIndex: Math.round(latlng.lat()*-100000)<<5
-	//         });
-	//         marker.myname = label;
+  	vm.progrssMenuOpen = function () {
+        ngDialog.open({ 
+        	template: 'eventProgress.html',
+        	overlay: false,
+        	showClose: false,
+        	scope: $scope,
+        	className: 'ngdialog-theme-default progress-menu draggable'     	
+        });
+    };
+
+  	function createMarker(latlng, label, html) {
+	// alert("createMarker("+latlng+","+label+","+html+","+color+")");
+	    var contentString = '<b>'+label+'</b><br>'+html;
+	    var marker = new google.maps.Marker({
+	        position: latlng,
+	        map: vm.map,
+	        title: label,
+	        zIndex: Math.round(latlng.lat()*-100000)<<5
+	        });
+	        marker.myname = label;
 
 
-	//     google.maps.event.addListener(marker, 'click', function() {
-	//         infowindow.setContent(contentString); 
-	//         infowindow.open(map,marker);
-	//         });
-	//     return marker;
-	// }  
+	    google.maps.event.addListener(marker, 'click', function() {
+	        infowindow.setContent(contentString); 
+	        infowindow.open(map,marker);
+	        });
+	    return marker;
+	}  
 
 
   	function setRoutes(){
@@ -218,72 +236,75 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		}
   		
   		function makeRouteCallback(routeNum, dip){
-	  		if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
-	  			startAnimation(routeNum);
-	  			return;
-	  		}
-	  		return function(response, status){
-	  			if(status == google.maps.DirectionsStatus.OK){
-	  				var bounds = new google.maps.LatLngBounds();
-	  				var route = response.routes[0];
-	  				vm.marker.position = new Object();
-	  				vm.destinations[routeNum] = new Object();
-
-	  				polyline[routeNum] = new google.maps.Polyline({
-	  				path: [],
-	            	strokeColor: '#FFFF00',
-	            	strokeWeight: 3 
-	            	});
-	  				poly2[routeNum] = new google.maps.Polyline({
-		            path: [],
-		            strokeColor: '#FFFF00',
-		            strokeWeight: 3
-		            });    
-
-		            //fir each route, display summary information
-	  				var path = response.routes[0].overview_path;
-		            var legs = response.routes[0].legs;
-
-
-		            disp = new google.maps.DirectionsRenderer(rendererOptions);     
-		            disp.setMap(vm.map);
-		            disp.setDirections(response);
-
-		            for (i=0;i<legs.length;i++) {
-		              if (i == 0) { 
-		                vm.marker.location = legs[i].start_location;
-		                // vm.marker.location.address = legs[i].start_address;
-		                // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-		                // marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
-		              }
-		              vm.destinations[routeNum].latlng = legs[i].end_location;
-		              vm.destinations[routeNum].address = legs[i].end_address;
-		              var steps = legs[i].steps;
-
-		              for (j=0;j<steps.length;j++) {
-		                var nextSegment = steps[j].path;                
-		                var nextSegment = steps[j].path;
-
-		                for (k=0;k<nextSegment.length;k++) {
-		                    polyline[routeNum].getPath().push(nextSegment[k]);
-		                    //bounds.extend(nextSegment[k]);
-		                }
-
-		              }
-	            	}
-
-	            	polyline[routeNum].setMap(vm.map);
-			         
-			        //map.fitBounds(bounds);
-			        startAnimation(routeNum);  
-
-	  			}
-	  		}
+  		if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
+  			startAnimation(routeNum);
+  			return;
   		}
+  		return function(response, status){
+  			if(status == google.maps.DirectionsStatus.OK){
+  				var bounds = new google.maps.LatLngBounds();
+  				var route = response.routes[0];
+  				vm.marker.position = new Object();
+  				vm.destinations[routeNum] = new Object();
+
+  				polyline[routeNum] = new google.maps.Polyline({
+  				path: [],
+            	strokeColor: '#FFFF00',
+            	strokeWeight: 3 
+            	});
+  				poly2[routeNum] = new google.maps.Polyline({
+	            path: [],
+	            strokeColor: '#FFFF00',
+	            strokeWeight: 3
+	            });    
+
+	            //fir each route, display summary information
+  				var path = response.routes[0].overview_path;
+	            var legs = response.routes[0].legs;
+
+
+	            disp = new google.maps.DirectionsRenderer(rendererOptions);     
+	            disp.setMap(vm.map);
+	            disp.setDirections(response);
+
+	            for (i=0;i<legs.length;i++) {
+	              if (i == 0) { 
+	                vm.marker.location = legs[i].start_location;
+	                vm.marker.location.address = legs[i].start_address;
+	                // marker = google.maps.Marker({map:map,position: startLocation.latlng});
+	                marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
+	              }
+	              vm.destinations[routeNum].latlng = legs[i].end_location;
+	              vm.destinations[routeNum].address = legs[i].end_address;
+	              var steps = legs[i].steps;
+
+	              for (j=0;j<steps.length;j++) {
+	                var nextSegment = steps[j].path;                
+	                var nextSegment = steps[j].path;
+
+	                for (k=0;k<nextSegment.length;k++) {
+	                    polyline[routeNum].getPath().push(nextSegment[k]);
+	                    //bounds.extend(nextSegment[k]);
+	                }
+
+	              }
+            	}
+
+            	polyline[routeNum].setMap(vm.map);
+		         
+		        //map.fitBounds(bounds);
+		        startAnimation(routeNum);  
+
+  			}
+  		}
+  	}
   	}
 
   	var eol = [];
-
+  	var lastVertex = 1;
+  	var stepnum=0;
+    var step = 5; // 5; // metres
+    var tick = 100; // milliseconds
 
   	function updatePoly(i,d) {
 	 // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
@@ -298,19 +319,21 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	        }
 	            poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
 	    } else {
-	        poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),endLocation[i].latlng);
+	        poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),vm.destinations[i].latlng);
 	    }
 	 }
   	function animate(index,d) {
 	   if (d>eol[index]) {
 
-	      marker[index].setPosition(endLocation[index].latlng);
+	      // marker[index].setPosition(endLocation[index].latlng);
+	      vm.marker.setPosition(vm.destinations[index].latlng);
 	      return;
 	   }
 	    var p = polyline[index].GetPointAtDistance(d);
 
 	    //map.panTo(p);
-	    marker[index].setPosition(p);
+	    // marker[index].setPosition(p);
+	    vm.marker.setPosition(vm.destinations[index].latlng);
 	    updatePoly(index,d);
 	    // timerHandle[index] = setTimeout("animate("+index+","+(d+step)+")", tick);
 	    $timeout(animate(index, (d + step)), tick);
@@ -319,8 +342,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	function startAnimation(index){
   		if(timerHandle[index])
   			clearTimeout(timerHandle[index]); 
-
-  		console.log(polyline[index]);
   		eol[index] = polyline[index].Distance();
   		vm.map.setCenter(polyline[index].getPath().getAt(0));
 
@@ -329,7 +350,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// timerHandle[index] = setTimeout("animate("+index+",50)", 2000);
 		$timeout(animate(index, 50), 2000);
   	}
-
 });
 
 app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
@@ -343,14 +363,6 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
     }
   });
 
-app.controller('dialogCtrl', function ($scope, ngDialog) {
-    $scope.clickToOpen = function () {
-        ngDialog.open({ 
-        	template: 'templateId', 
-        	className: 'ngdialog-theme-default'
-        });
-    };
-});
 
 app.directive("showForm", function(){
 	return {
