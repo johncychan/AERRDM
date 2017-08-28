@@ -1,7 +1,7 @@
-var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial']);
+var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog']);
 
 
-app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout){
+app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, ngDialog){
 
 	//map initialization
 	var vm = this;
@@ -40,7 +40,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 			});
 		}
 		//display the marker info
-		var htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div><div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
+		var htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div> " + 
+		"<div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
 		var compiled = $compile(htmlElement)($scope)
@@ -52,6 +53,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		vm.marker.addListener('click', function($scope){
 			vm.marker.infoWin.open(vm.map, vm.marker);
 		});
+		//clear onclick event in marker
 		google.maps.event.clearListeners(vm.map, 'click');
 	}
 
@@ -116,6 +118,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// close factor menu
 		$mdDialog.hide();
 
+		vm.progrssMenuOpen();
+
 		// console.log($scope.factor);
 		vm.map.setZoom(16);
 		vm.map.setCenter(vm.marker.position);
@@ -126,13 +130,24 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 			eventId: vm.eId,
 			SeverityLevel: vm.level
 		}
-		$http.post('/singleEvent', eventData)
-			.success(function(data){
-				console.log("success");
-			})
-			.error(function(data){
-				console.log('Error: ' + data);
-			})
+		$http({
+		   method  : 'POST',
+		   url     : '/singleEvent',
+		//     // set the headers so angular passing info as form data (not request payload)
+		   headers : { 'Content-Type': 'application/json' },
+		   data    :  {
+		               ID: vm.factor["ID"],
+		               Severity: vm.factor["Severity Level"],
+		               Category: vm.factor["Category"],
+		               Expenditure: vm.factor["Resource avg. expenditure"],
+		               Velocity: vm.factor["Resource avg. velocity"],
+		               Deadline: vm.factor["Deadline"],
+		               Location: vm.marker.position.toUrlValue()
+		             }
+
+		  }).then(function success(response) {
+			console.log(response.data);
+		  });
 
 		//receive facilities location from server and put markers on map
 		//using fake data right now
@@ -147,7 +162,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		for(var i = 0; i < vm.facilities.length; ++i){
 			vm.destinations[i] = new google.maps.Marker({
 				position: vm.facilities[i],
-				map: vm.map,
+				map: vm.map, 
 				animation: google.maps.Animation.DROP
 			});
 		}
@@ -167,7 +182,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		        scope: $scope,
 		        preserveScope: true,
 		        controller: function($scope) {
-			},
+			}
 		});
 	};
 
@@ -180,6 +195,16 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	vm.close = function () {
     	$mdDialog.cancel();
   	}
+
+  	vm.progrssMenuOpen = function () {
+        ngDialog.open({ 
+        	template: 'eventProgress.html',
+        	overlay: false,
+        	showClose: false,
+        	scope: $scope,
+        	className: 'ngdialog-theme-default progress-menu draggable'     	
+        });
+    };
 
   	function createMarker(latlng, label, html) {
 	// alert("createMarker("+latlng+","+label+","+html+","+color+")");
@@ -328,7 +353,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	function startAnimation(index){
   		if(timerHandle[index])
   			clearTimeout(timerHandle[index]); 
-  		// console.log(polyline[index]);
   		eol[index] = polyline[index].Distance();
   		vm.map.setCenter(polyline[index].getPath().getAt(0));
 
@@ -337,7 +361,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// timerHandle[index] = setTimeout("animate("+index+",50)", 2000);
 		$timeout(animate(index, 50), 2000);
   	}
-
 });
 
 app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
@@ -350,6 +373,7 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
       };
     }
   });
+
 
 app.directive("showForm", function(){
 	return {
