@@ -125,7 +125,6 @@ module.exports = function(passport){
 	router.post('/test', function(req, res, next) {
 		var Test = {response: "hello"};
 		console.log("Mobile");
-		console.log(req.body);
 		res.writeHead(200, {'Content-Type': 'application/json'});
 		res.write(JSON.stringify(Test));
 		return res.end();

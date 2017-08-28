@@ -130,24 +130,13 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 			eventId: vm.eId,
 			SeverityLevel: vm.level
 		}
-		$http({
-		   method  : 'POST',
-		   url     : '/singleEvent',
-		//     // set the headers so angular passing info as form data (not request payload)
-		   headers : { 'Content-Type': 'application/json' },
-		   data    :  {
-		               ID: vm.factor["ID"],
-		               Severity: vm.factor["Severity Level"],
-		               Category: vm.factor["Category"],
-		               Expenditure: vm.factor["Resource avg. expenditure"],
-		               Velocity: vm.factor["Resource avg. velocity"],
-		               Deadline: vm.factor["Deadline"],
-		               Location: vm.marker.position.toUrlValue()
-		             }
-
-		  }).then(function success(response) {
-			console.log(response.data);
-		  });
+		$http.post('/singleEvent', eventData)
+			.success(function(data){
+				console.log("success");
+			})
+			.error(function(data){
+				console.log('Error: ' + data);
+			})
 
 		//receive facilities location from server and put markers on map
 		//using fake data right now

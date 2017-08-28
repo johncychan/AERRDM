@@ -1,9 +1,14 @@
-<md-dialog id="attribute-dialog" draggable class="safari_radius">
+<md-dialog id="attribute-dialog"  class="safari_radius draggable">
   <md-dialog-content class="safari_radius">
     <!-- <div class="modal-content"> -->
       <div class="modal-header safari_top_radius">
         <button type="button" class="close" ng-click="vm.close()">&times;</button>
-        <span class="modal-title safari_dialog_header">Factor Setting</span>
+        <div id="factor-setting-title-container">
+          <div class="icon-container">
+            <span class="glyphicon glyphicon-cog" id="factor-menu-title-icon"></span>
+          </div>
+          <span class="modal-title safari_dialog_header">Factor Setting</span>
+        </div>
       </div>
       <div class="modal-body">
         <div class="table-container">
