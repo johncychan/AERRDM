@@ -236,13 +236,14 @@ function animate(index,d) {
 //-------------------------------------------------------------------------
 
 function startAnimation(index) {
-        if (timerHandle[index]) clearTimeout(timerHandle[index]);
-        eol[index]=polyline[index].Distance();
-        map.setCenter(polyline[index].getPath().getAt(0));
+      console.log("start marker animation");
+      if (timerHandle[index]) clearTimeout(timerHandle[index]);
+      eol[index]=polyline[index].Distance();
+      map.setCenter(polyline[index].getPath().getAt(0));
 
-        poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)], strokeColor:"#FFFF00", strokeWeight:3});
+      poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)], strokeColor:"#FFFF00", strokeWeight:3});
 
-        timerHandle[index] = setTimeout("animate("+index+",50)",2000);  // Allow time for the initial map display
+      timerHandle[index] = setTimeout("animate("+index+",50)",2000);  // Allow time for the initial map display
 }
 
 //----------------------------------------------------------------------------    

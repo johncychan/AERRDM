@@ -224,68 +224,69 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		}
   		
   		function makeRouteCallback(routeNum, dip){
-  		if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
-  			startAnimation(routeNum);
-  			return;
-  		}
-  		return function(response, status){
-  			if(status == google.maps.DirectionsStatus.OK){
+	  		if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
+	  			startAnimation(routeNum);
+	  			return;
+	  		}
+	  		return function(response, status){
+	  			if(status == google.maps.DirectionsStatus.OK){
 
-  				var bounds = new google.maps.LatLngBounds();
-  				var route = response.routes[0];
-  				startLocation[routeNum] = new Object();
-  				endLocation[routeNum] = new Object();
+	  				var bounds = new google.maps.LatLngBounds();
+	  				var route = response.routes[0];
+	  				startLocation[routeNum] = new Object();
+	  				endLocation[routeNum] = new Object();
 
-  				polyline[routeNum] = new google.maps.Polyline({
-  				path: [],
-            	strokeColor: '#FFFF00',
-            	strokeWeight: 3 
-            	});
-  				poly2[routeNum] = new google.maps.Polyline({
-	            path: [],
-	            strokeColor: '#FFFF00',
-	            strokeWeight: 3
-	            });    
+	  				polyline[routeNum] = new google.maps.Polyline({
+	  				path: [],
+	            	strokeColor: '#FFFF00',
+	            	strokeWeight: 3 
+	            	});
+	  				poly2[routeNum] = new google.maps.Polyline({
+		            path: [],
+		            strokeColor: '#FFFF00',
+		            strokeWeight: 3
+		            });    
 
-	            //fir each route, display summary information
-  				var path = response.routes[0].overview_path;
-	            var legs = response.routes[0].legs;
+		            //fir each route, display summary information
+	  				var path = response.routes[0].overview_path;
+		            var legs = response.routes[0].legs;
 
 
-	            disp = new google.maps.DirectionsRenderer(rendererOptions);     
-	            disp.setMap(vm.map);
-	            disp.setDirections(response);
+		            disp = new google.maps.DirectionsRenderer(rendererOptions);     
+		            disp.setMap(vm.map);
+		            disp.setDirections(response);
 
-	            //create resources markers
-	            for (i=0;i<legs.length;i++) {
-	              if (i == 0) { 
-	                startLocation[routeNum].latlng = legs[i].start_location;
-	                startLocation[routeNum].address = legs[i].start_address;
-	                // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-	                marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
-	              }
-	              endLocation[routeNum].latlng = legs[i].end_location;
-	              endLocation[routeNum].address = legs[i].end_address;
-	              var steps = legs[i].steps;
+		            //create resources markers
+		            for (i=0;i<legs.length;i++) {
+		              if (i == 0) { 
+		                startLocation[routeNum].latlng = legs[i].start_location;
+		                startLocation[routeNum].address = legs[i].start_address;
+		                // marker = google.maps.Marker({map:map,position: startLocation.latlng});
+		                marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
+		              }
+		              endLocation[routeNum].latlng = legs[i].end_location;
+		              endLocation[routeNum].address = legs[i].end_address;
+		              var steps = legs[i].steps;
 
-	              for (j=0;j<steps.length;j++) {
-	                var nextSegment = steps[j].path;                
-	                var nextSegment = steps[j].path;
+		              for (j=0;j<steps.length;j++) {
+		                var nextSegment = steps[j].path;                
+		                var nextSegment = steps[j].path;
 
-	                for (k=0;k<nextSegment.length;k++) {
-	                    polyline[routeNum].getPath().push(nextSegment[k]);
-	                    //bounds.extend(nextSegment[k]);
-	                }
+		                for (k=0;k<nextSegment.length;k++) {
+		                    polyline[routeNum].getPath().push(nextSegment[k]);
+		                    //bounds.extend(nextSegment[k]);
+		                }
 
-	              }
-            	}
+		              }
+	            	}
 
-  			}
-  			polyline[routeNum].setMap(vm.map);
-		        //map.fitBounds(bounds);
-	        startAnimation(routeNum); 
-  		}
-  	}
+	            	polyline[routeNum].setMap(vm.map);		         
+			    //map.fitBounds(bounds);
+		        	startAnimation(routeNum); 
+	  			}
+	  			
+	  		}
+  		}	
   	}
 
   	var eol = [];
@@ -339,7 +340,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
   						strokeColor:"#FFFF00", strokeWeight:3});
 		// timerHandle[index] = setTimeout("animate("+index+",50)", 2000);
-		timerHandle[index] = $timeout(animate(index, 50), 200);
+		timerHandle[index] = $timeout(animate(index, 50), 2000);
   	}
 
 });
