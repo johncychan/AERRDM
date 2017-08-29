@@ -374,7 +374,6 @@ app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
     }
   });
 
-
 app.directive("showForm", function(){
 	return {
 		restrict: 'E',
