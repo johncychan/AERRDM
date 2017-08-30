@@ -42,7 +42,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 			vm.marker = new google.maps.Marker({
 				position: e.latLng,
 				map: vm.map,
-				draggable: true
+				draggable: true,
+				
 			});
 		}
 		//display the marker info
@@ -347,7 +348,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   						strokeColor:"#FFFF00", strokeWeight:3});
   		$timeout(function() {
   			animate(index, 50);
-  		}, 10000);
+  		}, 50);
   	}
 
 });
