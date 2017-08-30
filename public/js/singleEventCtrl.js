@@ -42,11 +42,13 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 			vm.marker = new google.maps.Marker({
 				position: e.latLng,
 				map: vm.map,
-				draggable: true
+				draggable: true,
+				
 			});
 		}
 		//display the marker info
-		var htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div><div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
+		var htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div> " + 
+		"<div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
 		var compiled = $compile(htmlElement)($scope)
@@ -58,6 +60,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		vm.marker.addListener('click', function($scope){
 			vm.marker.infoWin.open(vm.map, vm.marker);
 		});
+		//clear onclick event in marker
 		google.maps.event.clearListeners(vm.map, 'click');
 	}
 
@@ -144,13 +147,25 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 			eventId: vm.eId,
 			SeverityLevel: vm.level
 		}
-		$http.post('/singleEvent', eventData)
-			.success(function(data){
-				console.log("success");
-			})
-			.error(function(data){
-				console.log('Error: ' + data);
-			})
+		$http({
+		   method  : 'POST',
+		   url     : '/singleEvent',
+		//     // set the headers so angular passing info as form data (not request payload)
+		   headers : { 'Content-Type': 'application/json' },
+		   data    :  {
+		               ID: vm.factor["ID"],
+		               Severity: vm.factor["Severity Level"],
+		               Category: vm.factor["Category"],
+		               Expenditure: vm.factor["Resource avg. expenditure"],
+		               Velocity: vm.factor["Resource avg. velocity"],
+		               Deadline: vm.factor["Deadline"],
+		               Location: vm.marker.position.toUrlValue()
+		             }
+
+		  }).then(function success(response) {
+			console.log(response.data);
+		  });
+
 
 		//receive facilities location from server and put markers on map
 		//using fake data right now
@@ -165,6 +180,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		startLoc[1] = 'Hyams Beach';
 		endLoc = 'University of Wollongong';
 		
+
 		// for(var i = 0; i < endLoc.length; ++i){
 		// 	facilitiesMarker[i] = new google.maps.Marker({
 		// 		position: startLoc[i],
@@ -175,6 +191,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		
 		//set the routes between startloc and endloc
 
+		//receive task information
 		receiveEventTask();
 
 		setRoutes();
@@ -191,7 +208,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		        scope: $scope,
 		        preserveScope: true,
 		        controller: function($scope) {
-			},
+			}
 		});
 	};
 
@@ -204,6 +221,18 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	vm.close = function () {
     	$mdDialog.cancel();
   	}
+
+
+  	vm.progrssMenuOpen = function () {
+        ngDialog.open({ 
+        	template: 'eventProgress.html',
+        	overlay: false,
+        	showClose: false,
+        	scope: $scope,
+        	className: 'ngdialog-theme-default progress-menu draggable'     	
+        });
+    };
+
 
   	function createMarker(latlng, label, html) {
 	    var marker = new google.maps.Marker({
@@ -219,25 +248,34 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 
 
   	function setRoutes(){
+
   		var directionDisplay = new Array();
-  		for(var i = 0; i < startLoc.length; ++i){
+
   		var rendererOptions = {
   			map: vm.map,
   			suppressMarkers : true,
   			preserveViewport: true
   		}
+
   		directionsService = new google.maps.DirectionsService();
 
   		var travelMode = google.maps.DirectionsTravelMode.DRIVING;
-  		//vm.requests = [];
-  		
-  			vm.request = {
-  				origin: startLoc[i],
-  				destination: endLoc,
-  				travelMode: travelMode
-  			};
-  			directionsService.route(vm.request, makeRouteCallback(i, directionDisplay[i]));
+  		var requests = new Array();
+  		// for(var i = 0; i < startLoc.length; ++i){
+  		// 	requests[i] = {
+  		// 		origin: startLoc[i],
+  		// 		destination: endLoc,
+  		// 		travelMode: travelMode
+  		// 	};
+  		// 	directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
+  		// }
+  		var request = {
+  			origin: startLoc[0],
+  			destination: endLoc,
+  			travelMode: travelMode
+
   		}
+  		directionsService.route(request, makeRouteCallback(0, directionDisplay[0]));
   		
   		function makeRouteCallback(routeNum, dip){
 	  		if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
@@ -263,7 +301,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		            strokeWeight: 3
 		            });    
 
-		            //fir each route, display summary information
+
 	  				var path = response.routes[0].overview_path;
 		            var legs = response.routes[0].legs;
 
@@ -273,7 +311,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		            disp.setDirections(response);
 
 		            //create resources markers
-		            for (i=0;i<legs.length;i++) {
+		            for (i = 0; i < legs.length; i++) {
+
 		              if (i == 0) { 
 		                startLocation[routeNum].latlng = legs[i].start_location;
 		                startLocation[routeNum].address = legs[i].start_address;
@@ -284,22 +323,24 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		              endLocation[routeNum].address = legs[i].end_address;
 		              var steps = legs[i].steps;
 
-		              for (j=0;j<steps.length;j++) {
+		              for (j = 0; j < steps.length; j++) {
 		                var nextSegment = steps[j].path;                
 		                var nextSegment = steps[j].path;
 
-		                for (k=0;k<nextSegment.length;k++) {
+		                for (k = 0;k < nextSegment.length; k++) {
+
 		                    polyline[routeNum].getPath().push(nextSegment[k]);
 		                    //bounds.extend(nextSegment[k]);
 		                }
 
 		              }
 	            	}
-
-	            	polyline[routeNum].setMap(vm.map);		         
-			    //map.fitBounds(bounds);
-		        	startAnimation(routeNum); 
+	            	
 	  			}
+	  			polyline[routeNum].setMap(vm.map);		         
+			    //map.fitBounds(bounds);
+		        startAnimation(routeNum); 
+
 	  			
 	  		}
   		}	
@@ -314,13 +355,13 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	function updatePoly(i,d) {
 	 // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
 	    if (poly2[i].getPath().getLength() > 20) {
-	          poly2[i]=new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
+	          poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
 	          // map.addOverlay(poly2)
 	        }
 
-	    if (polyline[i].GetIndexAtDistance(d) < lastVertex+2) {
-	        if (poly2[i].getPath().getLength()>1) {
-	            poly2[i].getPath().removeAt(poly2[i].getPath().getLength()-1)
+	    if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
+	        if (poly2[i].getPath().getLength() > 1) {
+	            poly2[i].getPath().removeAt(poly2[i].getPath().getLength() - 1)
 	        }
 	            poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
 	    } else {
@@ -328,40 +369,38 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	    }
 	 }
   	function animate(index,d) {
-  		// console.log("animate function");
-	   if (d>eol[index]) {
-	      // marker[index].setPosition(endLocation[index].latlng);
-	      marker[index].setPosition(endLocation[index].latlng);
-	      return;
-	   }
+  		console.log(index + " " + d);
+	   	if (d > eol[index]) {
+	      	marker[index].setPosition(endLocation[index].latlng);
+	      	return;
+	   	}
 	    var p = polyline[index].GetPointAtDistance(d);
-
-	    //map.panTo(p);
-	    // marker[index].setPosition(p);
 	    marker[index].setPosition(p);
 	    updatePoly(index,d);
-	    //timerHandle[index] = setTimeout($scope.$apply(animate(index,(d+step))), tick);
-	    //timerHandle[index] =  $timeout($scope.$apply(animate(index, (d + step))), tick);
+	    // timerHandle[index] = setTimeout("animate("+index+","+(d+step)+")", tick);
+	    // timerHandle[index] =  $timeout(animate(index, (d + step)), tick);
+	    timerHandle[index] =  $timeout(function() {
+	    	animate(index, (d + step));
+	    }, tick);
+
 	}
 
   	function startAnimation(index){
 
+
   		console.log("start marker animation");
-  		if(timerHandle[index])
-  			$timeout.cancel(timerHandle[index]);
-  		// console.log(polyline[index]);
+  		// if(timerHandle[index])
+  		// 	$timeout.cancel(timerHandle[index]);
   		eol[index] = polyline[index].Distance();
-  		// vm.map.setCenter(polyline[index].getPath().getAt(0));
-  		//vm.map.setZoom(20);
+
   		poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
   						strokeColor:"#FFFF00", strokeWeight:3});
-		//timerHandle[index] = setTimeout($scope.$apply(animate(index,50)), 2000);
-		//timerHandle[index] = $timeout($scope.$apply(animate(index, 50)), 2000);
-		//timerHandle[index] = animate(index, 50);
+  		$timeout(function() {
+  			animate(index, 50);
+  		}, 50);
   	}
 
-    /* this is a mockup function at the moment, it's regarding to receive task from server */
-    function receiveEventTask(){
+  	function receiveEventTask(){
 
       vm.services = [];
       //for loop to receive type of resources needed
@@ -381,9 +420,10 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		}
       //end for loop
     }
+
 });
 
-app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav) {
+app.controller('AppCtrl', function ($scope, $mdSidenav) {
     $scope.toggleLeft = buildToggler('left');
     $scope.toggleRight = buildToggler('right');
 
