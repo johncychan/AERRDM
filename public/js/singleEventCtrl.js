@@ -1,7 +1,7 @@
 var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog']);
 
 
-app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, ngDialog){
+app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog){
 
 	//map initialization
 	var vm = this;
@@ -192,7 +192,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		//set the routes between startloc and endloc
 
 		// receiveEventTask();
-
+		searchCircle();
 		setRoutes();
 	} 
 
@@ -245,6 +245,37 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	    return marker;
 	}  
 
+	function searchCircle(){
+		var _radius = 10000;
+		var rMin = _radius * 4/5;
+		var rMax = _radius;
+		var direction = 1;
+
+		var circleOption = {
+			center: vm.marker.position,
+			fillColor: '#3878c7',
+			fillOpacity: 0.6,
+			map: vm.map,
+			radius: 10000,
+			strokeColor: '#3878c7',
+	        strokeOpacity: 1,
+	        strokeWeight: 0.5
+		}
+		var circle = new google.maps.Circle(circleOption);
+
+		var circleTimer = $interval(function(){
+			var radius = circle.getRadius();
+			if((radius > rMax) || (radius) < rMin){
+				direction *= -1;
+			}
+			var _par = (radius/_radius) - 0.7;
+
+			circleOption.radius = radius + direction * 10;
+			circleOption.fillOpacity = 0.6 * _par;
+
+			circle.setOptions(circleOption);
+		}, 20);
+	}
 
   	function setRoutes(){
 
@@ -270,7 +301,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		// }
   		var request = {
   			origin: startLoc[0],
-  			destination: endLoc,
+  			destination: vm.marker.position,
   			travelMode: travelMode
 
   		}
@@ -368,7 +399,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	    }
 	 }
   	function animate(index,d) {
-  		console.log(index + " " + d);
+  		// console.log(index + " " + d);
 	   	if (d > eol[index]) {
 	      	marker[index].setPosition(endLocation[index].latlng);
 	      	return;
@@ -387,7 +418,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	function startAnimation(index){
 
 
-  		console.log("start marker animation");
+  		// console.log("start marker animation");
   		// if(timerHandle[index])
   		// 	$timeout.cancel(timerHandle[index]);
   		eol[index] = polyline[index].Distance();
