@@ -120,6 +120,16 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		}
   	}
 
+  	vm.progrssMenuOpen = function () {
+	    ngDialog.open({ 
+	      template: 'eventProgress.html',
+	      overlay: false,
+	      showClose: false,
+	      scope: $scope,
+	      className: 'ngdialog-theme-default progress-menu draggable'       
+	    });
+    };
+
 	// now start the simulation
 	vm.startSingleEvent = function(){
 		// close factor menu
@@ -156,6 +166,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 			console.log(response.data);
 		  });
 
+
 		//receive facilities location from server and put markers on map
 		//using fake data right now
 		//wait back end implementation
@@ -179,6 +190,9 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// }
 		
 		//set the routes between startloc and endloc
+
+		// receiveEventTask();
+
 		setRoutes();
 	} 
 
@@ -207,6 +221,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
     	$mdDialog.cancel();
   	}
 
+
   	vm.progrssMenuOpen = function () {
         ngDialog.open({ 
         	template: 'eventProgress.html',
@@ -216,6 +231,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
     };
+
 
   	function createMarker(latlng, label, html) {
 	    var marker = new google.maps.Marker({
@@ -256,6 +272,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   			origin: startLoc[0],
   			destination: endLoc,
   			travelMode: travelMode
+
   		}
   		directionsService.route(request, makeRouteCallback(0, directionDisplay[0]));
   		
@@ -283,7 +300,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		            strokeWeight: 3
 		            });    
 
-		            //for each route, display summary information
+
 	  				var path = response.routes[0].overview_path;
 		            var legs = response.routes[0].legs;
 
@@ -294,6 +311,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 
 		            //create resources markers
 		            for (i = 0; i < legs.length; i++) {
+
 		              if (i == 0) { 
 		                startLocation[routeNum].latlng = legs[i].start_location;
 		                startLocation[routeNum].address = legs[i].start_address;
@@ -309,6 +327,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		                var nextSegment = steps[j].path;
 
 		                for (k = 0;k < nextSegment.length; k++) {
+
 		                    polyline[routeNum].getPath().push(nextSegment[k]);
 		                    //bounds.extend(nextSegment[k]);
 		                }
@@ -320,6 +339,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	  			polyline[routeNum].setMap(vm.map);		         
 			    //map.fitBounds(bounds);
 		        startAnimation(routeNum); 
+
 	  			
 	  		}
   		}	
@@ -361,6 +381,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	    timerHandle[index] =  $timeout(function() {
 	    	animate(index, (d + step));
 	    }, tick);
+
 	}
 
   	function startAnimation(index){
@@ -377,6 +398,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   			animate(index, 50);
   		}, 50);
   	}
+
 });
 
 app.controller('AppCtrl', function ($scope, $mdSidenav) {
@@ -388,7 +410,8 @@ app.controller('AppCtrl', function ($scope, $mdSidenav) {
         $mdSidenav(componentId).toggle();
       };
     }
-  });
+});
+
 
 app.directive("showForm", function(){
 	return {
