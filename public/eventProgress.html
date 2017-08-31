@@ -8,14 +8,17 @@
 		</div>	
 	</div>
 
-  <div ng-controller="AppCtrl" id="loadingCircle">
+  <div id="progressStatus">
     <div layout="row" layout-sm="column" layout-align="space-around">
       <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    </div>
+    <div id="stageInfo">
+      <blink >{{vm.stage}}</blink>
     </div>
   </div>
 	<div id="progress-content">
     <div class="info-row">
-  		<div id="event-info-container">
+  		<div id="event-info-container"  class="initEvent-container">
   			<table id="event-info-table"> 
           <tr>
             <th colspan="2">Event Information</th>
@@ -34,7 +37,7 @@
           </tr>
         </table>
   		</div>
-      <div id="task-info-container">
+      <div id="task-info-container" ng-show = "vm.taskShow" ng-cloak>
         <table id="event-info-table"> 
           <tr>
             <th colspan="2">Task Information</th>

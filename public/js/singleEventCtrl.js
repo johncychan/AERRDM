@@ -1,4 +1,4 @@
-var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog']);
+var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog', 'ngAnimate']);
 
 
 app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, ngDialog){
@@ -224,6 +224,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 
 
   	vm.progrssMenuOpen = function () {
+
         ngDialog.open({ 
         	template: 'eventProgress.html',
         	overlay: false,
@@ -231,6 +232,29 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         	scope: $scope,
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
+
+
+  		vm.stage = "Analysing Event";
+
+       
+        $timeout(function() {
+  			vm.stage = "Establishing Plan";
+  		}, 3500);
+
+		// $timeout(function() {
+  // 			var myEl = angular.element(document.querySelector('#event-info-container'));
+		// 	myEl.removeClass('initEvent-container');
+  // 		}, 7000);
+
+		$timeout(function() {
+  			vm.taskShow = true;
+  		}, 5500);
+
+        $timeout(function() {
+  			vm.stage = "Next stage";
+  		}, 7500);
+
+
     };
 
 
@@ -332,16 +356,12 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		                    polyline[routeNum].getPath().push(nextSegment[k]);
 		                    //bounds.extend(nextSegment[k]);
 		                }
-
 		              }
 	            	}
-	            	
 	  			}
 	  			polyline[routeNum].setMap(vm.map);		         
 			    //map.fitBounds(bounds);
 		        startAnimation(routeNum); 
-
-	  			
 	  		}
   		}	
   	}
@@ -386,7 +406,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	}
 
   	function startAnimation(index){
-
 
   		console.log("start marker animation");
   		// if(timerHandle[index])
