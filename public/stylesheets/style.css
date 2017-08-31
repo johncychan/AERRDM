@@ -699,6 +699,7 @@
         box-shadow: 2px 2px 5px rgba(0,0,0,.2);
         padding: 0;
         background-color: #FFF;
+        width: 470px;
       }
 
       #ngdialog1 .modal-header{
@@ -709,6 +710,9 @@
 
       #progress-content{
         padding: 10px;
+        overflow:hidden;
+        display:table;
+        width: 100%;
       }
 
       @media only screen and (min-width: 2000px) {
@@ -717,28 +721,85 @@
         }
       }
 
+      .info-row{
+        display:table-row;
+      }
+
+      #event-info-container{
+        width: 55%;
+        display:table-cell;
+      }
+
+      #task-info-container{
+        width: 45%;
+        display:table-cell;
+      }
+
       #event-info-table{
         font-size: 11px;
       }
 
       #event-info-table .factor-key{
-        text-align: right;
-        border: 1px solid #000;
+        /*border: 1px solid #000;*/
         padding: 1px 7px;
       }
 
       #event-info-table .factor-value{
         padding: 0 10px;
-        border-right: 1px solid #000;
+        /*border-right: 1px solid #000;*/
       }
 
       #event-info-table tr:first-child .factor-value{
-        border-top: 1px solid #000;
+        /*border-top: 1px solid #000;*/
       }
 
       #event-info-table tr:last-child .factor-value{
-        border-bottom: 1px solid #000;
+        /*border-bottom: 1px solid #000;*/
       }
+
+      #event-info-table th{
+        text-align: center !important;
+      }
+
+      #loadingCircle{
+        width: 100%;
+      }
+
+      .progressCirculardemoBasicUsage body {
+  padding: 20px; }
+
+.progressCirculardemoBasicUsage h4 {
+  margin: 10px 0; }
+
+.progressCirculardemoBasicUsage md-progress-circular {
+  margin-bottom: 20px; }
+
+.progressCirculardemoBasicUsage #loaders > md-switch {
+  margin: 0;
+  margin-left: 10px;
+  margin-top: -10px; }
+
+.progressCirculardemoBasicUsage #loaders > h5 {
+  margin-top: 0; }
+
+.progressCirculardemoBasicUsage #loaders > p {
+  margin-right: 20px;
+  margin-bottom: 24px; }
+
+.progressCirculardemoBasicUsage p.small {
+  font-size: 0.8em;
+  margin-top: -18px; }
+
+.progressCirculardemoBasicUsage hr {
+  width: 100%;
+  margin-top: 20px;
+  border-color: rgba(221, 221, 177, 0.1); }
+
+.progressCirculardemoBasicUsage p.small > code {
+  font-size: 0.8em; }
+
+.progressCirculardemoBasicUsage .visible {
+  border-color: rgba(221, 221, 177, 0); }
 
 
       /* end event progress */
