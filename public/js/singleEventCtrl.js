@@ -1,7 +1,7 @@
-var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog', 'ngAnimate']);
+var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog']);
 
 
-app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, ngDialog){
+app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog){
 
 	//map initialization
 	var vm = this;
@@ -73,7 +73,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         	vm.lastOpenedInfoWindow.close();
     	}
 	}
-
 	vm.setDataField = function(){
 		//change center view
 		// vm.map.setZoom(25);
@@ -202,10 +201,9 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// }
 		
 		//set the routes between startloc and endloc
-
-		//receive task information
+//********************************
 		receiveEventTask();
-
+		searchCircle();
 		setRoutes();
 	} 
 
@@ -236,7 +234,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 
 
   	vm.progrssMenuOpen = function () {
-
         ngDialog.open({ 
         	template: 'eventProgress.html',
         	overlay: false,
@@ -245,8 +242,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
 
-  		vm.stage = "Analysing Event";
 
+  		vm.stage = "Analysing Event";
   		$timeout(function() {
   			vm.eventShow = true;
   		}, 1500);
@@ -254,16 +251,12 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         $timeout(function() {
   			vm.stage = "Establishing Plan";
   		}, 3500);
-
 		$timeout(function() {
   			vm.taskShow = true;
   		}, 5500);
-
         $timeout(function() {
   			vm.stage = "Searching for Facilities";
   		}, 7500);
-
-
     };
 
 
@@ -279,6 +272,37 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	    return marker;
 	}  
 
+	function searchCircle(){
+		var _radius = 10000;
+		var rMin = _radius * 4/5;
+		var rMax = _radius;
+		var direction = 1;
+
+		var circleOption = {
+			center: vm.marker.position,
+			fillColor: '#3878c7',
+			fillOpacity: 0.6,
+			map: vm.map,
+			radius: 10000,
+			strokeColor: '#3878c7',
+	        strokeOpacity: 1,
+	        strokeWeight: 0.5
+		}
+		var circle = new google.maps.Circle(circleOption);
+
+		var circleTimer = $interval(function(){
+			var radius = circle.getRadius();
+			if((radius > rMax) || (radius) < rMin){
+				direction *= -1;
+			}
+			var _par = (radius/_radius) - 0.7;
+
+			circleOption.radius = radius + direction * 10;
+			circleOption.fillOpacity = 0.6 * _par;
+
+			circle.setOptions(circleOption);
+		}, 20);
+	}
 
   	function setRoutes(){
 
@@ -304,7 +328,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		// }
   		var request = {
   			origin: startLoc[0],
-  			destination: endLoc,
+  			destination: vm.marker.position,
   			travelMode: travelMode
 
   		}
@@ -365,12 +389,16 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		                    polyline[routeNum].getPath().push(nextSegment[k]);
 		                    //bounds.extend(nextSegment[k]);
 		                }
+
 		              }
 	            	}
+	            	
 	  			}
 	  			polyline[routeNum].setMap(vm.map);		         
 			    //map.fitBounds(bounds);
 		        startAnimation(routeNum); 
+
+	  			
 	  		}
   		}	
   	}
@@ -398,7 +426,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	    }
 	 }
   	function animate(index,d) {
-  		console.log(index + " " + d);
+  		// console.log(index + " " + d);
 	   	if (d > eol[index]) {
 	      	marker[index].setPosition(endLocation[index].latlng);
 	      	return;
@@ -416,7 +444,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 
   	function startAnimation(index){
 
-  		console.log("start marker animation");
+
+  		// console.log("start marker animation");
   		// if(timerHandle[index])
   		// 	$timeout.cancel(timerHandle[index]);
   		eol[index] = polyline[index].Distance();
@@ -428,8 +457,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		}, 50);
   	}
 
-  	function receiveEventTask(){
-
+	  	function receiveEventTask(){
       vm.services = [];
       //for loop to receive type of resources needed
         //push()
@@ -441,7 +469,6 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
           resource: 'Ambulance',
           number: 3
         }];
-
         vm.totalResource = 0;
         for(var i = 0; i < vm.services.length; i++){
 	        vm.totalResource += vm.services[i].number;
