@@ -51,10 +51,10 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		"<div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
-		var compiled = $compile(htmlElement)($scope)
+		vm.compiled = $compile(htmlElement)($scope)
 		vm.marker.infoWin = new google.maps.InfoWindow({
 			// content: "<showTag></showTag>"
-			content: compiled[0]
+			content: vm.compiled[0]
 		});
 		//show the infomation window
 		vm.marker.addListener('click', function($scope){
@@ -62,6 +62,16 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		});
 		//clear onclick event in marker
 		google.maps.event.clearListeners(vm.map, 'click');
+
+		//set info windows
+		vm.lastOpenedInfoWindow = vm.marker.infoWin;
+
+	}
+
+	vm.closeInfoWin = function(){
+		if (vm.lastOpenedInfoWindow) {
+        	vm.lastOpenedInfoWindow.close();
+    	}
 	}
 
 	vm.setDataField = function(){
@@ -134,6 +144,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	vm.startSingleEvent = function(){
 		// close factor menu
 		$mdDialog.hide();
+
+		vm.closeInfoWin();
 
 		vm.progrssMenuOpen();
 
@@ -233,25 +245,22 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
 
-
   		vm.stage = "Analysing Event";
 
+  		$timeout(function() {
+  			vm.eventShow = true;
+  		}, 1500);
        
         $timeout(function() {
   			vm.stage = "Establishing Plan";
   		}, 3500);
-
-		// $timeout(function() {
-  // 			var myEl = angular.element(document.querySelector('#event-info-container'));
-		// 	myEl.removeClass('initEvent-container');
-  // 		}, 7000);
 
 		$timeout(function() {
   			vm.taskShow = true;
   		}, 5500);
 
         $timeout(function() {
-  			vm.stage = "Next stage";
+  			vm.stage = "Searching for Facilities";
   		}, 7500);
 
 

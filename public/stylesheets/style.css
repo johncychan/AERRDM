@@ -701,15 +701,15 @@
         filter: blur(5px);*/
       }
 
-      #ngdialog1 .ngdialog-content{
-        box-shadow: 2px 2px 5px rgba(0,0,0,.2);
-        padding: 0;
-        background-color: #FFF;
-        width: 470px;
-
+      [id^=ngdialog] .ngdialog-content{
+        box-shadow: 2px 2px 5px rgba(0,0,0,.2) !important;
+        padding: 0 !important;
+        background-color: #FFF !important;
+        width: 470px !important;
+        height: 260px;
       }
 
-      #ngdialog1 .modal-header{
+      [id^=ngdialog] .modal-header{
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;
         color: #FFF;
@@ -733,7 +733,7 @@
       }
 
       #event-info-container{
-        transition: all linear 0.5s;
+        transition: all linear 0.8s;
         /*position: relative;*/
         width: 55%;
         display:table-cell;
@@ -782,6 +782,10 @@
         color: #37474F;
       }
 
+      #event-info-container.ng-hide{
+        opacity: 0;
+      }
+
       #task-info-container.ng-hide {
         opacity: 0;
       }
@@ -823,13 +827,11 @@
         border-color: rgba(221, 221, 177, 0); }
 
 
-      /*.initEvent-container{
-        margin: 0 110px !important;
-        width: 100% !important;
-        display: block !important;
-      }*/
-
       /* end event progress */
+
+      [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+        display: none !important;
+      }
 
       blink {
           -webkit-transition: 700ms ease-in-out all;
