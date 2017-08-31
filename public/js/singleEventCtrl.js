@@ -51,10 +51,10 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		"<div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
-		var compiled = $compile(htmlElement)($scope)
+		vm.compiled = $compile(htmlElement)($scope)
 		vm.marker.infoWin = new google.maps.InfoWindow({
 			// content: "<showTag></showTag>"
-			content: compiled[0]
+			content: vm.compiled[0]
 		});
 		//show the infomation window
 		vm.marker.addListener('click', function($scope){
@@ -62,8 +62,17 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		});
 		//clear onclick event in marker
 		google.maps.event.clearListeners(vm.map, 'click');
+
+		//set info windows
+		vm.lastOpenedInfoWindow = vm.marker.infoWin;
+
 	}
 
+	vm.closeInfoWin = function(){
+		if (vm.lastOpenedInfoWindow) {
+        	vm.lastOpenedInfoWindow.close();
+    	}
+	}
 	vm.setDataField = function(){
 		//change center view
 		// vm.map.setZoom(25);
@@ -135,6 +144,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// close factor menu
 		$mdDialog.hide();
 
+		vm.closeInfoWin();
+
 		vm.progrssMenuOpen();
 
 		// console.log($scope.factor);
@@ -190,8 +201,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// }
 		
 		//set the routes between startloc and endloc
-
-		// receiveEventTask();
+//********************************
+		receiveEventTask();
 		searchCircle();
 		setRoutes();
 	} 
@@ -230,6 +241,22 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         	scope: $scope,
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
+
+
+  		vm.stage = "Analysing Event";
+  		$timeout(function() {
+  			vm.eventShow = true;
+  		}, 1500);
+       
+        $timeout(function() {
+  			vm.stage = "Establishing Plan";
+  		}, 3500);
+		$timeout(function() {
+  			vm.taskShow = true;
+  		}, 5500);
+        $timeout(function() {
+  			vm.stage = "Searching for Facilities";
+  		}, 7500);
     };
 
 
@@ -429,6 +456,25 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   			animate(index, 50);
   		}, 50);
   	}
+
+	  	function receiveEventTask(){
+      vm.services = [];
+      //for loop to receive type of resources needed
+        //push()
+        vm.services =
+        [{
+          resource: 'Police car',
+          number: 2
+        },{
+          resource: 'Ambulance',
+          number: 3
+        }];
+        vm.totalResource = 0;
+        for(var i = 0; i < vm.services.length; i++){
+	        vm.totalResource += vm.services[i].number;
+		}
+      //end for loop
+    }
 
 });
 
