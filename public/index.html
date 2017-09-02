@@ -54,8 +54,8 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.4.0/js/ngDialog.min.js"></script>
 
         <!-- Angular Slider -->
-        <!--<link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/1.4.8/rzslider.min.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/1.4.8/rzslider.min.js"></script>-->
+        <!--<link rel = "stylesheet" href = "//cdnjs.cloudflare.com/ajax/libs/angularjs-slider/1.4.8/rzslider.min.css">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angularjs-slider/1.4.8/rzslider.min.js"></script>-->
 
     </head>
     
@@ -169,6 +169,16 @@
               <input id="pac-input" class="controls" type="text" placeholder="Search Box">
             </div>
           </div>
+      </div>
+
+      <div id="footer">
+        <md-slider-container>
+          <md-slider flex ng-model="vm.step" min="0" max="5" aria-label="blue" class="md-primary">
+          </md-slider>
+          <md-input-container>
+            <input flex type="number" ng-model="vm.step" aria-label="blue" aria-controls="blue-slider" min="1" max="5">
+          </md-input-container>
+        </md-slider-container>
       </div>
 
     <ng-map  id="map" center='current-position'

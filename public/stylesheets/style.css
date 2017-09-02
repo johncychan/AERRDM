@@ -89,6 +89,29 @@
         width: 345px;
       }
 
+      /* slider CSS */
+      #footer{
+        bottom: 10px;
+        right: 60px;
+        position: absolute;
+        z-index: 10;
+        width: 20%;
+      }
+
+      #slider-container{
+        /*margin: 0 auto;*/
+        padding: 20px;
+        width: 30%
+      }
+
+      #footer md-slider-container{
+        width: 80%;
+      }
+
+      #footer md-input-container input{
+        padding: 0 5px 0 10px !important; 
+      }
+
       /* header CSS */
       #header{
         top: 0;

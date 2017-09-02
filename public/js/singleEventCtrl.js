@@ -34,6 +34,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		vm.map.setZoom(10);
 	});
 
+
 	//put a marker by clicking mouse
 	vm.placeMarker = function(e){
 		if(vm.marker){
@@ -419,7 +420,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	var eol = [];
   	var lastVertex = 1;
   	var stepnum=0;
-    var step = 50; // 5; // metres
+    vm.step = 3; // 5; // metres
     var tick = 100; // milliseconds
 
   	function updatePoly(i,d) {
@@ -451,7 +452,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	    // timerHandle[index] = setTimeout("animate("+index+","+(d+step)+")", tick);
 	    // timerHandle[index] =  $timeout(animate(index, (d + step)), tick);
 	    timerHandle[index] =  $timeout(function() {
-	    	animate(index, (d + step));
+	    	animate(index, (d + vm.step*20));
 	    }, tick);
 
 	}
