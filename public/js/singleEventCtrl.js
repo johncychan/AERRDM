@@ -271,6 +271,15 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         $timeout(function() {
   			vm.stage = "Searching for Facilities";
   		}, 7500);
+
+  		$timeout(function() {
+  			vm.containerExtend = 'progress-extend';
+  			vm.contentExtend = 'progress-content-extend';
+  		}, 7600);
+
+  		$timeout(function() {
+  			vm.radarShow = true;
+  		}, 8100);
     };
 
 
