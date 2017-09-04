@@ -89,6 +89,29 @@
         width: 345px;
       }
 
+      /* slider CSS */
+      #footer{
+        bottom: 10px;
+        right: 60px;
+        position: absolute;
+        z-index: 10;
+        width: 20%;
+      }
+
+      #slider-container{
+        /*margin: 0 auto;*/
+        padding: 20px;
+        width: 30%
+      }
+
+      #footer md-slider-container{
+        width: 80%;
+      }
+
+      #footer md-input-container input{
+        padding: 0 5px 0 10px !important; 
+      }
+
       /* header CSS */
       #header{
         top: 0;
@@ -669,6 +692,18 @@
 
       #progress-menu-container{
         position: relative;
+
+        height: 260px;
+      }
+
+      .progress-extend{
+        transition: all linear 0.9s;
+        height: 350px !important;
+      }
+
+      .progress-content-extend{
+        transition: all linear 0.9s;
+        margin-top: 88px;
       }
 
       #progress-menu-container .modal-header{
@@ -693,7 +728,7 @@
         bottom: auto !important;
         padding-top: 10px !important;
         padding-bottom: 10px !important;
-        margin: 320px 0 20px 0;
+        margin: 320px 0 20px 10px;
         width: 500px;
         position: absolute !important;
         opacity: 0.9;
@@ -706,7 +741,8 @@
         padding: 0 !important;
         background-color: #FFF !important;
         width: 470px !important;
-        height: 260px;
+
+        /*height: 350px;*/
       }
 
       [id^=ngdialog] .modal-header{
@@ -720,6 +756,8 @@
         overflow:hidden;
         display:table;
         width: 100%;
+
+        /*margin-top: 88px;*/
       }
 
       @media only screen and (min-width: 2000px) {
@@ -784,6 +822,67 @@
 
       #event-info-container.ng-hide{
         opacity: 0;
+
+      }
+
+      #task-info-container.ng-hide {
+        opacity: 0;
+      }
+
+      #radar.ng-hide{
+        opacity: 0;
+      }
+
+      .progressCirculardemoBasicUsage body {
+        padding: 20px; }
+
+      .progressCirculardemoBasicUsage h4 {
+        margin: 10px 0; }
+
+      .progressCirculardemoBasicUsage md-progress-circular {
+        margin-bottom: 20px; }
+
+      .progressCirculardemoBasicUsage #loaders > md-switch {
+        margin: 0;
+        margin-left: 10px;
+        margin-top: -10px; }
+
+      .progressCirculardemoBasicUsage #loaders > h5 {
+        margin-top: 0; }
+
+      .progressCirculardemoBasicUsage #loaders > p {
+        margin-right: 20px;
+        margin-bottom: 24px; }
+
+      .progressCirculardemoBasicUsage p.small {
+        font-size: 0.8em;
+        margin-top: -18px; }
+
+      .progressCirculardemoBasicUsage hr {
+        width: 100%;
+        margin-top: 20px;
+        border-color: rgba(221, 221, 177, 0.1); }
+
+      .progressCirculardemoBasicUsage p.small > code {
+        font-size: 0.8em; }
+
+      .progressCirculardemoBasicUsage .visible {
+        border-color: rgba(221, 221, 177, 0); }
+
+
+      #search_radar{
+        width: 50%;
+      }
+
+      #search_radar #radar{
+        transition: all linear 1.2s;
+        display: block;
+        left: 50%;
+        margin:0 auto;
+        margin: -125px 0 0 -125px;
+        position: absolute;
+        z-index: 10;
+        top: 45%;
       }
 
       #task-info-container.ng-hide {

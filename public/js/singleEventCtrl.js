@@ -34,6 +34,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		vm.map.setZoom(10);
 	});
 
+
 	//put a marker by clicking mouse
 	vm.placeMarker = function(e){
 		if(vm.marker){
@@ -47,11 +48,12 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 			});
 		}
 		//display the marker info
-		var htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div> " + 
+		vm.htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div> " + 
 		"<div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
-		vm.compiled = $compile(htmlElement)($scope)
+
+		vm.compiled = $compile(vm.htmlElement)($scope)
 		vm.marker.infoWin = new google.maps.InfoWindow({
 			// content: "<showTag></showTag>"
 			content: vm.compiled[0]
@@ -73,15 +75,26 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         	vm.lastOpenedInfoWindow.close();
     	}
 	}
-	vm.setDataField = function(){
-		//change center view
-		// vm.map.setZoom(25);
-		vm.map.setCenter(vm.marker.position);
-		// $scope.open = function(){
-			
-		// }
-		//pop a form ask user set the input field
+	
+	vm.callFunction = function(name){
+		if(angular.isFunction(vm[name]))
+			vm[name]()
+	}
 
+	vm.infoWinRedirect = function(toFunction){
+		// remove last compile element object
+		vm.compiled.remove();
+		// get function name 
+		vm.to_function = toFunction;
+		vm.htmlElement = "	<div><div><p id=\"event-setting-header\">Event information</p></div> " + 
+		"<div><button class=\"button continue-btn ripple\" ng-click=\"vm.callFunction(vm.to_function)\">" + "View progress" + "</button></div></div>"
+		// var htmlElement = "<showTag></showTag>"
+		//need to compile 
+		vm.compiled = $compile(vm.htmlElement)($scope)
+		vm.marker.infoWin = new google.maps.InfoWindow({
+			// content: "<showTag></showTag>"
+			content: vm.compiled[0]
+		});
 	}
 
 	vm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
@@ -129,24 +142,26 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		}
   	}
 
-  	vm.progrssMenuOpen = function () {
-	    ngDialog.open({ 
-	      template: 'eventProgress.html',
-	      overlay: false,
-	      showClose: false,
-	      scope: $scope,
-	      className: 'ngdialog-theme-default progress-menu draggable'       
-	    });
-    };
+  	// vm.progrssMenuOpen = function () {
+	  //   ngDialog.open({ 
+	  //     template: 'eventProgress.html',
+	  //     overlay: false,
+	  //     showClose: false,
+	  //     scope: $scope,
+	  //     className: 'ngdialog-theme-default progress-menu draggable'       
+	  //   });
+   //  };
 
 	// now start the simulation
 	vm.startSingleEvent = function(){
 		// close factor menu
 		$mdDialog.hide();
-
+		// close info window
 		vm.closeInfoWin();
-
+		// open progress menu
 		vm.progrssMenuOpen();
+		// redirect info window to progress menu
+		vm.infoWinRedirect("progrssMenuOpen");
 
 		// console.log($scope.factor);
 		// vm.map.setZoom(16);
@@ -234,7 +249,8 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 
 
   	vm.progrssMenuOpen = function () {
-        ngDialog.open({ 
+
+	    var dialog = ngDialog.open({ 
         	template: 'eventProgress.html',
         	overlay: false,
         	showClose: false,
@@ -257,6 +273,16 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         $timeout(function() {
   			vm.stage = "Searching for Facilities";
   		}, 7500);
+
+
+  		$timeout(function() {
+  			vm.containerExtend = 'progress-extend';
+  			vm.contentExtend = 'progress-content-extend';
+  		}, 7600);
+
+  		$timeout(function() {
+  			vm.radarShow = true;
+  		}, 8100);
     };
 
 
@@ -406,7 +432,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	var eol = [];
   	var lastVertex = 1;
   	var stepnum=0;
-    var step = 50; // 5; // metres
+    vm.step = 3; // 5; // metres
     var tick = 100; // milliseconds
 
   	function updatePoly(i,d) {
@@ -425,6 +451,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	        poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),endLocation[i].latlng);
 	    }
 	 }
+
   	function animate(index,d) {
   		// console.log(index + " " + d);
 	   	if (d > eol[index]) {
@@ -437,7 +464,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	    // timerHandle[index] = setTimeout("animate("+index+","+(d+step)+")", tick);
 	    // timerHandle[index] =  $timeout(animate(index, (d + step)), tick);
 	    timerHandle[index] =  $timeout(function() {
-	    	animate(index, (d + step));
+	    	animate(index, (d + vm.step*20));
 	    }, tick);
 
 	}
@@ -457,10 +484,11 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		}, 50);
   	}
 
-	  	function receiveEventTask(){
-      vm.services = [];
-      //for loop to receive type of resources needed
-        //push()
+
+  	function receiveEventTask(){
+  	vm.services = [];
+  	//for loop to receive type of resources needed
+   	 //push()
         vm.services =
         [{
           resource: 'Police car',
@@ -473,7 +501,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         for(var i = 0; i < vm.services.length; i++){
 	        vm.totalResource += vm.services[i].number;
 		}
-      //end for loop
+
     }
 
 });
