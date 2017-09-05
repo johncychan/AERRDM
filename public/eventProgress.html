@@ -1,4 +1,4 @@
-<div id="progress-menu-container" class="{{vm.containerExtend}}">
+<div id="progress-menu-container" class="{{singleVm.containerExtend}}">
 	<div class="modal-header safari_top_radius">
 		<div id="progress-title-content">
 			<div class="icon-container">
@@ -13,47 +13,47 @@
       <md-progress-circular md-mode="indeterminate"></md-progress-circular>
     </div>
     <div id="stageInfo">
-      <blink >{{vm.stage}}</blink>
+      <blink >{{singleVm.stage}}</blink>
     </div>
     <div id="search_radar">
-      <canvas id="radar" width="200" height="200" ng-show = "vm.radarShow" ng-cloak ></canvas>
+      <canvas id="radar" width="200" height="200" ng-show = "singleVm.radarShow" ng-cloak ></canvas>
     </div>
   </div>
-	<div id="progress-content" class="{{vm.contentExtend}}">
+	<div id="progress-content" class="{{singleVm.contentExtend}}">
     <div class="info-row">
-  		<div id="event-info-container"  ng-show = "vm.eventShow" ng-cloak>
+  		<div id="event-info-container"  ng-show = "singleVm.eventShow" ng-cloak>
   			<table id="event-info-table"> 
           <tr>
             <th colspan="2">Event Information</th>
           </tr>
           <tr>
             <td class="factor-key">Event Severity</td>
-            <td class="factor-value">Level {{vm.factor['Severity Level']}}</td>
+            <td class="factor-value">Level {{singleVm.factor['Severity Level']}}</td>
           </tr>
           <tr>
             <td class="factor-key">Event Category </td>
-            <td class="factor-value">{{vm.factor['Category']}}</td>
+            <td class="factor-value">{{singleVm.factor['Category']}}</td>
           </tr>
-          <tr ng-repeat="service in vm.services">
+          <tr ng-repeat="service in singleVm.services">
             <td class="factor-key"> Required Service {{$index + 1}}</td>
             <td class="factor-value">{{service['resource']}}</td>
           </tr>
         </table>
   		</div>
-      <div id="task-info-container" ng-show = "vm.taskShow" ng-cloak>
+      <div id="task-info-container" ng-show = "singleVm.taskShow" ng-cloak>
         <table id="event-info-table"> 
           <tr>
             <th colspan="2">Task Information</th>
           </tr>
           <tr>
             <td class="factor-key">Num. of resources</td>
-            <td class="factor-value">{{vm.totalResource}}</td>
+            <td class="factor-value">{{singleVm.totalResource}}</td>
           </tr>
           <tr>
             <td class="factor-key">Average deadline</td>
-            <td class="factor-value">{{vm.factor['Deadline']}} mins</td>
+            <td class="factor-value">{{singleVm.factor['Deadline']}} mins</td>
           </tr>
-          <tr ng-repeat="service in vm.services">
+          <tr ng-repeat="service in singleVm.services">
             <td class="factor-key"> Required Service {{$index + 1}}</td>
             <td class="factor-value">{{service['number']}} - {{service['resource']}}</td>
           </tr>

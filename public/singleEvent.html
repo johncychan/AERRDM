@@ -1,0 +1,13 @@
+<ng-map  id="map" center='current-position'
+    geo-fallback-center="[40.74, -74.18]"
+    map-type-control="false" on-click="singleVm.placeMarker()" fullscreen-control="false"
+></ng-map>
+<div id="footer">
+<md-slider-container>
+  <md-slider flex ng-model="singleVm.step" min="0" max="5" aria-label="blue" class="md-primary">
+  </md-slider>
+  <md-input-container>
+    <input flex type="number" ng-model="singleVm.step" aria-label="blue" aria-controls="blue-slider" min="1" max="5">
+  </md-input-container>
+</md-slider-container>
+</div>
