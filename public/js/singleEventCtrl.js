@@ -1,10 +1,7 @@
-var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog']);
-
-
-app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog){
+app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog){
 
 	//map initialization
-	var vm = this;
+	var singleVm = this;
 	var directionDisplay;
 	var directionsService;
 	var stepDisplay;
@@ -30,118 +27,119 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	var nextPanoId;
 
 	NgMap.getMap("map").then(function(map){
-		vm.map = map;
-		vm.map.setZoom(10);
+		singleVm.map = map;
+		singleVm.map.setZoom(10);
 	});
 
 
 	//put a marker by clicking mouse
-	vm.placeMarker = function(e){
-		if(vm.marker){
-			vm.marker.setMap(null);
+	singleVm.placeMarker = function(e){
+		if(singleVm.marker){
+			singleVm.marker.setMap(null);
 		}else{
-			vm.marker = new google.maps.Marker({
+			singleVm.marker = new google.maps.Marker({
 				position: e.latLng,
-				map: vm.map,
+				map: singleVm.map,
 				draggable: true,
 				
 			});
 		}
 		//display the marker info
-		vm.htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div> " + 
-		"<div><button class=\"button continue-btn ripple\" ng-click=\"vm.setDataField()\">" + "Set event data" + "</button></div></div>"
+		singleVm.htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div> " + 
+		"<div><button class=\"button continue-btn ripple\" ng-click=\"singleVm.setDataField()\">" + "Set event data" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
-		vm.compiled = $compile(vm.htmlElement)($scope)
-		vm.marker.infoWin = new google.maps.InfoWindow({
+
+		singleVm.compiled = $compile(singleVm.htmlElement)($scope)
+		singleVm.marker.infoWin = new google.maps.InfoWindow({
 			// content: "<showTag></showTag>"
-			content: vm.compiled[0]
+			content: singleVm.compiled[0]
 		});
 		//show the infomation window
-		vm.marker.addListener('click', function($scope){
-			vm.marker.infoWin.open(vm.map, vm.marker);
+		singleVm.marker.addListener('click', function($scope){
+			singleVm.marker.infoWin.open(singleVm.map, singleVm.marker);
 		});
 		//clear onclick event in marker
-		google.maps.event.clearListeners(vm.map, 'click');
+		google.maps.event.clearListeners(singleVm.map, 'click');
 
 		//set info windows
-		vm.lastOpenedInfoWindow = vm.marker.infoWin;
+		singleVm.lastOpenedInfoWindow = singleVm.marker.infoWin;
 
 	}
 
-	vm.closeInfoWin = function(){
-		if (vm.lastOpenedInfoWindow) {
-        	vm.lastOpenedInfoWindow.close();
+	singleVm.closeInfoWin = function(){
+		if (singleVm.lastOpenedInfoWindow) {
+        	singleVm.lastOpenedInfoWindow.close();
     	}
 	}
 	
-	vm.callFunction = function(name){
-		if(angular.isFunction(vm[name]))
-			vm[name]()
+	singleVm.callFunction = function(name){
+		if(angular.isFunction(singleVm[name]))
+			singleVm[name]()
 	}
 
-	vm.infoWinRedirect = function(toFunction){
+	singleVm.infoWinRedirect = function(toFunction){
 		// remove last compile element object
-		vm.compiled.remove();
+		singleVm.compiled.remove();
 		// get function name 
-		vm.to_function = toFunction;
-		vm.htmlElement = "	<div><div><p id=\"event-setting-header\">Event information</p></div> " + 
-		"<div><button class=\"button continue-btn ripple\" ng-click=\"vm.callFunction(vm.to_function)\">" + "View progress" + "</button></div></div>"
+		singleVm.to_function = toFunction;
+		singleVm.htmlElement = "	<div><div><p id=\"event-setting-header\">Event information</p></div> " + 
+		"<div><button class=\"button continue-btn ripple\" ng-click=\"singleVm.callFunction(singleVm.to_function)\">" + "View progress" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
-		vm.compiled = $compile(vm.htmlElement)($scope)
-		vm.marker.infoWin = new google.maps.InfoWindow({
+		singleVm.compiled = $compile(singleVm.htmlElement)($scope)
+		singleVm.marker.infoWin = new google.maps.InfoWindow({
 			// content: "<showTag></showTag>"
-			content: vm.compiled[0]
+			content: singleVm.compiled[0]
 		});
 	}
 
-	vm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
+	singleVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
 
-	vm.levelGenerator = function(){
+	singleVm.levelGenerator = function(){
 		return Math.floor((Math.random()*5)+1);
 	}
-	vm.categoryGenerator = function(){
-		var size = vm.category_list.length;
+	singleVm.categoryGenerator = function(){
+		var size = singleVm.category_list.length;
 		return Math.floor((Math.random()*size));
 	}
-	vm.expenditureGenerator = function(){
+	singleVm.expenditureGenerator = function(){
 		var max = 70; 
 		var min = 30
 		return Math.floor((Math.random()*(max-min+1))+min);
 	}
-	vm.velocityGenerator = function(){
+	singleVm.velocityGenerator = function(){
 		var max = 65;
 		var min = 30;
 		return Math.floor((Math.random()*(max-min+1))+min);
 	}
-	vm.deadlineGenerator = function(){
+	singleVm.deadlineGenerator = function(){
 		var max = 15;
 		var min = 5;
 		return Math.floor((Math.random()*(max-min+1))+min);
 	}
 
-	vm.factorGenerate = function(){
-  		vm.level = vm.levelGenerator();
-		vm.category = vm.categoryGenerator();
-		vm.expenditure = vm.expenditureGenerator();
-		vm.velocity = vm.velocityGenerator();
-		vm.deadline = vm.deadlineGenerator();
+	singleVm.factorGenerate = function(){
+  		singleVm.level = singleVm.levelGenerator();
+		singleVm.category = singleVm.categoryGenerator();
+		singleVm.expenditure = singleVm.expenditureGenerator();
+		singleVm.velocity = singleVm.velocityGenerator();
+		singleVm.deadline = singleVm.deadlineGenerator();
 
 		//Auto increment
-		vm.eId = 001;
+		singleVm.eId = 001;
 
-		vm.factor = {
-			'ID': vm.eId,
-			'Severity Level': vm.level,
-			'Category': vm.category_list[vm.category],
-			'Resource avg. expenditure': vm.expenditure,
-			'Resource avg. velocity': vm.velocity,
-			'Deadline': vm.deadline
+		singleVm.factor = {
+			'ID': singleVm.eId,
+			'Severity Level': singleVm.level,
+			'Category': singleVm.category_list[singleVm.category],
+			'Resource avg. expenditure': singleVm.expenditure,
+			'Resource avg. velocity': singleVm.velocity,
+			'Deadline': singleVm.deadline
 		}
   	}
 
-  	// vm.progrssMenuOpen = function () {
+  	// singleVm.progrssMenuOpen = function () {
 	  //   ngDialog.open({ 
 	  //     template: 'eventProgress.html',
 	  //     overlay: false,
@@ -152,25 +150,25 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
    //  };
 
 	// now start the simulation
-	vm.startSingleEvent = function(){
+	singleVm.startSingleEvent = function(){
 		// close factor menu
 		$mdDialog.hide();
 		// close info window
-		vm.closeInfoWin();
+		singleVm.closeInfoWin();
 		// open progress menu
-		vm.progrssMenuOpen();
+		singleVm.progrssMenuOpen();
 		// redirect info window to progress menu
-		vm.infoWinRedirect("progrssMenuOpen");
+		singleVm.infoWinRedirect("progrssMenuOpen");
 
 		// console.log($scope.factor);
-		// vm.map.setZoom(16);
-		vm.map.setCenter(vm.marker.position);
+		// singleVm.map.setZoom(16);
+		singleVm.map.setCenter(singleVm.marker.position);
 
 		// post data to back-end
 		var eventData = {
-			location: vm.marker.position,
-			eventId: vm.eId,
-			SeverityLevel: vm.level
+			location: singleVm.marker.position,
+			eventId: singleVm.eId,
+			SeverityLevel: singleVm.level
 		}
 		$http({
 		   method  : 'POST',
@@ -178,29 +176,29 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		//     // set the headers so angular passing info as form data (not request payload)
 		   headers : { 'Content-Type': 'application/json' },
 		   data    :  {
-		               ID: vm.factor["ID"],
-		               Severity: vm.factor["Severity Level"],
-		               Category: vm.factor["Category"],
-		               Expenditure: vm.factor["Resource avg. expenditure"],
-		               Velocity: vm.factor["Resource avg. velocity"],
-		               Deadline: vm.factor["Deadline"],
-		               Location: vm.marker.position.toUrlValue()
+		               ID: singleVm.factor["ID"],
+		               Severity: singleVm.factor["Severity Level"],
+		               Category: singleVm.factor["Category"],
+		               Expenditure: singleVm.factor["Resource avg. expenditure"],
+		               Velocity: singleVm.factor["Resource avg. velocity"],
+		               Deadline: singleVm.factor["Deadline"],
+		               Location: singleVm.marker.position.toUrlValue()
 		             }
 
 		  }).then(function success(response) {
-			console.log(response.data);
+			// console.log(response.data);
 		  });
 
 
 		//receive facilities location from server and put markers on map
 		//using fake data right now
 		//wait back end implementation
-		// vm.facilities = [];
-		// vm.destinations  = [];
+		// singleVm.facilities = [];
+		// singleVm.destinations  = [];
 		// var facility1 = {lat: -34.4105585, lng: 150.8783824};
 		// var facility2 = {lat: -34.4853985, lng: 150.872664};
-		// vm.facilities.push(facility1);
-		// vm.facilities.push(facility2);
+		// singleVm.facilities.push(facility1);
+		// singleVm.facilities.push(facility2);
 		startLoc[0] = 'Sydney';
 		startLoc[1] = 'Hyams Beach';
 		endLoc = 'University of Wollongong';
@@ -209,7 +207,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		// for(var i = 0; i < endLoc.length; ++i){
 		// 	facilitiesMarker[i] = new google.maps.Marker({
 		// 		position: startLoc[i],
-		// 		map: vm.map,
+		// 		map: singleVm.map,
 		// 		animation: google.maps.Animation.DROP
 		// 	});
 		// }
@@ -221,9 +219,9 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		setRoutes();
 	} 
 
-	vm.setDataField = function(){
+	singleVm.setDataField = function(){
 		// generate factor
-		vm.factorGenerate();
+		singleVm.factorGenerate();
 
 		$mdDialog.show(
 			{
@@ -237,17 +235,17 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	};
 
 	// reset factor
-	vm.reset = function () {
-		vm.factorGenerate();
+	singleVm.reset = function () {
+		singleVm.factorGenerate();
 	}
 
 	// close dialog
-	vm.close = function () {
+	singleVm.close = function () {
     	$mdDialog.cancel();
   	}
 
 
-  	vm.progrssMenuOpen = function () {
+  	singleVm.progrssMenuOpen = function () {
 
 	    var dialog = ngDialog.open({ 
         	template: 'eventProgress.html',
@@ -257,28 +255,30 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
 
-  		vm.stage = "Analysing Event";
+
+  		singleVm.stage = "Analysing Event";
   		$timeout(function() {
-  			vm.eventShow = true;
+  			singleVm.eventShow = true;
   		}, 1500);
        
         $timeout(function() {
-  			vm.stage = "Establishing Plan";
+  			singleVm.stage = "Establishing Plan";
   		}, 3500);
 		$timeout(function() {
-  			vm.taskShow = true;
+  			singleVm.taskShow = true;
   		}, 5500);
         $timeout(function() {
-  			vm.stage = "Searching for Facilities";
+  			singleVm.stage = "Searching for Facilities";
   		}, 7500);
 
+
   		$timeout(function() {
-  			vm.containerExtend = 'progress-extend';
-  			vm.contentExtend = 'progress-content-extend';
+  			singleVm.containerExtend = 'progress-extend';
+  			singleVm.contentExtend = 'progress-content-extend';
   		}, 7600);
 
   		$timeout(function() {
-  			vm.radarShow = true;
+  			singleVm.radarShow = true;
   		}, 8100);
     };
 
@@ -286,7 +286,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	function createMarker(latlng, label, html) {
 	    var marker = new google.maps.Marker({
 	        position: latlng,
-	        map: vm.map,
+	        map: singleVm.map,
 	        title: label,
 	        zIndex: Math.round(latlng.lat()*-100000)<<5
 	        });
@@ -302,10 +302,10 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 		var direction = 1;
 
 		var circleOption = {
-			center: vm.marker.position,
+			center: singleVm.marker.position,
 			fillColor: '#3878c7',
 			fillOpacity: 0.6,
-			map: vm.map,
+			map: singleVm.map,
 			radius: 10000,
 			strokeColor: '#3878c7',
 	        strokeOpacity: 1,
@@ -332,7 +332,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		var directionDisplay = new Array();
 
   		var rendererOptions = {
-  			map: vm.map,
+  			map: singleVm.map,
   			suppressMarkers : true,
   			preserveViewport: true
   		}
@@ -351,7 +351,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		// }
   		var request = {
   			origin: startLoc[0],
-  			destination: vm.marker.position,
+  			destination: singleVm.marker.position,
   			travelMode: travelMode
 
   		}
@@ -387,7 +387,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 
 
 		            disp = new google.maps.DirectionsRenderer(rendererOptions);     
-		            disp.setMap(vm.map);
+		            disp.setMap(singleVm.map);
 		            disp.setDirections(response);
 
 		            //create resources markers
@@ -417,7 +417,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	            	}
 	            	
 	  			}
-	  			polyline[routeNum].setMap(vm.map);		         
+	  			polyline[routeNum].setMap(singleVm.map);		         
 			    //map.fitBounds(bounds);
 		        startAnimation(routeNum); 
 
@@ -429,7 +429,7 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   	var eol = [];
   	var lastVertex = 1;
   	var stepnum=0;
-    vm.step = 3; // 5; // metres
+    singleVm.step = 3; // 5; // metres
     var tick = 100; // milliseconds
 
   	function updatePoly(i,d) {
@@ -458,20 +458,14 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
 	    var p = polyline[index].GetPointAtDistance(d);
 	    marker[index].setPosition(p);
 	    updatePoly(index,d);
-	    // timerHandle[index] = setTimeout("animate("+index+","+(d+step)+")", tick);
-	    // timerHandle[index] =  $timeout(animate(index, (d + step)), tick);
 	    timerHandle[index] =  $timeout(function() {
-	    	animate(index, (d + vm.step*20));
+	    	animate(index, (d + singleVm.step*20));
 	    }, tick);
 
 	}
 
   	function startAnimation(index){
 
-
-  		// console.log("start marker animation");
-  		// if(timerHandle[index])
-  		// 	$timeout.cancel(timerHandle[index]);
   		eol[index] = polyline[index].Distance();
 
   		poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
@@ -481,11 +475,12 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
   		}, 50);
   	}
 
+
   	function receiveEventTask(){
-  	vm.services = [];
+  	singleVm.services = [];
   	//for loop to receive type of resources needed
    	 //push()
-        vm.services =
+        singleVm.services =
         [{
           resource: 'Police car',
           number: 2
@@ -493,11 +488,11 @@ app.controller('mainContrl', function(NgMap, $compile, $scope, $mdDialog, $http,
           resource: 'Ambulance',
           number: 3
         }];
-        vm.totalResource = 0;
-        for(var i = 0; i < vm.services.length; i++){
-	        vm.totalResource += vm.services[i].number;
+        singleVm.totalResource = 0;
+        for(var i = 0; i < singleVm.services.length; i++){
+	        singleVm.totalResource += singleVm.services[i].number;
 		}
-  	//end for loop
+
     }
 
 });
@@ -523,7 +518,7 @@ app.directive("showForm", function(){
 
 app.directive("showTag", function(){
 	return{
-		template: "<div><h1><button ng-click=vm.setDataField()>" + "Start simulation" + "</button></h1></div>"
+		template: "<div><h1><button ng-click=singleVm.setDataField()>" + "Start simulation" + "</button></h1></div>"
 		// template: "<p><p>"
 	};
 });

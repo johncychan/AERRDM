@@ -58,7 +58,7 @@
 
     </head>
     
-    <body ng-app="meanMapApp" ng-controller = "mainContrl as vm">
+    <body ng-app="meanMapApp">
 
       <!-- header -->
       <div id="header" class="clearfix">
@@ -74,10 +74,10 @@
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu" id="option-container">
                       <li>
-                          <a href="#" class="event-option">Single Event</a>
+                          <a href="/#/" class="event-option">Single Event</a>
                       </li>
                       <li>
-                          <a href="#" class="event-option">Multiple Events</a>
+                          <a href="/#/multiEvent" class="event-option">Multiple Events</a>
                       </li>
                       <li>
                           <a href="#" class="event-option">Dynamic Events</a>
@@ -151,15 +151,6 @@
         </md-sidenav>
       </div>
 
-      <!-- right side nav (Not necessary) -->
-      <!-- <div id="rightSideNav" class="rightSideNav clearfix">
-        <a href="javascript:void(0)" class="closebtn" id="rightNavClose">&times;</a>
-        <a href="#">About</a>
-        <a href="#">Services</a>
-        <a href="#">Clients</a>
-        <a href="#">Contact</a>
-      </div> -->
-
       <!-- search box and hamburger menu -->
       <div class="search-container" >
           <div class="searchbox-hamburger" >
@@ -169,21 +160,8 @@
             </div>
           </div>
       </div>
+      <ng-view></ng-view>
 
-      <div id="footer">
-        <md-slider-container>
-          <md-slider flex ng-model="vm.step" min="0" max="5" aria-label="blue" class="md-primary">
-          </md-slider>
-          <md-input-container>
-            <input flex type="number" ng-model="vm.step" aria-label="blue" aria-controls="blue-slider" min="1" max="5">
-          </md-input-container>
-        </md-slider-container>
-      </div>
-
-    <ng-map  id="map" center='current-position'
-    geo-fallback-center="[40.74, -74.18]"
-    map-type-control="false" on-click="vm.placeMarker()" fullscreen-control="false"
-    ></ng-map>
   </body>
 
 </html>

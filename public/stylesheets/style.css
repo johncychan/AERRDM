@@ -692,6 +692,7 @@
 
       #progress-menu-container{
         position: relative;
+
         height: 260px;
       }
 
@@ -740,6 +741,7 @@
         padding: 0 !important;
         background-color: #FFF !important;
         width: 470px !important;
+
         /*height: 350px;*/
       }
 
@@ -754,6 +756,7 @@
         overflow:hidden;
         display:table;
         width: 100%;
+
         /*margin-top: 88px;*/
       }
 
@@ -819,6 +822,7 @@
 
       #event-info-container.ng-hide{
         opacity: 0;
+
       }
 
       #task-info-container.ng-hide {
@@ -880,6 +884,46 @@
         z-index: 10;
         top: 45%;
       }
+
+      #task-info-container.ng-hide {
+        opacity: 0;
+      }
+
+      .progressCirculardemoBasicUsage body {
+        padding: 20px; }
+
+      .progressCirculardemoBasicUsage h4 {
+        margin: 10px 0; }
+
+      .progressCirculardemoBasicUsage md-progress-circular {
+        margin-bottom: 20px; }
+
+      .progressCirculardemoBasicUsage #loaders > md-switch {
+        margin: 0;
+        margin-left: 10px;
+        margin-top: -10px; }
+
+      .progressCirculardemoBasicUsage #loaders > h5 {
+        margin-top: 0; }
+
+      .progressCirculardemoBasicUsage #loaders > p {
+        margin-right: 20px;
+        margin-bottom: 24px; }
+
+      .progressCirculardemoBasicUsage p.small {
+        font-size: 0.8em;
+        margin-top: -18px; }
+
+      .progressCirculardemoBasicUsage hr {
+        width: 100%;
+        margin-top: 20px;
+        border-color: rgba(221, 221, 177, 0.1); }
+
+      .progressCirculardemoBasicUsage p.small > code {
+        font-size: 0.8em; }
+
+      .progressCirculardemoBasicUsage .visible {
+        border-color: rgba(221, 221, 177, 0); }
 
 
       /* end event progress */
