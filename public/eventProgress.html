@@ -9,14 +9,16 @@
 	</div>
 
   <div id="progressStatus">
-    <div layout="row" layout-sm="column" layout-align="space-around">
-      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-    </div>
     <div id="stageInfo">
-      <blink >{{singleVm.stage}}</blink>
+      <blink id="stage">{{singleVm.stage}}</blink>
+    </div>
+    <div id="progressBar">
+      <div layout="row" layout-sm="column" layout-align="space-around">
+        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+      </div>
     </div>
     <div id="search_radar">
-      <canvas id="radar" width="200" height="200" ng-show = "singleVm.radarShow" ng-cloak ></canvas>
+      <canvas id="radar" width="230" height="230" ng-show = "singleVm.radarShow" ng-cloak ></canvas>
     </div>
   </div>
 	<div id="progress-content" class="{{singleVm.contentExtend}}">

@@ -2,12 +2,25 @@
     geo-fallback-center="[40.74, -74.18]"
     map-type-control="false" on-click="singleVm.placeMarker()" fullscreen-control="false"
 ></ng-map>
+
+<!-- ng-show = "singleVm.panelShow" -->
+<nav class="menu draggable"  >
+  <input type="checkbox" href="#" class="menu-open" name="menu-open" id="menu-open"/>
+  <label class="menu-open-button" for="menu-open">
+  	<i class="fa fa-gear gear" aria-hidden="true"></i>
+    <span class="hamburger hamburger-1"></span>
+    <span class="hamburger hamburger-2"></span>
+    <span class="hamburger hamburger-3"></span>
+  </label>
+
+  <a ng-click = "singleVm.placeMarker()" class="menu-item ripple"> <i class="fa fa-map-marker" aria-hidden="true"></i> </a>
+  <a ng-click = "singleVm.stepControl(-1)" class="menu-item ripple"> <i class="fa fa-backward"></i> </a>
+  <a ng-click = "singleVm.stepControl(+1)" class="menu-item ripple"> <i class="fa fa-forward"></i> </a>
+  <a ng-click = "singleVm.stopTimeout()" class="menu-item ripple"> <i class="fa fa-stop"></i> </a>
+  <a ng-click = "singleVm.pauseTimeout()" class="menu-item ripple"> <i class="fa fa-pause"> </i> </a>
+  <a ng-click = "singleVm.restartTimeout()" class="menu-item ripple"> <i class="fa fa-play"></i> </a>
+</nav>
+
 <div id="footer">
-<md-slider-container>
-  <md-slider flex ng-model="singleVm.step" min="0" max="5" aria-label="blue" class="md-primary">
-  </md-slider>
-  <md-input-container>
-    <input flex type="number" ng-model="singleVm.step" aria-label="blue" aria-controls="blue-slider" min="1" max="5">
-  </md-input-container>
-</md-slider-container>
+<!-- -->
 </div>
