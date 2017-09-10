@@ -156,6 +156,10 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		// close info window
 		singleVm.closeInfoWin();
 		// open progress menu
+
+		//
+		singleVm.progressInfoControl();
+
 		singleVm.progrssMenuOpen();
 		// redirect info window to progress menu
 		singleVm.infoWinRedirect("progrssMenuOpen");
@@ -245,6 +249,35 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   	}
 
 
+  	var totalProgressStage = 6;
+  	var progressCurrentStage = 0;
+  	var progressHandle = [];
+
+  	singleVm.progressInfoControl = function(){
+  		singleVm.stage = "Analysing Event";
+
+
+  		$timeout(function() {
+  			singleVm.eventShow = true;
+  		}, 1500);
+        $timeout(function() {
+  			singleVm.stage = "Establishing Plan";
+  		}, 3500);
+		$timeout(function() {
+  			singleVm.taskShow = true;
+  		}, 5500);
+        $timeout(function() {
+  			singleVm.stage = "Searching for Facilities";
+  		}, 7500);
+  		$timeout(function() {
+  			singleVm.containerExtend = 'progress-extend';
+  			singleVm.contentExtend = 'progress-content-extend';
+  		}, 7600);
+  		$timeout(function() {
+  			singleVm.radarShow = true;
+  		}, 8100);
+  	}
+
   	singleVm.progrssMenuOpen = function () {
 
 	    var dialog = ngDialog.open({ 
@@ -255,31 +288,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
 
-
-  		singleVm.stage = "Analysing Event";
-  		$timeout(function() {
-  			singleVm.eventShow = true;
-  		}, 1500);
-       
-        $timeout(function() {
-  			singleVm.stage = "Establishing Plan";
-  		}, 3500);
-		$timeout(function() {
-  			singleVm.taskShow = true;
-  		}, 5500);
-        $timeout(function() {
-  			singleVm.stage = "Searching for Facilities";
-  		}, 7500);
-
-
-  		$timeout(function() {
-  			singleVm.containerExtend = 'progress-extend';
-  			singleVm.contentExtend = 'progress-content-extend';
-  		}, 7600);
-
-  		$timeout(function() {
-  			singleVm.radarShow = true;
-  		}, 8100);
+        // singleVm.panelShow = true;
     };
 
 
@@ -429,8 +438,21 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   	var eol = [];
   	var lastVertex = 1;
   	var stepnum=0;
-    singleVm.step = 3; // 5; // metres
+  	var maxStep = 5; // max distance per move
+    singleVm.step = 3; // 3; // metres
+    var playStop = true; // true = play, false = stop
     var tick = 100; // milliseconds
+
+    var current_index = 0;
+    var current_point = 0;
+
+    singleVm.stepControl = function(step){
+    	singleVm.step = singleVm.step + step;
+    	if(singleVm.step > maxStep)
+    		singleVm.step = maxStep;
+    	else if(singleVm.step < 1)
+    		singleVm.step = 1;
+    }
 
   	function updatePoly(i,d) {
 	 // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
@@ -449,7 +471,34 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	    }
 	 }
 
+
+	// stop simulation
+	singleVm.stopTimeout = function(){
+		//reset map
+		//clear current event
+	}
+
+	// pause simulation
+	singleVm.pauseTimeout = function(){
+		if(playStop){
+			playStop = false;
+			$timeout.cancel(timerHandle[current_index]);
+		}
+	}
+
+	// play simulation after paused
+	singleVm.restartTimeout = function(){
+		if(!playStop){
+			playStop = true;
+			timerHandle[current_index] =  $timeout(function() {
+		    	animate(current_index, (current_point + singleVm.step*20));
+		    }, tick);
+		}
+	}
+
   	function animate(index,d) {
+  		current_index = index;
+  		current_point = d;
   		// console.log(index + " " + d);
 	   	if (d > eol[index]) {
 	      	marker[index].setPosition(endLocation[index].latlng);
@@ -465,7 +514,6 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	}
 
   	function startAnimation(index){
-
   		eol[index] = polyline[index].Distance();
 
   		poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
@@ -477,9 +525,10 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
 
   	function receiveEventTask(){
-  	singleVm.services = [];
-  	//for loop to receive type of resources needed
-   	 //push()
+
+	  	singleVm.services = [];
+	  	//for loop to receive type of resources needed
+	   	 //push()
         singleVm.services =
         [{
           resource: 'Police car',

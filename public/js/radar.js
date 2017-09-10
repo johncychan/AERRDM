@@ -9,7 +9,7 @@ var canvasLoader = function(){
     self.ctx = self.canvas.getContext('2d');
     self.ctx.lineWidth = .5;
     self.ctx.strokeStyle = 'rgba(0,0,0,.75)';
-    self.count = 25;
+    self.count = 35;
     self.rotation = 270*(Math.PI/180);		
     self.speed = 7;
     self.canvasLoop();
