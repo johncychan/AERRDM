@@ -11,7 +11,12 @@ app.config(function($routeProvider) {
 	.when("/multiEvent",
 	{
 		templateUrl: "multiEvent.html",
-		controller: "multeEventCtrl",
+		controller: "multiEventCtrl",
 		controllerAs: "multiVm"
+	})
+	.when("/facilityWindow",
+	{
+		templateUrl: "facilityWindow.html"
+
 	})
 })

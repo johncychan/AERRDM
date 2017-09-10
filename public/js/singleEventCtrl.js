@@ -5,7 +5,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	var directionDisplay;
 	var directionsService;
 	var stepDisplay;
-
+	$scope.headerMes = "Single Event"
 
 	var position;
 	var marker = [];
