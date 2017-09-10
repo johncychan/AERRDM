@@ -26,9 +26,30 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	var panoClient;
 	var nextPanoId;
 
+	var iconBase = "./img/";
+	var icons = {
+		ambulance:{
+			url: iconBase + "ambulance.svg"
+		},
+		fireTruck:{
+			icon: iconBase + "firetruck.svg"
+		},
+		policeCar:{
+			icon: iconBase + "police-car.svg"
+		},
+		hospital:{
+			icon: iconBase + "hospital.svg"
+		},
+		fireStation:{
+			icon: iconBase + "fire-station.svg"
+		},
+		policeStation:{
+			icon: iconBase + "polica-station.svg"
+		}
+	};
 	NgMap.getMap("map").then(function(map){
 		singleVm.map = map;
-		singleVm.map.setZoom(10);
+		singleVm.map.setZoom(14);
 	});
 
 
@@ -94,7 +115,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		});
 	}
 
-	singleVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
+	singleVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage", "Conflagration"];
 
 	singleVm.levelGenerator = function(){
 		return Math.floor((Math.random()*5)+1);
@@ -160,6 +181,8 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		//
 		singleVm.progressInfoControl();
 
+		$timeout(searchCircle(), 500000);
+
 		singleVm.progrssMenuOpen();
 		// redirect info window to progress menu
 		singleVm.infoWinRedirect("progrssMenuOpen");
@@ -194,32 +217,12 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		  });
 
 
-		//receive facilities location from server and put markers on map
-		//using fake data right now
-		//wait back end implementation
-		// singleVm.facilities = [];
-		// singleVm.destinations  = [];
-		// var facility1 = {lat: -34.4105585, lng: 150.8783824};
-		// var facility2 = {lat: -34.4853985, lng: 150.872664};
-		// singleVm.facilities.push(facility1);
-		// singleVm.facilities.push(facility2);
 		startLoc[0] = 'Sydney';
 		startLoc[1] = 'Hyams Beach';
 		endLoc = 'University of Wollongong';
-		
 
-		// for(var i = 0; i < endLoc.length; ++i){
-		// 	facilitiesMarker[i] = new google.maps.Marker({
-		// 		position: startLoc[i],
-		// 		map: singleVm.map,
-		// 		animation: google.maps.Animation.DROP
-		// 	});
-		// }
-		
-		//set the routes between startloc and endloc
-//********************************
 		receiveEventTask();
-		searchCircle();
+		// searchCircle();
 		setRoutes();
 	} 
 
@@ -297,7 +300,8 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	        position: latlng,
 	        map: singleVm.map,
 	        title: label,
-	        zIndex: Math.round(latlng.lat()*-100000)<<5
+	        zIndex: Math.round(latlng.lat()*-100000)<<5,
+	        icon: "./img/police-car.svg"
 	        });
 	        marker.myname = label;
 
@@ -350,21 +354,21 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
   		var travelMode = google.maps.DirectionsTravelMode.DRIVING;
   		var requests = new Array();
-  		// for(var i = 0; i < startLoc.length; ++i){
-  		// 	requests[i] = {
-  		// 		origin: startLoc[i],
-  		// 		destination: endLoc,
-  		// 		travelMode: travelMode
-  		// 	};
-  		// 	directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
-  		// }
-  		var request = {
-  			origin: startLoc[0],
-  			destination: singleVm.marker.position,
-  			travelMode: travelMode
-
+  		for(var i = 0; i < startLoc.length; ++i){
+  			requests[i] = {
+  				origin: startLoc[i],
+  				destination: singleVm.marker.position,
+  				travelMode: travelMode
+  			};
+  			directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
   		}
-  		directionsService.route(request, makeRouteCallback(0, directionDisplay[0]));
+  		// var request = {
+  		// 	origin: startLoc[0],
+  		// 	destination: singleVm.marker.position,
+  		// 	travelMode: travelMode
+
+  		// }
+  		// directionsService.route(request, makeRouteCallback(0, directionDisplay[0]));
   		
   		function makeRouteCallback(routeNum, dip){
 	  		if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
