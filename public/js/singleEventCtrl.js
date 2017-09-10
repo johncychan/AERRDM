@@ -5,7 +5,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	var directionDisplay;
 	var directionsService;
 	var stepDisplay;
-
+	$scope.headerMes = "Single Event"
 
 	var position;
 	var marker = [];
@@ -255,6 +255,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
   	singleVm.progressInfoControl = function(){
   		singleVm.stage = "Analysing Event";
+
 
   		$timeout(function() {
   			singleVm.eventShow = true;
@@ -506,7 +507,6 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	    var p = polyline[index].GetPointAtDistance(d);
 	    marker[index].setPosition(p);
 	    updatePoly(index,d);
-
 	    timerHandle[index] =  $timeout(function() {
 	    	animate(index, (d + singleVm.step*20));
 	    }, tick);
@@ -525,6 +525,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
 
   	function receiveEventTask(){
+
 	  	singleVm.services = [];
 	  	//for loop to receive type of resources needed
 	   	 //push()

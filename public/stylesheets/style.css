@@ -701,6 +701,7 @@
 
       #progress-menu-container{
         position: relative;
+
         height: 260px;
       }
 
@@ -764,6 +765,7 @@
         overflow:hidden;
         display:table;
         width: 100%;
+
         margin-top: 12px;
         /*padding-top: 80px;*/
       }
@@ -839,6 +841,7 @@
 
       #event-info-container.ng-hide{
         opacity: 0;
+
       }
 
       #task-info-container.ng-hide {
