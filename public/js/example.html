@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-<title>GeekOnJava: Directions Complex</title>
+<title></title>
   
 
 <style>
@@ -38,15 +38,15 @@ body{height:100%;margin:0px;font-family: Helvetica,Arial;}
   var nextPanoId;
   
   var startLoc = new Array();
-  startLoc[0] = 'rio claro, trinidad';
-  startLoc[1] = 'preysal, trinidad';
-  // startLoc[2] = 'san fernando, trinidad';
+  startLoc[0] = 'Sydney';
+  startLoc[1] = 'Hyams Beach';
+  startLoc[2] = 'Moss Vale';
   // startLoc[3] = 'couva, trinidad';
 
   var endLoc = new Array();
-  endLoc[0] = 'princes town, trinidad';
-  endLoc[1] = 'tabaquite, trinidad';
-  // endLoc[2] = 'mayaro, trinidad';
+  endLoc[0] = 'Wollongong Hospital';
+  endLoc[1] = 'Wollongong Hospital';
+  endLoc[2] = 'Wollongong Hospital';
   // endLoc[3] = 'arima, trinidad';
 
 
@@ -66,19 +66,19 @@ function initialize() {
     }
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
-    address = 'Trinidad and Tobago'
+    address = 'Sydney'
     geocoder = new google.maps.Geocoder();
     geocoder.geocode( { 'address': address}, function(results, status) {
      map.fitBounds(results[0].geometry.viewport);
 
     }); 
-  // setRoutes();
+  setRoutes();
   } 
 
 
-function createMarker(latlng, label, html) {
+function createMarker(latlng, label, html, color) {
 // alert("createMarker("+latlng+","+label+","+html+","+color+")");
-    var contentString = '<b>'+label+'</b><br>'+html;
+    // var contentString = '<b>'+label+'</b><br>'+html;
     var marker = new google.maps.Marker({
         position: latlng,
         map: map,
@@ -220,6 +220,7 @@ function setRoutes(){
 //----------------------------------------------------------------------------
 
 function animate(index,d) {
+    console.log("animate funciton");
    if (d>eol[index]) {
 
       marker[index].setPosition(endLocation[index].latlng);
@@ -236,13 +237,14 @@ function animate(index,d) {
 //-------------------------------------------------------------------------
 
 function startAnimation(index) {
-        if (timerHandle[index]) clearTimeout(timerHandle[index]);
-        eol[index]=polyline[index].Distance();
-        map.setCenter(polyline[index].getPath().getAt(0));
+      console.log("start marker animation");
+      if (timerHandle[index]) clearTimeout(timerHandle[index]);
+      eol[index]=polyline[index].Distance();
+      map.setCenter(polyline[index].getPath().getAt(0));
 
-        poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)], strokeColor:"#FFFF00", strokeWeight:3});
+      poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)], strokeColor:"#FFFF00", strokeWeight:3});
 
-        timerHandle[index] = setTimeout("animate("+index+",50)",2000);  // Allow time for the initial map display
+      timerHandle[index] = setTimeout("animate("+index+",50)",2000);  // Allow time for the initial map display
 }
 
 //----------------------------------------------------------------------------    

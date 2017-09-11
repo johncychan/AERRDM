@@ -26,3 +26,24 @@ app.directive('draggable', function() {
   };
 });
  
+app.directive('blink', ['$interval', function($interval) {
+  return function(scope, element, attrs) {
+      var timeoutId;
+      
+      var blink = function() {
+        element.css('opacity') === '1' ? element.css('opacity', '0') : element.css('opacity', '1');
+      }
+      
+      timeoutId = $interval(function() {
+        blink();
+      }, 600);
+    
+      element.css({
+        'display': 'inline-block'
+      });
+      
+      element.on('$destroy', function() {
+        $interval.cancel(timeoutId);
+      });
+    };
+}]);
