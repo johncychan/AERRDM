@@ -173,13 +173,13 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	// now start the simulation
 	singleVm.startSingleEvent = function(){
 		// close factor menu
+		var progressStage = 0;
 		$mdDialog.hide();
 		// close info window
 		singleVm.closeInfoWin();
 		// open progress menu
 
-		//
-		singleVm.progressInfoControl();
+		singleVm.progressInfoControl(0);
 
 		$timeout(searchCircle(), 500000);
 
@@ -253,32 +253,48 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
 
   	var totalProgressStage = 6;
-  	var progressCurrentStage = 0;
+  	var currentProgressStage = 0;
   	var progressHandle = [];
+  	// var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
+  	var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500];
 
-  	singleVm.progressInfoControl = function(){
-  		singleVm.stage = "Analysing Event";
+  	singleVm.progressInfoControl = function(index){
+  		// currentProgressStage = index;
+  		if(index > delayArray.length){
+  			return;
+  		}
+  		if(index == 0)
+  			singleVm.stage = "Analysing Event";
 
-
-  		$timeout(function() {
+  		if(index == 1){
   			singleVm.eventShow = true;
-  		}, 1500);
-        $timeout(function() {
-  			singleVm.stage = "Establishing Plan";
-  		}, 3500);
-		$timeout(function() {
+	  	}
+	  	else if(index == 2){
+			singleVm.stage = "Establishing Plan";
+	    }
+	    else if(index == 3){
   			singleVm.taskShow = true;
-  		}, 5500);
-        $timeout(function() {
+		}
+		else if(index == 4){
+	    
   			singleVm.stage = "Searching for Facilities";
-  		}, 7500);
-  		$timeout(function() {
-  			singleVm.containerExtend = 'progress-extend';
+	    }
+	    else if(index == 5){
+	
+	  		singleVm.containerExtend = 'progress-extend';
   			singleVm.contentExtend = 'progress-content-extend';
-  		}, 7600);
-  		$timeout(function() {
+	  	}
+	  	else if(index == 6){
   			singleVm.radarShow = true;
-  		}, 8100);
+		}
+
+		console.log(index);
+
+  		index++;
+  		currentProgressStage = index;
+  		progressHandle[index] = $timeout(function(){
+  			singleVm.progressInfoControl(index);
+  		}, delayArray[index]);
   	}
 
   	singleVm.progrssMenuOpen = function () {
@@ -450,6 +466,8 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
     var current_index = 0;
     var current_point = 0;
 
+    var markerStarted = false;
+
     singleVm.stepControl = function(step){
     	singleVm.step = singleVm.step + step;
     	if(singleVm.step > maxStep)
@@ -485,8 +503,15 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	// pause simulation
 	singleVm.pauseTimeout = function(){
 		if(playStop){
+			console.log(currentProgressStage);
 			playStop = false;
-			$timeout.cancel(timerHandle[current_index]);
+			// if marker started
+			if(markerStarted)
+				$timeout.cancel(timerHandle[current_index]);
+			// pause progress menu
+			$timeout.cancel(progressHandle[currentProgressStage]);
+			singleVm.pause = "pause-effect";
+			singleVm.pauseIcon = true;
 		}
 	}
 
@@ -494,13 +519,22 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	singleVm.restartTimeout = function(){
 		if(!playStop){
 			playStop = true;
-			timerHandle[current_index] =  $timeout(function() {
-		    	animate(current_index, (current_point + singleVm.step*20));
-		    }, tick);
+			if(markerStarted){
+				timerHandle[current_index] =  $timeout(function() {
+			    	animate(current_index, (current_point + singleVm.step*20));
+			    }, tick);
+			}
+
+			singleVm.pause = "";
+		    progressHandle[currentProgressStage] = $timeout(function(){
+		    	singleVm.progressInfoControl(currentProgressStage);
+		    }, delayArray[currentProgressStage]);
+		    singleVm.pauseIcon = false;
 		}
 	}
 
   	function animate(index,d) {
+  		markerStarted = true;
   		current_index = index;
   		current_point = d;
   		// console.log(index + " " + d);
@@ -512,7 +546,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	    marker[index].setPosition(p);
 	    updatePoly(index,d);
 	    timerHandle[index] =  $timeout(function() {
-	    	animate(index, (d + singleVm.step*20));
+	    	animate(index, (d + singleVm.step*5));
 	    }, tick);
 
 	}
@@ -524,7 +558,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   						strokeColor:"#FFFF00", strokeWeight:3});
   		$timeout(function() {
   			animate(index, 50);
-  		}, 50);
+  		}, 23000);
   	}
 
 

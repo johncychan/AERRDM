@@ -1,4 +1,7 @@
-<div id="progress-menu-container" class="{{singleVm.containerExtend}}">
+<div id="progress-menu-container" class="{{singleVm.containerExtend}} {{singleVm.pause}}">
+  <div id="progess-menu-pause-icon" ng-show = "singleVm.pauseIcon">
+    <blink><i class="fa fa-pause fa-2x" aria-hidden="true"></i></blink>
+  </div>
 	<div class="modal-header safari_top_radius">
 		<div id="progress-title-content">
 			<div class="icon-container">
@@ -10,7 +13,6 @@
 
   <div id="progressStatus">
     <div id="stageInfo">
-
       <blink id="stage">{{singleVm.stage}}</blink>
     </div>
     <div id="progressBar">
