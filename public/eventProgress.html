@@ -27,6 +27,7 @@
 	<div id="progress-content" class="{{singleVm.contentExtend}}">
     <div class="info-row">
   		<div id="event-info-container"  ng-show = "singleVm.eventShow" ng-cloak>
+
   			<table id="event-info-table"> 
           <tr>
             <th colspan="2">Event Information</th>
@@ -40,12 +41,14 @@
             <td class="factor-value">{{singleVm.factor['Category']}}</td>
           </tr>
           <tr ng-repeat="service in singleVm.services">
+
             <td class="factor-key"> Required Service {{$index + 1}}</td>
             <td class="factor-value">{{service['resource']}}</td>
           </tr>
         </table>
   		</div>
       <div id="task-info-container" ng-show = "singleVm.taskShow" ng-cloak>
+
         <table id="event-info-table"> 
           <tr>
             <th colspan="2">Task Information</th>
@@ -59,6 +62,7 @@
             <td class="factor-value">{{singleVm.factor['Deadline']}} mins</td>
           </tr>
           <tr ng-repeat="service in singleVm.services">
+
             <td class="factor-key"> Required Service {{$index + 1}}</td>
             <td class="factor-value">{{service['number']}} - {{service['resource']}}</td>
           </tr>
@@ -70,3 +74,4 @@
 
 <!-- radar script -->
 <script src="js/radar.js"></script>
+

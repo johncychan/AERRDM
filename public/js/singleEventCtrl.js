@@ -1,11 +1,13 @@
 app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog){
 
+
 	//map initialization
 	var singleVm = this;
 	var directionDisplay;
 	var directionsService;
 	var stepDisplay;
 	$scope.headerMes = "Single Event"
+
 
 	var position;
 	var marker = [];
@@ -26,9 +28,31 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	var panoClient;
 	var nextPanoId;
 
+	var iconBase = "./img/";
+	var icons = {
+		ambulance:{
+			url: iconBase + "ambulance.svg"
+		},
+		fireTruck:{
+			icon: iconBase + "firetruck.svg"
+		},
+		policeCar:{
+			icon: iconBase + "police-car.svg"
+		},
+		hospital:{
+			icon: iconBase + "hospital.svg"
+		},
+		fireStation:{
+			icon: iconBase + "fire-station.svg"
+		},
+		policeStation:{
+			icon: iconBase + "polica-station.svg"
+		}
+	};
 	NgMap.getMap("map").then(function(map){
 		singleVm.map = map;
 		singleVm.map.setZoom(14);
+
 	});
 
 
@@ -40,6 +64,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 			singleVm.marker = new google.maps.Marker({
 				position: e.latLng,
 				map: singleVm.map,
+
 				draggable: true,
 				
 			});
@@ -54,6 +79,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		singleVm.marker.infoWin = new google.maps.InfoWindow({
 			// content: "<showTag></showTag>"
 			content: singleVm.compiled[0]
+
 		});
 		//show the infomation window
 		singleVm.marker.addListener('click', function($scope){
@@ -78,6 +104,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 			singleVm[name]()
 	}
 
+
 	singleVm.infoWinRedirect = function(toFunction){
 		// remove last compile element object
 		singleVm.compiled.remove();
@@ -94,7 +121,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		});
 	}
 
-	singleVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
+	singleVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage", "Conflagration"];
 
 	singleVm.levelGenerator = function(){
 		return Math.floor((Math.random()*5)+1);
@@ -127,6 +154,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		singleVm.deadline = singleVm.deadlineGenerator();
 
 		//Auto increment
+
 		singleVm.eId = 001;
 
 		singleVm.factor = {
@@ -135,19 +163,20 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 			'Category': singleVm.category_list[singleVm.category],
 			'Resource avg. expenditure': singleVm.expenditure,
 			'Resource avg. velocity': singleVm.velocity,
-			'Deadline': singleVm.deadline
+			'Deadline': singleVm.deadline,
+			'Location': singleVm.marker.position.toUrlValue()
 		}
   	}
 
-  	// singleVm.progrssMenuOpen = function () {
-	  //   ngDialog.open({ 
-	  //     template: 'eventProgress.html',
-	  //     overlay: false,
-	  //     showClose: false,
-	  //     scope: $scope,
-	  //     className: 'ngdialog-theme-default progress-menu draggable'       
-	  //   });
-   //  };
+  	singleVm.progrssMenuOpen = function () {
+	    ngDialog.open({ 
+	      template: 'eventProgress.html',
+	      overlay: false,
+	      showClose: false,
+	      scope: $scope,
+	      className: 'ngdialog-theme-default progress-menu draggable'       
+	    });
+    };
 
 	// now start the simulation
 	singleVm.startSingleEvent = function(){
@@ -160,6 +189,8 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
 		singleVm.progressInfoControl(0);
 
+		// $timeout(searchCircle(), 500000);
+
 		singleVm.progrssMenuOpen();
 		// redirect info window to progress menu
 		singleVm.infoWinRedirect("progrssMenuOpen");
@@ -167,6 +198,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		// console.log($scope.factor);
 		// singleVm.map.setZoom(16);
 		singleVm.map.setCenter(singleVm.marker.position);
+
 
 		// post data to back-end
 		var eventData = {
@@ -180,13 +212,16 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		//     // set the headers so angular passing info as form data (not request payload)
 		   headers : { 'Content-Type': 'application/json' },
 		   data    :  {
+
 		               ID: singleVm.factor["ID"],
 		               Severity: singleVm.factor["Severity Level"],
 		               Category: singleVm.factor["Category"],
-		               Expenditure: singleVm.factor["Resource avg. expenditure"],
-		               Velocity: singleVm.factor["Resource avg. velocity"],
+		               Expenditure: {min: 2, max: 10},
+		               Velocity: {min: 20, max: 100},
 		               Deadline: singleVm.factor["Deadline"],
-		               Location: singleVm.marker.position.toUrlValue()
+		               Location: singleVm.marker.position.toUrlValue(),
+			       ResourceNum: {min: 2, max: 10},
+			       ResourceCost: {min: 2, max: 10}
 		             }
 
 		  }).then(function success(response) {
@@ -194,32 +229,13 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		  });
 
 
-		//receive facilities location from server and put markers on map
-		//using fake data right now
-		//wait back end implementation
-		// singleVm.facilities = [];
-		// singleVm.destinations  = [];
-		// var facility1 = {lat: -34.4105585, lng: 150.8783824};
-		// var facility2 = {lat: -34.4853985, lng: 150.872664};
-		// singleVm.facilities.push(facility1);
-		// singleVm.facilities.push(facility2);
 		startLoc[0] = 'Sydney';
 		startLoc[1] = 'Hyams Beach';
 		endLoc = 'University of Wollongong';
-		
 
-		// for(var i = 0; i < endLoc.length; ++i){
-		// 	facilitiesMarker[i] = new google.maps.Marker({
-		// 		position: startLoc[i],
-		// 		map: singleVm.map,
-		// 		animation: google.maps.Animation.DROP
-		// 	});
-		// }
-		
-		//set the routes between startloc and endloc
-//********************************
 		receiveEventTask();
 		searchCircle();
+
 		setRoutes();
 	} 
 
@@ -297,6 +313,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   	singleVm.progrssMenuOpen = function () {
 
 	    var dialog = ngDialog.open({ 
+
         	template: 'eventProgress.html',
         	overlay: false,
         	showClose: false,
@@ -304,7 +321,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
 
-        // singleVm.panelShow = true;
+
     };
 
 
@@ -313,7 +330,8 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	        position: latlng,
 	        map: singleVm.map,
 	        title: label,
-	        zIndex: Math.round(latlng.lat()*-100000)<<5
+	        zIndex: Math.round(latlng.lat()*-100000)<<5,
+	        icon: "./img/police-car.svg"
 	        });
 	        marker.myname = label;
 
@@ -331,6 +349,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 			fillColor: '#3878c7',
 			fillOpacity: 0.6,
 			map: singleVm.map,
+
 			radius: 10000,
 			strokeColor: '#3878c7',
 	        strokeOpacity: 1,
@@ -366,21 +385,22 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
   		var travelMode = google.maps.DirectionsTravelMode.DRIVING;
   		var requests = new Array();
-  		// for(var i = 0; i < startLoc.length; ++i){
-  		// 	requests[i] = {
-  		// 		origin: startLoc[i],
-  		// 		destination: endLoc,
-  		// 		travelMode: travelMode
-  		// 	};
-  		// 	directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
-  		// }
-  		var request = {
-  			origin: startLoc[0],
-  			destination: singleVm.marker.position,
-  			travelMode: travelMode
-
+  		for(var i = 0; i < startLoc.length; ++i){
+  			requests[i] = {
+  				origin: startLoc[i],
+  				destination: singleVm.marker.position,
+  				travelMode: travelMode
+  			};
+  			directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
   		}
-  		directionsService.route(request, makeRouteCallback(0, directionDisplay[0]));
+  		// var request = {
+  		// 	origin: startLoc[0],
+  		// 	destination: singleVm.marker.position,
+  		// 	travelMode: travelMode
+
+  		// }
+  		// directionsService.route(request, makeRouteCallback(0, directionDisplay[0]));
+
   		
   		function makeRouteCallback(routeNum, dip){
 	  		if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
@@ -413,6 +433,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
 		            disp = new google.maps.DirectionsRenderer(rendererOptions);     
 		            disp.setMap(singleVm.map);
+
 		            disp.setDirections(response);
 
 		            //create resources markers
@@ -443,6 +464,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	            	
 	  			}
 	  			polyline[routeNum].setMap(singleVm.map);		         
+
 			    //map.fitBounds(bounds);
 		        startAnimation(routeNum); 
 
@@ -457,6 +479,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   	var maxStep = 5; // max distance per move
     singleVm.step = 3; // 3; // metres
     var playStop = true; // true = play, false = stop
+
     var tick = 100; // milliseconds
 
     var current_index = 0;
@@ -533,6 +556,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   		markerStarted = true;
   		current_index = index;
   		current_point = d;
+
   		// console.log(index + " " + d);
 	   	if (d > eol[index]) {
 	      	marker[index].setPosition(endLocation[index].latlng);
@@ -543,11 +567,13 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	    updatePoly(index,d);
 	    timerHandle[index] =  $timeout(function() {
 	    	animate(index, (d + singleVm.step*5));
+
 	    }, tick);
 
 	}
 
   	function startAnimation(index){
+
   		eol[index] = polyline[index].Distance();
 
   		poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
@@ -564,6 +590,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	  	//for loop to receive type of resources needed
 	   	 //push()
         singleVm.services =
+
         [{
           resource: 'Police car',
           number: 2
@@ -575,6 +602,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
         for(var i = 0; i < singleVm.services.length; i++){
 	        singleVm.totalResource += singleVm.services[i].number;
 		}
+
 
     }
 

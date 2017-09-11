@@ -756,6 +756,7 @@
         width: 470px !important;
 
         /*height: 350px;*/
+
       }
 
       [id^=ngdialog] .modal-header{
@@ -772,6 +773,7 @@
 
         margin-top: 12px;
         /*padding-top: 80px;*/
+
       }
 
       @media only screen and (min-width: 2000px) {
@@ -830,6 +832,7 @@
 
       #stageInfo{
         padding: 20px 0 10px 0;
+
         font-size: 12px;
         text-align: center;
         color: #37474F;
@@ -969,6 +972,7 @@
         background-color: #bfbfbf;
         opacity: 0.5;
       }
+
 
       #progess-menu-pause-icon{
         position: absolute;
@@ -1221,6 +1225,7 @@
       /* simluation setting panel end */
 
 
+
       [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
         display: none !important;
       }
@@ -1269,5 +1274,4 @@
         opacity:.2;
         transition:0s;
       }
-
 
