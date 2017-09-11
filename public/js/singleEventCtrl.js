@@ -206,6 +206,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 			eventId: singleVm.eId,
 			SeverityLevel: singleVm.level
 		}
+		//send request to server for searching facilities
 		$http({
 		   method  : 'POST',
 		   url     : '/singleEvent',
@@ -220,13 +221,23 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		               Velocity: {min: 20, max: 100},
 		               Deadline: singleVm.factor["Deadline"],
 		               Location: singleVm.marker.position.toUrlValue(),
-			       ResourceNum: {min: 2, max: 10},
-			       ResourceCost: {min: 2, max: 10}
+			       	   ResourceNum: {min: 2, max: 10},
+			           ResourceCost: {min: 2, max: 10}
 		             }
 
 		  }).then(function success(response) {
-			// console.log(response.data);
+			console.log(response.data);
 		  });
+
+		//retrive facilities' locaiton data from serve
+		// $http.get("/singleEvent")
+		// .then(function(response){
+		// 	//handle success
+		// 	singleVm.facilityLocation = response.data;
+		// }, function(response){
+		// 	//handle wrong
+
+		// });
 
 
 		startLoc[0] = 'Sydney';
@@ -477,7 +488,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   	var lastVertex = 1;
   	var stepnum=0;
   	var maxStep = 5; // max distance per move
-    singleVm.step = 3; // 3; // metres
+    singleVm.step = 0.1; // 3; // metres
     var playStop = true; // true = play, false = stop
 
     var tick = 100; // milliseconds
@@ -491,8 +502,8 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
     	singleVm.step = singleVm.step + step;
     	if(singleVm.step > maxStep)
     		singleVm.step = maxStep;
-    	else if(singleVm.step < 1)
-    		singleVm.step = 1;
+    	else if(singleVm.step < 0.1)
+    		singleVm.step = 0.1;
     }
 
   	function updatePoly(i,d) {
