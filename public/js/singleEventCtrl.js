@@ -207,37 +207,33 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 			SeverityLevel: singleVm.level
 		}
 		//send request to server for searching facilities
+		var facilityInfo;
 		$http({
-		   method  : 'POST',
-		   url     : '/singleEvent',
-		//     // set the headers so angular passing info as form data (not request payload)
-		   headers : { 'Content-Type': 'application/json' },
-		   data    :  {
+			method  : 'POST',
+			url     : '/singleEvent',
+			//     // set the headers so angular passing info as form data (not request payload)
+			headers : { 'Content-Type': 'application/json' },
+			data    :  {
 
-		               ID: singleVm.factor["ID"],
-		               Severity: singleVm.factor["Severity Level"],
-		               Category: singleVm.factor["Category"],
-		               Expenditure: {min: 2, max: 10},
-		               Velocity: {min: 20, max: 100},
-		               Deadline: singleVm.factor["Deadline"],
-		               Location: singleVm.marker.position.toUrlValue(),
+			           ID: singleVm.factor["ID"],
+			           Severity: singleVm.factor["Severity Level"],
+			           Category: singleVm.factor["Category"],
+			           Expenditure: {min: 2, max: 10},
+			           Velocity: {min: 20, max: 100},
+			           Deadline: singleVm.factor["Deadline"],
+			           Location: singleVm.marker.position.toUrlValue(),
 			       	   ResourceNum: {min: 2, max: 10},
 			           ResourceCost: {min: 2, max: 10}
-		             }
+			         }
 
-		  }).then(function success(response) {
-			console.log(response.data);
-		  });
+			}).then(function success(response) {
+				console.log(response.data);
+				//store facility information 
+				
+			});
+			// console.log(facilityInfo);
+			//put markers on the facilicity locaitons
 
-		//retrive facilities' locaiton data from serve
-		// $http.get("/singleEvent")
-		// .then(function(response){
-		// 	//handle success
-		// 	singleVm.facilityLocation = response.data;
-		// }, function(response){
-		// 	//handle wrong
-
-		// });
 
 
 		startLoc[0] = 'Sydney';
