@@ -225,7 +225,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		             }
 
 		  }).then(function success(response) {
-			// console.log(response.data);
+			console.log(response.data);
 		  });
 
 
@@ -301,8 +301,6 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   			singleVm.radarShow = true;
 		}
 
-		console.log(index);
-
   		index++;
   		currentProgressStage = index;
   		progressHandle[index] = $timeout(function(){
@@ -320,8 +318,6 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
         	scope: $scope,
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
-
-
     };
 
 
