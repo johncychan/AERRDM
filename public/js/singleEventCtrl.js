@@ -209,6 +209,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		//send request to server for searching facilities
 		var facilityInfo;
 		$http({
+
 			method  : 'POST',
 			url     : '/singleEvent',
 			//     // set the headers so angular passing info as form data (not request payload)
@@ -233,7 +234,6 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 			});
 			// console.log(facilityInfo);
 			//put markers on the facilicity locaitons
-
 
 
 		startLoc[0] = 'Sydney';
@@ -308,8 +308,6 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   			singleVm.radarShow = true;
 		}
 
-		console.log(index);
-
   		index++;
   		currentProgressStage = index;
   		progressHandle[index] = $timeout(function(){
@@ -327,8 +325,6 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
         	scope: $scope,
         	className: 'ngdialog-theme-default progress-menu draggable'     	
         });
-
-
     };
 
 
