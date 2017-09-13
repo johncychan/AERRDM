@@ -102,7 +102,7 @@ module.exports = function(passport){
 */
 	// Single Event Initiate
 	router.post('/singleEvent', function(req, res, next) {
-		console.log(req.body);
+		// console.log(req.body);
 		
 		dbquery.InsertSimulation(req, function(err, r) {
 
@@ -120,7 +120,7 @@ module.exports = function(passport){
 
 			Promise.all(promises).then(function(allData) {
 				var rtval = {resources: resources_list, sim_id: r.insertedId};
-
+				
 				for(var i = 0; i < resource_names.length; i++)
 				{
 					rtval[resource_names[i]] = allData[i];
