@@ -1,4 +1,5 @@
-app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $http, $timeout, $interval, $q, ngDialog){
+app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog){
+
 
 
 	//map initialization
@@ -190,7 +191,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		singleVm.closeInfoWin();
 		// open progress menu
 
-		singleVm.progressInfoControl(0);
+		progressInfoControl(0);
 
 		// $timeout(searchCircle(), 500000);
 
@@ -264,7 +265,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		console.log(startLoc);
 
 		startLoc[0] = 'Sydney';
-		startLoc[1] = 'Hyams Beach';
+		startLoc[1] = 'Moore Park';
 		endLoc = 'University of Wollongong';
 
 
@@ -311,41 +312,45 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   	// var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
   	var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500];
 
-  	singleVm.progressInfoControl = function(index){
-  		// currentProgressStage = index;
-  		if(index > delayArray.length){
-  			return;
-  		}
-  		if(index == 0)
-  			singleVm.stage = "Analysing Event";
+  	var promises = [];
+  	var deferred = $q.defer();
 
-  		if(index == 1){
+  	function progressInfoControl(stage){
+  		// currentProgressStage = stage;
+  		if(stage > delayArray.length){
+  			deferred.resolve('done');
+  			return promises.push(deferred.promise);
+  		}
+  		if(stage == 0){
+  			singleVm.stage = "Analysing Event";
+  		}
+  		else if(stage == 1){
   			singleVm.eventShow = true;
 	  	}
-	  	else if(index == 2){
+	  	else if(stage == 2){
 			singleVm.stage = "Establishing Plan";
 	    }
-	    else if(index == 3){
+	    else if(stage == 3){
   			singleVm.taskShow = true;
 		}
-		else if(index == 4){
-	    
+		else if(stage == 4){
   			singleVm.stage = "Searching for Facilities";
 	    }
-	    else if(index == 5){
-	
+	    else if(stage == 5){
 	  		singleVm.containerExtend = 'progress-extend';
   			singleVm.contentExtend = 'progress-content-extend';
 	  	}
-	  	else if(index == 6){
+	  	else if(stage == 6){
   			singleVm.radarShow = true;
 		}
 
-  		index++;
-  		currentProgressStage = index;
-  		progressHandle[index] = $timeout(function(){
-  			singleVm.progressInfoControl(index);
-  		}, delayArray[index]);
+
+  		stage++;
+  		currentProgressStage = stage;
+  		progressHandle[stage] = $timeout(function(){
+  			progressInfoControl(stage);
+  		}, delayArray[stage]);
+
   	}
 
   	singleVm.progrssMenuOpen = function () {
@@ -589,16 +594,18 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
     var tick = 100; // milliseconds
 
     var current_index = 0;
-    var current_point = 0;
+    var current_point = [];
 
     var markerStarted = false;
 
     singleVm.stepControl = function(step){
     	singleVm.step = singleVm.step + step;
-    	if(singleVm.step > maxStep)
+    	if(singleVm.step > maxStep){
     		singleVm.step = maxStep;
-    	else if(singleVm.step < 0.1)
+    	}
+    	else if(singleVm.step < 0.1){
     		singleVm.step = 0.1;
+    	}
     }
 
   	function updatePoly(i,d) {
@@ -637,11 +644,15 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	// pause simulation
 	singleVm.pauseTimeout = function(){
 		if(playStop){
-			console.log(currentProgressStage);
+			// console.log(currentProgressStage);
 			playStop = false;
 			// if marker started
-			if(markerStarted)
-				$timeout.cancel(timerHandle[current_index]);
+			if(markerStarted){
+				for(var i = 0; i < startLoc.length; i++){
+					$timeout.cancel(timerHandle[i]);
+					console.log("Pause" + i);
+				}
+			}
 			// pause progress menu
 			$timeout.cancel(progressHandle[currentProgressStage]);
 			singleVm.pause = "pause-effect";
@@ -654,14 +665,23 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 		if(!playStop){
 			playStop = true;
 			if(markerStarted){
-				timerHandle[current_index] =  $timeout(function() {
-			    	animate(current_index, (current_point + singleVm.step*20));
+				timerHandle[0] = $timeout(function() {
+			    	animate(0, (current_point + singleVm.step*5));
 			    }, tick);
+			    timerHandle[1] = $timeout(function() {
+			    	animate(1, (current_point + singleVm.step*5));
+			    }, tick);
+				// for(var i = 0; i < startLoc.length; i++){
+				// 	console.log("Restart" + i);
+				// 	timerHandle[i] = $timeout(function() {
+				//     	animate(i, (current_point + singleVm.step*5));
+				//     }, tick);
+				// }
 			}
 
 			singleVm.pause = "";
 		    progressHandle[currentProgressStage] = $timeout(function(){
-		    	singleVm.progressInfoControl(currentProgressStage);
+		    	progressInfoControl(currentProgressStage);
 		    }, delayArray[currentProgressStage]);
 		    singleVm.pauseIcon = false;
 		}
@@ -669,9 +689,10 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
   	function animate(index,d) {
   		markerStarted = true;
-  		current_index = index;
   		current_point = d;
-
+  		// for(var i = 0; i < startLoc.length; ++i){
+  		
+  		// }
   		// console.log(index + " " + d);
 	   	if (d > eol[index]) {
 	      	marker[index].setPosition(endLocation[index].latlng);
@@ -682,9 +703,7 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 	    updatePoly(index,d);
 	    timerHandle[index] =  $timeout(function() {
 	    	animate(index, (d + singleVm.step*5));
-
 	    }, tick);
-
 	}
 
   	function startAnimation(index){
@@ -693,11 +712,21 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
 
   		poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
   						strokeColor:"#FFFF00", strokeWeight:3});
-  		$timeout(function() {
-  			animate(index, 50);
-  		}, 23000);
-  	}
 
+
+  		// animate(index, 50);
+
+  		$q.all(promises).then(
+  			function(){
+	  			animate(index, 50);
+  			},
+  			function(){
+  				console.log("Fail");
+  			}
+  		).finally(function(){
+  			console.log("Done");
+  		});
+  	}
 
   	function receiveEventTask(){
 
