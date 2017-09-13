@@ -341,7 +341,6 @@ app.controller('singleEventCtrl', function(NgMap, $compile, $scope, $mdDialog, $
   			singleVm.radarShow = true;
 		}
 
-
   		index++;
   		currentProgressStage = index;
   		progressHandle[index] = $timeout(function(){
