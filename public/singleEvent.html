@@ -3,39 +3,38 @@
     map-type-control="false" on-click="singleVm.placeMarker()" fullscreen-control="false"
 ></ng-map>
 
-
 <!-- ng-show = "singleVm.panelShow" -->
-<nav class="menu draggable"  >
-  <input type="checkbox" href="#" class="menu-open" name="menu-open" id="menu-open" />
-  <label class="menu-open-button" for="menu-open">
+<nav class="simulation-menu draggable"  >
+  <input type="checkbox" href="#" class="simulation-menu-open" name="simulation-menu-open" id="simulation-menu-open" />
+  <label class="simulation-menu-open-button" for="simulation-menu-open">
     <md-tooltip md-direction="top" md-delay="300"> Simluation Setting </md-tooltip>
   	<i class="fa fa-gear gear" aria-hidden="true"></i>
-    <span class="hamburger hamburger-1"></span>
-    <span class="hamburger hamburger-2"></span>
-    <span class="hamburger hamburger-3"></span>
+    <span class="sim-hamburger sim-hamburger-1"></span>
+    <span class="sim-hamburger sim-hamburger-2"></span>
+    <span class="sim-hamburger sim-hamburger-3"></span>
   </label>
 
-  <a ng-click = "singleVm.placeMarker()" class="menu-item ripple"> 
+  <a ng-click = "singleVm.placeMarker()" class="simulation-menu-item ripple"> 
     <i class="fa fa-map-marker" aria-hidden="true"></i> 
     <md-tooltip md-direction="top" > Place Marker </md-tooltip>
   </a>
-  <a ng-click = "singleVm.stepControl(+0.5)" class="menu-item ripple"> 
+  <a ng-click = "singleVm.stepControl(+0.5)" class="simulation-menu-item ripple"> 
     <i class="fa fa-forward"></i>
     <md-tooltip md-direction="top"> Speed Up </md-tooltip>
   </a>
-  <a ng-click = "singleVm.stepControl(-0.5)" class="menu-item ripple"> 
+  <a ng-click = "singleVm.stepControl(-0.5)" class="simulation-menu-item ripple"> 
     <i class="fa fa-backward"></i> 
     <md-tooltip md-direction="bottom"> Speed Down </md-tooltip>
   </a>
-  <a ng-click = "singleVm.stopTimeout()" class="menu-item ripple"> 
+  <a ng-click = "singleVm.stopTimeout()" class="simulation-menu-item ripple"> 
     <i class="fa fa-stop"></i> 
     <md-tooltip md-direction="bottom"> Stop Simulation </md-tooltip>
   </a>
-  <a ng-click = "singleVm.pauseTimeout()" class="menu-item ripple"> 
+  <a ng-click = "singleVm.pauseTimeout()" class="simulation-menu-item ripple"> 
     <i class="fa fa-pause"> </i> 
     <md-tooltip md-direction="bottom"> Pause Simulation </md-tooltip>
   </a>
-  <a ng-click = "singleVm.restartTimeout()" class="menu-item ripple">
+  <a ng-click = "singleVm.restartTimeout()" class="simulation-menu-item ripple">
     <i class="fa fa-play"></i> 
     <md-tooltip md-direction="top"> Play Simulation </md-tooltip>
   </a>
