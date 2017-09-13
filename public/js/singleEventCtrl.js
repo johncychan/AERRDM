@@ -1,7 +1,5 @@
 app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog){
 
-
-
 	//map initialization
 	var singleVm = this;
 	var directionDisplay;
@@ -57,6 +55,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
 	});
 
+	singleVm.placeEvent = function(){
+		singleVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
+		console.log(1111);
+	}
 
 	//put a marker by clicking mouse
 	singleVm.placeMarker = function(e){
@@ -67,8 +69,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 				position: e.latLng,
 				map: singleVm.map,
 				icon: "./img/marker.svg",
-				draggable: true
-				
+				draggable: true,
+				animation: google.maps.Animation.DROP
 			});
 		}
 		//display the marker info
@@ -212,7 +214,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		}
 		//send request to server for searching facilities
 		// var facilityInfo = new Array();
-		var deferred = $q.defer();
+		// var deferred = $q.defer();
 		var facilityInfo = new Object();
 		var tmp;
 		$http({
@@ -241,7 +243,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 				// facilityInfo = JSON.parse(response.data);
 				// for(var i in response.data)
 				// 	facilityInfo.push([i, response.data[i]]);
-				Object.assign(facilityInfo, response.data);
+				// Object.assign(facilityInfo, response.data);
 				for(var i = 0; i < response.data.fire_station.length; ++i){
 					putFire(response.data.fire_station[i].location);
 					// startLoc.push(response.data.fire_station[i].location);
@@ -257,8 +259,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 					// console.log(startLoc.length);
 				}
 
-				deferred.resolve();
-				promises.push(deferred.promise);
+				// deferred.resolve();
+				// promises.push(deferred.promise);
 			});
 			
 
@@ -266,8 +268,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
 		startLoc[0] = 'Sydney';
 		startLoc[1] = 'Moore Park';
-		endLoc = 'University of Wollongong';
-
+		startLoc[2] = 'The university of sydney';
+		// startLoc[3] = 'USD';
 
 		receiveEventTask();
 		searchCircle();
@@ -498,10 +500,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   		var travelMode = google.maps.DirectionsTravelMode.DRIVING;
   		var requests = new Array();
-  		for(var i = 0; i < startLocLength; ++i){
+  		for(var i = 0; i < startLoc.length; ++i){
   			console.log(i);
   			requests[i] = {
-  				origin: startLoc[i].location,
+  				origin: startLoc[i],
   				destination: singleVm.marker.position,
   				travelMode: travelMode
   			};
