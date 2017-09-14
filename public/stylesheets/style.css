@@ -71,7 +71,7 @@
         font-size: 15px;
         font-weight: 300;
         padding: 1px 13px;
-        margin-left: 55px;
+        margin-left: 56px;
         text-overflow: ellipsis;
         width: 300px;
         height: 38px;
@@ -1572,6 +1572,11 @@
     }
     #menu__active:checked ~ label #degree--up-1:checked ~ .menu__listings ~ .menu__arrow--top label[for="degree--up-2"] {
       display: block;
+    }
+
+
+    .hamburger-menu-icon-left{
+      padding-left: 30px;
     }
 
     .animate-show {
