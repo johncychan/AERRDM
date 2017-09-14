@@ -58,6 +58,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 	});
 
 
+	//put a marker by search box
+	singleVm.placeMarkerBySearch = function(){
+		console.log(this.getPlace());  
+        var loc = this.getPlace().geometry.location;
+        $scope.latlng = [loc.lat(), loc.lng()];
+      	
+      	console.log(loc.lat() + " " + loc.lng());
+	}
+
 	//put a marker by clicking mouse
 	singleVm.placeMarker = function(e){
 		if(singleVm.marker){
@@ -278,6 +287,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			setRoutes();
 		});
 		
+
+		singleVm.panelShow = "true";
 	} 
 
 	singleVm.setDataField = function(){
@@ -350,6 +361,18 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   			progressInfoControl(stage);
   		}, delayArray[stage]);
 
+  	}
+
+  	singleVm.searchExtend = function(){
+  		singleVm.searchBoxExtend = "";
+  		if(!singleVm.searchShow){
+			singleVm.searchBoxExtend = "searchBox-extend animated rotateInUpLeft";
+			singleVm.searchShow = true;
+		}
+		else{
+			singleVm.searchBoxExtend = "animated rotateOutDownLeft ";
+			singleVm.searchShow = false;
+		}
   	}
 
   	singleVm.progrssMenuOpen = function () {
