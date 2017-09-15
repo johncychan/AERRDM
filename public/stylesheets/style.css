@@ -71,7 +71,7 @@
         font-size: 15px;
         font-weight: 300;
         padding: 1px 13px;
-        margin-left: 56px;
+        margin-left: 210px;
         text-overflow: ellipsis;
         width: 300px;
         height: 38px;
@@ -1598,39 +1598,34 @@
       animation-fill-mode: both;
     }
 
-    @keyframes rotateInUpLeft {
+    @keyframes fadeIn {
       from {
-        transform-origin: left bottom;
-        transform: rotate3d(0, 0, 1, 45deg);
         opacity: 0;
       }
 
       to {
-        transform-origin: left bottom;
-        transform: none;
         opacity: 1;
       }
     }
 
-    .rotateInUpLeft {
-      animation-name: rotateInUpLeft;
+    .fadeIn {
+      animation-duration: 1.7s;
+      animation-name: fadeIn;
     }
 
-    @keyframes rotateOutDownLeft {
+    @keyframes fadeOut {
       from {
-        transform-origin: left bottom;
         opacity: 1;
       }
 
       to {
-        transform-origin: left bottom;
-        transform: rotate3d(0, 0, 1, 45deg);
         opacity: 0;
       }
     }
 
-    .rotateOutDownLeft {
-      animation-name: rotateOutDownLeft;
+    .fadeOut {
+      animation-duration: 0.5s;
+      animation-name: fadeOut;
     }
 
     @keyframes slideInDown {

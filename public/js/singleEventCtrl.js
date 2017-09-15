@@ -366,11 +366,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   	singleVm.searchExtend = function(){
   		singleVm.searchBoxExtend = "";
   		if(!singleVm.searchShow){
-			singleVm.searchBoxExtend = "searchBox-extend animated rotateInUpLeft";
+			singleVm.searchBoxExtend = "animated fadeIn";
 			singleVm.searchShow = true;
 		}
 		else{
-			singleVm.searchBoxExtend = "animated rotateOutDownLeft ";
+			singleVm.searchBoxExtend = "animated fadeOut ";
 			singleVm.searchShow = false;
 		}
   	}
