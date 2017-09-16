@@ -81,7 +81,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			});
 		}
 		//display the marker info
-		singleVm.htmlElement = "	<div><div><p id=\"event-setting-header\">Single Event Setting</p></div> " + 
+		singleVm.htmlElement = "	<div><div><p id=\"infoWin-header\">Single Event Setting</p></div> " + 
 		"<div><button class=\"button continue-btn ripple\" ng-click=\"singleVm.setDataField()\">" + "Set event data" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
@@ -121,7 +121,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		singleVm.compiled.remove();
 		// get function name 
 		singleVm.to_function = toFunction;
-		singleVm.htmlElement = "	<div><div><p id=\"event-setting-header\">Event information</p></div> " + 
+		singleVm.htmlElement = "	<div><div><p id=\"infoWin-header\">Event information</p></div> " + 
 		"<div><button class=\"button continue-btn ripple\" ng-click=\"singleVm.callFunction(singleVm.to_function)\">" + "View progress" + "</button></div></div>"
 		// var htmlElement = "<showTag></showTag>"
 		//need to compile 
@@ -142,13 +142,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		return Math.floor((Math.random()*size));
 	}
 	singleVm.expenditureGenerator = function(){
-		var max = 70; 
-		var min = 30
+		var max = 10; 
+		var min = 2;
 		return Math.floor((Math.random()*(max-min+1))+min);
 	}
 	singleVm.velocityGenerator = function(){
-		var max = 65;
-		var min = 30;
+		var max = 100;
+		var min = 20;
 		return Math.floor((Math.random()*(max-min+1))+min);
 	}
 	singleVm.deadlineGenerator = function(){
@@ -252,15 +252,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 				// 	facilityInfo.push([i, response.data[i]]);
 				Object.assign(facilityInfo, response.data);
 				for(var i = 0; i < response.data.fire_station.length; ++i){
-					putFire(response.data.fire_station[i].location);
+					putFire(response.data.fire_station[i]);
 					// startLoc.push(response.data.fire_station[i].location);
 				}
 				for(var i = 0; i < response.data.police.length; ++i){
-					putPolice(response.data.police[i].location);
+					putPolice(response.data.police[i]);
 					// startLoc.push(response.data.police[i].location);
 				}
 				for(var i = 0; i < response.data.hospital.length; ++i){
-					putHospital(response.data.hospital[i].location);
+					putHospital(response.data.hospital[i]);
 					tmp = response.data.hospital[i].location;
 					startLoc.push(tmp);
 					// console.log(startLoc.length);
@@ -271,7 +271,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			});
 			
 
-		console.log(startLoc);
+		// console.log(startLoc);
 
 		startLoc[0] = 'Sydney';
 		startLoc[1] = 'Moore Park';
@@ -402,7 +402,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 	    return marker;
 	}  
 
-	function putPolice(latlng, label, type){
+	function putPolice(facilityObj, label, type){
 		var iconUrl;
 		// if(type == 'hospital')
 		// 	iconUrl = './img/hospital.svg';
@@ -413,6 +413,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		// if(type == 'hospital'){
 
 		// }
+		var latlng = facilityObj.location;
 		var marker = new google.maps.Marker({
 			position: latlng,
 			map: singleVm.map,
@@ -421,10 +422,23 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			animation: google.maps.Animation.DROP
 		})
 
+		var facilityElement = facilitiesInfo(facilityObj, "police");
+
+		var compiled = $compile(facilityElement)($scope)
+		marker.infoWin = new google.maps.InfoWindow({
+			// content: "<showTag></showTag>"
+			content: compiled[0]
+
+		});
+		//show the infomation window
+		marker.addListener('click', function($scope){
+			marker.infoWin.open(singleVm.map, marker);
+		});
+
 		// return marker;
 	}
 
-	function putHospital(latlng, label, type){
+	function putHospital(facilityObj, label, type){
 		var iconUrl;
 		// if(type == 'hospital')
 		// 	iconUrl = './img/hospital.svg';
@@ -435,6 +449,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		// if(type == 'hospital'){
 
 		// }
+		var latlng = facilityObj.location;
 		var marker = new google.maps.Marker({
 			position: latlng,
 			map: singleVm.map,
@@ -443,10 +458,23 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			animation: google.maps.Animation.DROP
 		})
 
+		var facilityElement = facilitiesInfo(facilityObj, "hospital");
+
+		var compiled = $compile(facilityElement)($scope)
+		marker.infoWin = new google.maps.InfoWindow({
+			// content: "<showTag></showTag>"
+			content: compiled[0]
+
+		});
+		//show the infomation window
+		marker.addListener('click', function($scope){
+			marker.infoWin.open(singleVm.map, marker);
+		});
+
 		// return marker;
 	}
 
-	function putFire(latlng, label, type){
+	function putFire(facilityObj, label, type){
 		var iconUrl;
 		// if(type == 'hospital')
 		// 	iconUrl = './img/hospital.svg';
@@ -457,6 +485,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		// if(type == 'hospital'){
 
 		// }
+		var latlng = facilityObj.location;
 		var marker = new google.maps.Marker({
 			position: latlng,
 			map: singleVm.map,
@@ -465,7 +494,66 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			animation: google.maps.Animation.DROP
 		})
 
+		var facilityElement = facilitiesInfo(facilityObj, "fire_station");
+
+		var compiled = $compile(facilityElement)($scope)
+		marker.infoWin = new google.maps.InfoWindow({
+			// content: "<showTag></showTag>"
+			content: compiled[0]
+
+		});
+		//show the infomation window
+		marker.addListener('click', function($scope){
+			marker.infoWin.open(singleVm.map, marker);
+		});
+
 		// return marker;
+	}
+
+	function resourcesNumberGenerate(num){
+		return new Array (num);
+	}
+
+	function facilitiesInfo(facilityObj, facility_type){
+		var type = "";
+		if(facility_type == "police")
+			type = "Police Car";
+		else if(facility_type == "hospital")
+			type = "Ambulance";
+		else if(facility_type == "fire_station")
+			type = "Fire Truck";
+
+		var max = 6;
+		var min = 4;
+		var number = Math.floor(Math.random() * (max - min + 1)) + min;
+		console.log(number);
+		singleVm.number = resourcesNumberGenerate(number);
+
+		var facility_name = facilityObj.name;
+		var element = 	"<div>"+
+							"<div class=\"infoWin-header-container\">"+
+								"<p id=\"infoWin-header\" class=\"facility-header\">Location</p>"+"<span class=\"facility-name\">"+facility_name+"</span>"+
+							"</div> " + 
+							"<div>" +
+								"<div id=\"facility-info-container\">"+
+							        "<table id=\"resource-info-table\">"+
+							          "<tr>"+
+							            "<th colspan=\"2\" class=\"recourse-header\">Mobile Resources Information</th>"+
+							          "</tr>"+
+							          "<tr>"+
+							            "<th class=\"sub-header\">ID</th>"+
+							            "<th class=\"sub-header\">Type</th>"+
+							          "</tr>"+
+							          "<tr ng-repeat=\"i in singleVm.number track by $index\">"+
+							            "<td class=\"\">{{$index + 1}}</td>"+
+							            "<td class=\"\">"+type+"</td>"+
+							          "</tr>"+
+							        "</table>"+
+							      "</div>"+
+							"</div>"+
+						"</div>"
+
+		return element;
 	}
 
 	function searchCircle(){

@@ -658,9 +658,56 @@
         
       }
 
-      #event-setting-header{
+      .infoWin-header-container{
+        margin: 0 0 5px 0;
+      }
+
+      #infoWin-header{
         color: #004d66;
         font-weight: 500;
+      }
+
+      #infoWin-header.facility-header{
+        float: left;
+        padding: 0 5px 0 0 ;
+        margin-bottom: 0;
+      }
+
+      .infoWin-header-container .facility-name{
+        font-size: 13px;
+       }
+
+      #facility-info-container{
+        padding: 0 1px 0 0;
+      }
+
+      #resource-info-table{
+        font-size: 13px;
+        margin-top: 5px;
+        /*width: 95%;*/
+        border-collapse: collapse;
+      }
+
+      #resource-info-table th{
+        text-align: center;
+        background-color: #007399;
+        border: 1px solid #007399;
+        /*color: #004d66;*/
+        color: #FFF;
+        padding: 2px 5px;
+
+      }
+
+      #resource-info-table .recourse-header{
+        border-bottom: 2px solid #FFF;
+      }
+
+      #resource-info-table .sub-header{
+        text-align: left;
+      }
+
+      #resource-info-table td{
+        padding: 3px 5px;
       }
 
       .button{
@@ -747,12 +794,12 @@
 
       .progress-extend{
         transition: all linear 0.9s;
-        height: 370px !important;
+        height: 400px !important;
       }
 
       .progress-content-extend{
         transition: all linear 0.9s;
-        margin-top: 126px !important;
+        margin-top: 150px !important;
       }
 
       #progress-menu-container .modal-header{
@@ -860,6 +907,10 @@
 
       #event-info-table th{
         text-align: center !important;
+        background-color: #007399;
+        border: 1px solid #007399;
+        /*color: #004d66;*/
+        color: #FFF;
       }
 
       #progressStatus{
@@ -948,7 +999,7 @@
         margin: -125px 0 0 -125px;
         position: absolute;
         z-index: 10;
-        top: 45%;
+        top: 42%;
       }
 
       #task-info-container.ng-hide {
