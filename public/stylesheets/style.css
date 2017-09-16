@@ -589,16 +589,33 @@
         width: 100%;
       }
 
+      #factorTable .minValue{
+        width: 25%;
+      }
+
+      #factorTable .minValue input{
+        /*width: 40%;*/
+      }
+
+      #factorTable .maxValue{
+        padding: 0 0 0 10px !important;
+        width: 30%;
+      }
+
+      #factorTable .maxValue input{ 
+        /*width: 55%;*/
+      }
+
       #factorTable .factor-key{
         text-align: right;
-        padding: 0 10px 0 0;
-        width: 52%;
+        padding: 0 10px 0 30px;
+        width: 48%;
         border: 1px solid #000;
       }
 
       #factorTable .factor-value{
         padding: 0 0 0 20px;
-        width: 48%;
+        /*width: 48%;*/
       }
 
       #factorTable .non-input-adjust{
