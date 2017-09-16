@@ -1,4 +1,5 @@
 <div class="search-container" >
+
     <section class="menu menu--circle">
       <input type="checkbox" id="menu__active"/>
       <label for="menu__active" class="menu__active">
@@ -102,7 +103,7 @@
 ></ng-map>
 
 <!-- ng-show = "singleVm.panelShow" -->
-<nav class="simulation-menu draggable"  >
+<nav class="simulation-menu draggable"  ng-show = "singleVm.panelShow">
   <input type="checkbox" href="#" class="simulation-menu-open" name="simulation-menu-open" id="simulation-menu-open" />
   <label class="simulation-menu-open-button" for="simulation-menu-open">
     <md-tooltip md-direction="top" md-delay="300"> Simluation Setting </md-tooltip>
