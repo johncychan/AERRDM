@@ -8,39 +8,12 @@ var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/js
 // Place Object
 function Place(p, type, rnum, rcost) {
 	this.name = p.name;
-//	this.icon = p.icon;
 	this.location = p.geometry.location;
 	this.type = type;
 	this.resourceNum = Math.floor(Math.random() * (rnum.max-rnum.min+1) + rnum.min);
 	this.resourceCost = Math.floor(Math.random() * (rcost.max-rcost.min+1) + rcost.min);
 }
 
-// Request Places from Google Places API
-/*function RequestPlace(place_request, type) {
-	return new Promise(function(resolve, reject) {
-		place_request = place_request.replace('_TYPE',type);
-		type = type.replace('_', ' ');
-		console.log(place_request);
-		request(place_request, function(error, response, body) {
-			if(error) {
-				return reject(error);
-			}
-
-			rtval = JSON.parse(body);
-			facility = [];
-			for(var j=0;j<rtval.results.length; j++)
-			{
-				var name = rtval.results[j].name.toLowerCase();
-				if(name.includes(type)) {
-					console.log(name);
-					facility.push(new Place(rtval.results[j], type));
-				}
-			}
-
-			return resolve(facility);
-		});
-	});
-}*/
 
 function PlaceQuery (location, radius, type) {
 	url = google_map_api;
@@ -101,17 +74,20 @@ function FacilitiesSearch(url, type, rnum, rcost, dbr, db)
 {
 	return new Promise(function(resolve, reject) {
 		request(url, function(error, response, body) {
-			if(error) {
+			if(error)
+			{
+				console.log(error);
 				return reject(error);
 			}
-
 			var rtval = JSON.parse(body);
+			console.log("1");
 			var filterFacilities = FilterResults(rtval, type, rnum, rcost, dbr, db);
+			console.log("2");
 			return resolve(filterFacilities);
 		});
 	});
 }
 
-//module.exports.RequestPlace = RequestPlace;
+
 module.exports.PlaceQuery = PlaceQuery;
 module.exports.FacilitiesSearch = FacilitiesSearch;
