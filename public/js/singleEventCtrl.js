@@ -168,6 +168,17 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		return Math.floor((Math.random()*(max-min+1))+min);
 	}
 
+	singleVm.minVelocityGenerator = function(){
+		var max = 60; 
+		var min = 20;
+		return Math.floor((Math.random()*(max-min+1))+min);
+	}
+	singleVm.maxVelocityGenerator = function(){
+		var max = 100;
+		var min = 61;
+		return Math.floor((Math.random()*(max-min+1))+min);
+	}
+
 	singleVm.factorGenerate = function(){
   		singleVm.level = singleVm.levelGenerator();
 		singleVm.category = singleVm.categoryGenerator();
@@ -175,6 +186,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		singleVm.minExpenditure = singleVm.minExpenditureGenerator();
 		singleVm.maxExpenditure = singleVm.maxExpenditureGenerator();
 		singleVm.velocity = singleVm.velocityGenerator();
+		singleVm.minvelocity = singleVm.minVelocityGenerator();
+		singleVm.maxvelocity = singleVm.maxVelocityGenerator();
 		singleVm.deadline = singleVm.deadlineGenerator();
 
 		//Auto increment
@@ -188,6 +201,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			'Resource avg. expenditure': singleVm.expenditure,
 			'Min expenditure': singleVm.minExpenditure,
 			'Max expenditure': singleVm.maxExpenditure,
+			'Min velocity': singleVm.minvelocity,
+			'Max velocity': singleVm.maxvelocity,
 			'Resource avg. velocity': singleVm.velocity,
 			'Deadline': singleVm.deadline,
 			'Location': singleVm.marker.position.toUrlValue()
@@ -251,10 +266,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			           Severity: singleVm.factor["Severity Level"],
 			           Category: singleVm.factor["Category"],
 			           Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
-			           Velocity: {min: 20, max: 100},
+			           Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
 			           Deadline: singleVm.factor["Deadline"],
 			           Location: singleVm.marker.position.toUrlValue(),
-			       	   ResourceNum: {min: 2, max: 10}
+			       	   ResourceNum: {min: 2, max: 10},
+			       	   ResourceCost: {min: 2, max: 10}
 			         }
 
 			}).then(function success(response) {
