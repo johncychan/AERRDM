@@ -71,11 +71,19 @@
         font-size: 15px;
         font-weight: 300;
         padding: 1px 13px;
+        margin-left: 210px;
         text-overflow: ellipsis;
         width: 300px;
         height: 38px;
-        z-index: 10;
+        z-index: 16;
+        position: absolute;
+        box-shadow: 0px 1px 5px #676767;
       }
+
+      .searchBox-extend{
+        margin-left: 210px !important;
+      }
+
 
       @media only screen and (max-width: 375px) {
         #pac-input {
@@ -143,7 +151,7 @@
         position: absolute;
         z-index: 15;
         opacity: 0.9;
-        box-shadow: 0px 1px 10px #000000;
+        box-shadow: 0px 2px 8px #000000;
       }
 
       #titleName{
@@ -261,7 +269,7 @@
         box-shadow: 1px 1px 1px #000000;
         font-size: 15px;
         border-color: #424e57;
-
+        position: relative;
       }
 
       nav ul .btn-event-adjust:hover{
@@ -294,15 +302,20 @@
         background-color: #161a1d;
       }
 
+      .btn-primary:active, .btn-primary.active, .open > .dropdown-menu{ 
+      }
+
       .dropdown-menu{
-        z-index: 100003;
+        z-index: -1;
         background-color: #161a1d;
+        
       }
 
       .dropdown-menu li{
         padding: 10px 0;
         float: none;
       }
+
 
       .dropdown-menu li a{
         color: #FFFFFF;
@@ -577,7 +590,6 @@
         width: 100%;
       }
 
-
       #factorTable .minValue{
         width: 25% !important;
       }
@@ -604,7 +616,7 @@
 
       #factorTable .factor-value{
         padding: 0 0 0 20px;
-        width: 48%;
+        /*width: 48%;*/
       }
 
       #factorTable .non-input-adjust{
@@ -668,9 +680,56 @@
         
       }
 
-      #event-setting-header{
+      .infoWin-header-container{
+        margin: 0 0 5px 0;
+      }
+
+      #infoWin-header{
         color: #004d66;
         font-weight: 500;
+      }
+
+      #infoWin-header.facility-header{
+        float: left;
+        padding: 0 5px 0 0 ;
+        margin-bottom: 0;
+      }
+
+      .infoWin-header-container .facility-name{
+        font-size: 13px;
+       }
+
+      #facility-info-container{
+        padding: 0 1px 0 0;
+      }
+
+      #resource-info-table{
+        font-size: 13px;
+        margin-top: 5px;
+        /*width: 95%;*/
+        border-collapse: collapse;
+      }
+
+      #resource-info-table th{
+        text-align: center;
+        background-color: #007399;
+        border: 1px solid #007399;
+        /*color: #004d66;*/
+        color: #FFF;
+        padding: 2px 5px;
+
+      }
+
+      #resource-info-table .recourse-header{
+        border-bottom: 2px solid #FFF;
+      }
+
+      #resource-info-table .sub-header{
+        text-align: left;
+      }
+
+      #resource-info-table td{
+        padding: 3px 5px;
       }
 
       .button{
@@ -757,12 +816,12 @@
 
       .progress-extend{
         transition: all linear 0.9s;
-        height: 370px !important;
+        height: 400px !important;
       }
 
       .progress-content-extend{
         transition: all linear 0.9s;
-        margin-top: 126px !important;
+        margin-top: 150px !important;
       }
 
       #progress-menu-container .modal-header{
@@ -870,6 +929,10 @@
 
       #event-info-table th{
         text-align: center !important;
+        background-color: #007399;
+        border: 1px solid #007399;
+        /*color: #004d66;*/
+        color: #FFF;
       }
 
       #progressStatus{
@@ -958,7 +1021,7 @@
         margin: -125px 0 0 -125px;
         position: absolute;
         z-index: 10;
-        top: 45%;
+        top: 42%;
       }
 
       #task-info-container.ng-hide {
@@ -1379,6 +1442,7 @@
       transition: transform 1.3s;
       cursor: pointer;
       pointer-events: auto;
+      outline: none;
     }
     .menu__listings {
       z-index: 10;
@@ -1407,8 +1471,8 @@
       list-style: none;
     }
     .menu__arrow--top {
-      top: 0.5em;
-      left: 220px;
+      top: 65px;
+      left: 190px;
     }
     .menu__arrow--top .arrow {
       transform: rotate(-45deg);
@@ -1474,7 +1538,7 @@
       pointer-events: auto;
     }
     .circle li .placeholder .button {
-      font-size: 1.8em;
+      font-size: 2.1em;
       background-color: transparent;
       border: none;
       color: #392338;
@@ -1530,7 +1594,7 @@
       transition: transform 1s;
     }
     #menu__active:checked ~ label .menu__toggle {
-      background-color: #392338;
+      background-color: #00394d;
       transition: all 1s;
     }
     #menu__active:checked ~ label .hamburger {
@@ -1583,3 +1647,72 @@
       display: block;
     }
 
+
+    .hamburger-menu-icon-left{
+      padding-left: 30px;
+    }
+
+    .animate-show {
+      -webkit-transition: cubic-bezier(0.34, 0.03, 0.38, 1.01) 1s;
+      transition: cubic-bezier(0.34, 0.03, 0.38, 1.01) 1s;
+      opacity: 1;
+    }
+
+    .animate-show.ng-hide-add,
+    .animate-show.ng-hide-remove {
+        display: inline-block !important;
+    }
+    .animate-show.ng-hide {
+        opacity: 0;
+    }
+
+    .animated {
+      animation-duration: 1s;
+      animation-fill-mode: both;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .fadeIn {
+      animation-duration: 1.7s;
+      animation-name: fadeIn;
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+      }
+    }
+
+    .fadeOut {
+      animation-duration: 0.5s;
+      animation-name: fadeOut;
+    }
+
+    @keyframes slideInDown {
+      from {
+        transform: translate3d(0, -2%, 0);
+        visibility: visible;
+      }
+
+      to {
+        transform: translate3d(0, 0%, 0);
+      }
+    }
+
+    .slideInDown {
+      animation-duration: 0.3s;
+      animation-name: slideInDown;
+    }
