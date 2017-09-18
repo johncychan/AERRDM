@@ -808,6 +808,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		if(!playStop){
 			playStop = true;
 			if(markerStarted){
+				// need to fix bug
 				timerHandle[0] = $timeout(function() {
 			    	animate(0, (current_point + singleVm.step*5));
 			    }, tick);
