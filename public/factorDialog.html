@@ -20,32 +20,45 @@
               </tr>
               <tr>
                 <td class="factor-key"> Severity Level </td>
-                <td class="factor-value"><input type="number" ng-model="singleVm.factor['Severity Level']" class="factor-input" name="level" required/></td>
+
+                <td class="factor-value" colspan="2"><input placeholder = "1 - 5" min = "1" max = "5" type="number" ng-model="singleVm.factor['Severity Level']" class="factor-input level-input" name="level" required/></td>
               </tr>
               <tr>
                 <td class="factor-key"> Category </td>
-                <td class="factor-value non-input-adjust">
+                <td class="factor-value non-input-adjust" colspan="2">
                   <md-select ng-model="singleVm.factor['Category']" class="factor-cate-input">
                     <md-option ng-value="cate" ng-repeat="cate in singleVm.category_list">{{cate}}</md-option>
                   </md-select>
                 </td>
               </tr>
               <tr>
-                <td class="factor-key"> Resource avg. expenditure </td>
-                <td class="factor-value"><input type="number" ng-model="singleVm.factor['Resource avg. expenditure']" class="factor-input" name="expenditure" required/></td>
+
+                <td class="factor-key"> Resourcs expenditure </td>
+                <td class="factor-value minValue">
+                  <input type="number"  ng-model = "singleVm.factor['Min expenditure']" class="factor-input" name="min_expenditure" min="0" max="100" required placeholder = "min. 0"/><span style="padding-left: 9px; color: #666666">to</span>
+                </td>
+                <td class="factor-value maxValue">
+                  <input type="number"  ng-model = "singleVm.factor['Max expenditure']" class="factor-input" name="max_expenditure" min="101" max="200" required placeholder = "max. 200"/>
+                </td>
               </tr>
               <tr>
-                <td class="factor-key"> Resource avg. velocity </td>
-                <td class="factor-value"><input type="number" ng-model="singleVm.factor['Resource avg. velocity']" class="factor-input" name="velocity" required/><span class="factor-unit">km/h</td>
+                <td class="factor-key"> Resources velocity (km/h) </td>
+                <td class="factor-value minValue">
+                  <input type="number"  ng-model = "singleVm.factor['Min velocity']" class="factor-input" name="min_velocity" min="20" max="60" required placeholder = "min. 20"/><span style="padding-left: 9px; color: #666666">to</span>
+                </td>
+                <td class="factor-value maxValue">
+                  <input type="number"  ng-model = "singleVm.factor['Max velocity']" class="factor-input" name="max_velocity" min="61" max="100" required placeholder = "max. 100"/><!-- <span class="factor-unit">km/h</td> -->
+                </td>
               </tr>
               <tr>
-                <td class="factor-key"> Deadline </td>
-                <td class="factor-value"><input type="number" ng-model="singleVm.factor['Deadline']" class="factor-input" name="deadline" required/><span class="factor-unit">mins</td>
+                <td class="factor-key"> Deadline (mins) </td>
+                <td class="factor-value" colspan="2"><input type="number" ng-model="singleVm.factor['Deadline']" class="factor-input deadline-input" name="deadline" required/><!-- <span class="factor-unit">mins</td> -->
               </tr>
             </table>
             <div class="modal-footer">
               <button type="button" class="button event-setting-reset ripple" ng-click="singleVm.reset()">Reset</button>
-              <input ng-disabled="factorForm.deadline.$invalid || factorForm.level.$invalid || factorForm.velocity.$invalid || factorForm.expenditure.$invalid " type="submit" value="ok" class="button event-start" ng-click="singleVm.startSingleEvent()" />
+
+              <input ng-disabled="factorForm.deadline.$invalid || factorForm.level.$invalid || factorForm.velocity.$invalid || factorForm.min_expenditure.$invalid || factorForm.max_expenditure.$invalid || factorForm.min_velocity.$invalid || factorForm.max_velocity.$invalid " type="submit" value="ok" class="button event-start" ng-click="singleVm.startSingleEvent()" />
             </div>
           </form>
         </div>
