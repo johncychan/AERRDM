@@ -150,11 +150,36 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		return Math.floor((Math.random()*(max-min+1))+min);
 	}
 
+
+	singleVm.minExpenditureGenerator = function(){
+		var max = 100; 
+		var min = 0;
+		return Math.floor((Math.random()*(max-min+1))+min);
+	}
+	singleVm.maxExpenditureGenerator = function(){
+		var max = 200;
+		var min = 101;
+		return Math.floor((Math.random()*(max-min+1))+min);
+	}
+
+	singleVm.minVelocityGenerator = function(){
+		var max = 60; 
+		var min = 20;
+		return Math.floor((Math.random()*(max-min+1))+min);
+	}
+	singleVm.maxVelocityGenerator = function(){
+		var max = 100;
+		var min = 61;
+		return Math.floor((Math.random()*(max-min+1))+min);
+	}
+
 	singleVm.factorGenerate = function(){
   		singleVm.level = singleVm.levelGenerator();
 		singleVm.category = singleVm.categoryGenerator();
 		singleVm.expenditure = singleVm.expenditureGenerator();
 		singleVm.velocity = singleVm.velocityGenerator();
+		singleVm.minvelocity = singleVm.minVelocityGenerator();
+		singleVm.maxvelocity = singleVm.maxVelocityGenerator();
 		singleVm.deadline = singleVm.deadlineGenerator();
 
 		//Auto increment
@@ -166,6 +191,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			'Severity Level': singleVm.level,
 			'Category': singleVm.category_list[singleVm.category],
 			'Resource avg. expenditure': singleVm.expenditure,
+
+			'Min expenditure': singleVm.minExpenditure,
+			'Max expenditure': singleVm.maxExpenditure,
+			'Min velocity': singleVm.minvelocity,
+			'Max velocity': singleVm.maxvelocity,
 			'Resource avg. velocity': singleVm.velocity,
 			'Deadline': singleVm.deadline,
 			'Location': singleVm.marker.position.toUrlValue()
@@ -228,12 +258,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 			           ID: singleVm.factor["ID"],
 			           Severity: singleVm.factor["Severity Level"],
 			           Category: singleVm.factor["Category"],
-			           Expenditure: {min: 2, max: 10},
-			           Velocity: {min: 20, max: 100},
+
+			           Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
+			           Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
 			           Deadline: singleVm.factor["Deadline"],
 			           Location: singleVm.marker.position.toUrlValue(),
 			       	   ResourceNum: {min: 2, max: 10},
-			           ResourceCost: {min: 2, max: 10}
+			       	   ResourceCost: {min: 2, max: 10}
 			         }
 
 			}).then(function success(response) {
@@ -667,6 +698,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 		if(!playStop){
 			playStop = true;
 			if(markerStarted){
+				// need to fix bug
 				timerHandle[0] = $timeout(function() {
 			    	animate(0, (current_point + singleVm.step*5));
 			    }, tick);

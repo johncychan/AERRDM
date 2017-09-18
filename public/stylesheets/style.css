@@ -468,6 +468,7 @@
       md-dialog{
         min-width: 220px !important;
         border-radius: 4px;
+        width: 550px;
       }
 
       md-dialog-content{
@@ -576,10 +577,28 @@
         width: 100%;
       }
 
+
+      #factorTable .minValue{
+        width: 25% !important;
+      }
+
+      #factorTable .minValue input{
+        /*width: 40%;*/
+      }
+
+      #factorTable .maxValue{
+        padding: 0 0 0 10px !important;
+        width: 30% !important;
+      }
+
+      #factorTable .maxValue input{ 
+        /*width: 55%;*/
+      }
+
       #factorTable .factor-key{
         text-align: right;
-        padding: 0 10px 0 0;
-        width: 52%;
+        padding: 8px 10px 8px 40px;
+        width: 51%;
         border: 1px solid #000;
       }
 
@@ -604,8 +623,12 @@
         border-bottom: 1px solid #bfbfbf;
       }
 
+      #factorTable .factor-input.deadline-input, #factorTable .factor-input.level-input{
+        width: 88%;
+      }
+
       #factorTable .factor-cate-input{
-        width: 75%;
+        width: 88%;
         border: 0;
         outline: 0;
         background: transparent;
