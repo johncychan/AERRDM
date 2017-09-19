@@ -55,45 +55,102 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.map.setZoom(14);
   });
 
-  singleVm.placeEvent = function(){
-    singleVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
-    console.log(1111);
-  }
-
+  // random location
   singleVm.randomLocation = function(){
-    var max = 3;
+    var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House"];
+    var max = place.length-1;
     var min = 0;
+    var index = Math.floor((Math.random()*(max-min+1))+min);
 
-    var place = "University of Wollongong";
     var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({'address': place}, function(results, status){
+    geocoder.geocode({'address': place[index]}, function(results, status){
       singleVm.map.setCenter(results[0].geometry.location);
-      console.log(results[0].geometry.location);
-      singleVm.placeMarker(results[0].geometry.location)
+      singleVm.placeMarkerByRandomAndSearch(results[0].geometry.location)
     });
   }
 
-  //put a marker by search box
-  singleVm.placeMarkerBySearch = function(){
-    
+  // enable user to click on the map to place marker
+  singleVm.putMarker = function(){
+    // change cursor to marker
+    singleVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
+
+    // add click event on map
+    google.maps.event.addListener(singleVm.map, 'click', function(event){      
+      singleVm.placeMarker(event);
+    });
   }
 
-  //put a marker by clicking mouse
-  singleVm.placeMarker = function(e){
-    // console.log(loc[0]+" "+loc[1]);
+  // current location
+  singleVm.currentLocation = function(){
+    navigator.geolocation.getCurrentPosition(function(position){
+      var pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+
+      singleVm.map.setCenter(new google.maps.LatLng(pos.lat, pos.lng));
+      singleVm.placeMarkerCurrent(pos);
+    });
+  }
+
+  // triggered when place changed
+  singleVm.placeChanged = function(){
+    singleVm.place = this.getPlace();
+    singleVm.map.setCenter(singleVm.place.geometry.location);
+    singleVm.placeMarkerByRandomAndSearch(singleVm.place.geometry.location);
+  }
+
+  
+  // place a marker of current location
+  singleVm.placeMarkerCurrent = function(pos){
     if(singleVm.marker){
       singleVm.marker.setMap(null);
-    }else{
-      singleVm.marker = new google.maps.Marker({
-        // position: {lat: loc[0], lng: loc[1]},
-        // position: loc,
-        position: e.latLng,
-        map: singleVm.map,
-        icon: "./img/marker.svg",
-        draggable: true,
-        animation: google.maps.Animation.DROP
-      });
     }
+    singleVm.marker = new google.maps.Marker({
+      position: {lat: pos.lat, lng: pos.lng},
+      map: singleVm.map,
+      icon: "./img/marker.svg",
+      draggable: true,
+      animation: google.maps.Animation.DROP
+    });
+
+    singleVm.markerElement();
+  }
+
+  //place a marker by clicking mouse
+  singleVm.placeMarker = function(e){
+    if(singleVm.marker){
+      singleVm.marker.setMap(null);
+    }
+    singleVm.marker = new google.maps.Marker({
+      position: e.latLng,
+      map: singleVm.map,
+      icon: "./img/marker.svg",
+      draggable: true,
+      animation: google.maps.Animation.DROP
+    });
+
+    singleVm.markerElement();
+  }
+
+  //place a marker by random and search
+  singleVm.placeMarkerByRandomAndSearch = function(loc){
+    if(singleVm.marker){
+      singleVm.marker.setMap(null);
+    }
+    singleVm.marker = new google.maps.Marker({
+      position: loc,
+      map: singleVm.map,
+      icon: "./img/marker.svg",
+      draggable: true,
+      animation: google.maps.Animation.DROP
+    });
+
+    singleVm.markerElement();
+  }
+
+  // add element to marker
+  singleVm.markerElement = function(){
     //display the marker info
     singleVm.htmlElement = "  <div><div><p id=\"infoWin-header\">Single Event Setting</p></div> " + 
     "<div><button class=\"button continue-btn ripple\" ng-click=\"singleVm.setDataField()\">" + "Set event data" + "</button></div></div>"
@@ -110,8 +167,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker.addListener('click', function($scope){
       singleVm.marker.infoWin.open(singleVm.map, singleVm.marker);
     });
-    //clear onclick event in marker
-    google.maps.event.clearListeners(singleVm.map, 'click');
 
     //set info windows
     singleVm.lastOpenedInfoWindow = singleVm.marker.infoWin;
@@ -241,6 +296,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     var progressStage = 0;
     $mdDialog.hide();
     // close info window
+
+    //clear onclick event in marker
+    google.maps.event.clearListeners(singleVm.map, 'click');
+
     singleVm.closeInfoWin();
     // open progress menu
 
@@ -322,6 +381,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     startLoc[2] = 'The university of sydney';
     // startLoc[3] = 'USD';
 
+    setRoutes();
     receiveEventTask();
     searchCircle();
 
