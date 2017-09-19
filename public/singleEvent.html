@@ -16,7 +16,7 @@
             <div class="placeholder">
               <div class="upside">
                 <a href="" class="button">
-                  <i class="fa fa-map-marker" aria-hidden="true"></i>
+                  <i class="fa fa-map-marker" aria-hidden="true" ng-click="singleVm.putMarker()" style="outline: none;"></i>
                   <md-tooltip md-direction="bottom" > Place Marker </md-tooltip>
                 </a>
               </div>
@@ -25,8 +25,8 @@
           <li>
             <div class="placeholder">
               <div class="upside">
-                <a href="" class="button hamburger-menu-icon-left">
-                  <i class="fa fa-crosshairs" aria-hidden="true"></i>
+                <a href="" class="button hamburger-menu-icon-left" ng-click="singleVm.currentLocation()">
+                  <i class="fa fa-crosshairs" aria-hidden="true" style="outline: none;"></i>
                   <md-tooltip md-direction="bottom " > Current Location </md-tooltip>
                 </a>
               </div>
@@ -84,8 +84,8 @@
           <li>
             <div class="placeholder">
               <div class="upside">
-                <a class="button" >
-                  <i class="fa fa-random" aria-hidden="true"></i>
+                <a class="button" ng-click="singleVm.randomLocation()">
+                  <i class="fa fa-random" aria-hidden="true" style="outline: none;"></i>
                   <md-tooltip md-direction="bottom" > Randodm Location </md-tooltip>
                 </a>
               </div>
@@ -105,13 +105,14 @@
     </label>
   </section>
 
-  <input id="pac-input" class="controls animate-show {{singleVm.searchBoxExtend}}" type="text" placeholder="Search Box" ng-show = "singleVm.searchShow"/>
+  <input id="pac-input" places-auto-complete on-place-changed="singleVm.placeChanged()" class="controls animate-show {{singleVm.searchBoxExtend}}" type="text" placeholder="Search Box" ng-show = "singleVm.searchShow"/>
 
 </div>
 <ng-map  id="map" center='Sydney'
     geo-fallback-center="[40.74, -74.18]"
-    map-type-control="false" on-click="singleVm.placeMarker()" fullscreen-control="false"
+    map-type-control="false" fullscreen-control="false"
 ></ng-map>
+<!-- on-click="singleVm.placeMarker()" -->
 
 <!-- ng-show = "singleVm.panelShow" -->
 <nav class="simulation-menu draggable"  ng-show = "singleVm.panelShow">
