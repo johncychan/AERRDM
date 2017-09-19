@@ -63,14 +63,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.randomLocation = function(){
     var max = 3;
     var min = 0;
-    // var index = Math.floor((Math.random()*(max-min+1))+min);
-    // var location = [ [-33.86882, 151.209296], [-33.8806828, 151.204462], [-33.8860094, 151.2145413], [-34.405404, 150.87843] ];
-
-    // // console.log(location[index][0]+" "+location[index][1]);
-
-    // singleVm.map.setCenter({lat: location[index][0], lng:location[index][1]});
-
-    // singleVm.placeMarker(location[index]);
 
     var place = "University of Wollongong";
     var geocoder = new google.maps.Geocoder();
@@ -228,7 +220,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       'Resource avg. velocity': singleVm.velocity,
       'Deadline': singleVm.deadline,
       'Location': singleVm.marker.position.toUrlValue()
-    }
+      }
     }
 
     singleVm.progrssMenuOpen = function () {
