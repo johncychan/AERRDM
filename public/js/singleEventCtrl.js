@@ -60,6 +60,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     console.log(1111);
   }
 
+
   //put a marker by search box
   singleVm.placeMarkerBySearch = function(){
     console.log(this.getPlace());  
