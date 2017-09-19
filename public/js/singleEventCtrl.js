@@ -1,11 +1,11 @@
-app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog){
+app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService){
 
   //map initialization
   var singleVm = this;
   var directionDisplay;
   var directionsService;
   var stepDisplay;
-  $scope.headerMes = "Single Event"
+  $scope.headerMes = "Single Event";
 
 
   var position;
@@ -49,10 +49,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       icon: iconBase + "polica-station.svg"
     }
   };
+
   NgMap.getMap("map").then(function(map){
     singleVm.map = map;
     singleVm.map.setZoom(14);
-
   });
 
   singleVm.placeEvent = function(){
@@ -63,10 +63,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   //put a marker by search box
   singleVm.placeMarkerBySearch = function(){
     console.log(this.getPlace());  
-        var loc = this.getPlace().geometry.location;
-        $scope.latlng = [loc.lat(), loc.lng()];
-        
-        console.log(loc.lat() + " " + loc.lng());
+    var loc = this.getPlace().geometry.location;
+    $scope.latlng = [loc.lat(), loc.lng()];
+    
+    console.log(loc.lat() + " " + loc.lng());
   }
 
   //put a marker by clicking mouse
@@ -262,18 +262,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       url     : '/singleEvent',
       //     // set the headers so angular passing info as form data (not request payload)
       headers : { 'Content-Type': 'application/json' },
-      data    :  {
-
-                 ID: singleVm.factor["ID"],
+      data    : {
                  Severity: singleVm.factor["Severity Level"],
                  Category: singleVm.factor["Category"],
                  Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
                  Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
                  Deadline: singleVm.factor["Deadline"],
                  Location: singleVm.marker.position.toUrlValue(),
-                 ResourceNum: {min: 2, max: 10},
-                 ResourceCost: {min: 2, max: 10}
-               }
+                 ResourceNum: {min: 2, max: 10}
+                }
 
       }).then(function success(response) {
         // console.log(response.data);
@@ -283,6 +280,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         // for(var i in response.data)
         //  facilityInfo.push([i, response.data[i]]);
         // Object.assign(facilityInfo, response.data);
+
+
+
         for(var i = 0; i < response.data.fire_station.length; ++i){
           putFire(response.data.fire_station[i]);
           // startLoc.push(response.data.fire_station[i].location);

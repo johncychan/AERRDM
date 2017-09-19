@@ -1,4 +1,4 @@
-var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog']);
+var app = angular.module('meanMapApp', ['ngRoute', 'ngMap', 'ngMaterial', 'ngDialog', 'LocalStorageModule']);
 
 app.config(function($routeProvider) {
 	$routeProvider
@@ -19,4 +19,8 @@ app.config(function($routeProvider) {
 		templateUrl: "facilityWindow.html"
 
 	})
+})
+
+app.config(function (localStorageServiceProvider){
+	localStorageServiceProvider.setPrefix('meanMapApp');
 })

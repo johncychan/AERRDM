@@ -1543,6 +1543,7 @@
       border: none;
       color: #392338;
       cursor: pointer;
+      outline: none;
     }
     .circle li:nth-child(1) {
       transform: rotate(0deg) skewY(-54deg);

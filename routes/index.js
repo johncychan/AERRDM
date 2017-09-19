@@ -115,7 +115,7 @@ module.exports = function(passport){
 			{	
 				// console.log(resource_names[i]);
 				var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
-				promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.ResourceCost, r, req.db));
+				promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, req.db));
 			}
 
 			Promise.all(promises).then(function(allData) {
