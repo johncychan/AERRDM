@@ -55,6 +55,22 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.map.setZoom(14);
   });
 
+  function clearMapClickEvent(){
+    //clear onclick event in map
+    google.maps.event.clearListeners(singleVm.map, 'click');
+  }
+
+  singleVm.mapKeyUp = function($event){
+    var onKeyUpResult = $event.keyCode;
+    if(onKeyUpResult == 27)
+      defaultCursor();
+  }
+
+  function defaultCursor() {
+    clearMapClickEvent();
+    singleVm.map.setOptions({draggableCursor:'url(maps.gstatic.com/mapfil‌​es/openhand_8_8.cur)‌​,default'});
+  };
+
   // random location
   singleVm.randomLocation = function(){
     var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House"];
@@ -295,17 +311,16 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     var progressStage = 0;
     $mdDialog.hide();
     // close info window
-
-    //clear onclick event in marker
-    google.maps.event.clearListeners(singleVm.map, 'click');
-
     singleVm.closeInfoWin();
-    // open progress menu
+    //clear onclick event in map
+    clearMapClickEvent();
+
+    defaultCursor();
 
     progressInfoControl(0);
 
     // $timeout(searchCircle(), 500000);
-
+    // open progress menu
     progrssMenuOpen();
     // redirect info window to progress menu
     singleVm.infoWinRedirect("progrssMenuOpen");
@@ -462,6 +477,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     }
 
     singleVm.searchExtend = function(){
+      defaultCursor();
       singleVm.searchBoxExtend = "";
       if(!singleVm.searchShow){
         singleVm.searchBoxExtend = "animated fadeIn";

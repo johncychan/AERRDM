@@ -110,7 +110,7 @@
 </div>
 <ng-map  id="map" center='Sydney'
     geo-fallback-center="[40.74, -74.18]"
-    map-type-control="false" fullscreen-control="false"
+    map-type-control="false" fullscreen-control="false" ng-keyup = "singleVm.defaultCursor($event)"
 ></ng-map>
 <!-- on-click="singleVm.placeMarker()" -->
 
