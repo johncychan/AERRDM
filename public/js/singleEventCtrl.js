@@ -68,7 +68,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function defaultCursor() {
     clearMapClickEvent();
-    singleVm.map.setOptions({draggableCursor:'url(maps.gstatic.com/mapfil‌​es/openhand_8_8.cur)‌​,default'});
+    singleVm.map.setOptions({draggableCursor:''});
   };
 
   // random location
