@@ -60,21 +60,41 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     console.log(1111);
   }
 
+  singleVm.randomLocation = function(){
+    var max = 3;
+    var min = 0;
+    // var index = Math.floor((Math.random()*(max-min+1))+min);
+    // var location = [ [-33.86882, 151.209296], [-33.8806828, 151.204462], [-33.8860094, 151.2145413], [-34.405404, 150.87843] ];
+
+    // // console.log(location[index][0]+" "+location[index][1]);
+
+    // singleVm.map.setCenter({lat: location[index][0], lng:location[index][1]});
+
+    // singleVm.placeMarker(location[index]);
+
+    var place = "University of Wollongong";
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'address': place}, function(results, status){
+      singleVm.map.setCenter(results[0].geometry.location);
+      console.log(results[0].geometry.location);
+      singleVm.placeMarker(results[0].geometry.location)
+    });
+  }
+
   //put a marker by search box
   singleVm.placeMarkerBySearch = function(){
-    console.log(this.getPlace());  
-    var loc = this.getPlace().geometry.location;
-    $scope.latlng = [loc.lat(), loc.lng()];
     
-    console.log(loc.lat() + " " + loc.lng());
   }
 
   //put a marker by clicking mouse
   singleVm.placeMarker = function(e){
+    // console.log(loc[0]+" "+loc[1]);
     if(singleVm.marker){
       singleVm.marker.setMap(null);
     }else{
       singleVm.marker = new google.maps.Marker({
+        // position: {lat: loc[0], lng: loc[1]},
+        // position: loc,
         position: e.latLng,
         map: singleVm.map,
         icon: "./img/marker.svg",
@@ -182,7 +202,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   }
 
   singleVm.factorGenerate = function(){
-      singleVm.level = singleVm.levelGenerator();
+    singleVm.level = singleVm.levelGenerator();
     singleVm.category = singleVm.categoryGenerator();
     singleVm.expenditure = singleVm.expenditureGenerator();
     singleVm.minExpenditure = singleVm.minExpenditureGenerator();
@@ -236,7 +256,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
     // $timeout(searchCircle(), 500000);
 
-    singleVm.progrssMenuOpen();
+    progrssMenuOpen();
     // redirect info window to progress menu
     singleVm.infoWinRedirect("progrssMenuOpen");
 
@@ -313,12 +333,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     receiveEventTask();
     searchCircle();
 
-    console.log(deferred.promise.$$state.status);
-
-    $q.all(promises).then(function(){
-      setRoutes();
-    });
-    
 
     singleVm.panelShow = "true";
   } 
@@ -399,17 +413,16 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.searchExtend = function(){
       singleVm.searchBoxExtend = "";
       if(!singleVm.searchShow){
-      singleVm.searchBoxExtend = "animated fadeIn";
-      singleVm.searchShow = true;
-    }
-    else{
-      singleVm.searchBoxExtend = "animated fadeOut ";
-      singleVm.searchShow = false;
-    }
+        singleVm.searchBoxExtend = "animated fadeIn";
+        singleVm.searchShow = true;
+      }
+      else{
+        singleVm.searchBoxExtend = "animated fadeOut ";
+        singleVm.searchShow = false;
+      }
     }
 
-    singleVm.progrssMenuOpen = function () {
-
+    function progrssMenuOpen(){
       var dialog = ngDialog.open({ 
 
           template: 'eventProgress.html',
