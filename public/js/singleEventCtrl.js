@@ -1,4 +1,4 @@
-app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService){
+app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, selectedFacility){
 
   //map initialization
   var singleVm = this;
@@ -105,6 +105,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       };
 
       singleVm.map.setCenter(new google.maps.LatLng(pos.lat, pos.lng));
+      console.log("processing");
       singleVm.placeMarkerCurrent(pos);
     });
   }
@@ -367,7 +368,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         // Object.assign(facilityInfo, response.data);
 
 
-
         for(var i = 0; i < response.data.fire_station.length; ++i){
           putFire(response.data.fire_station[i]);
           // startLoc.push(response.data.fire_station[i].location);
@@ -435,14 +435,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
     var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500];
 
-    var promises = [];
-    var deferred = $q.defer();
 
     function progressInfoControl(stage){
       // currentProgressStage = stage;
       if(stage > delayArray.length){
-        deferred.resolve('done');
-        return promises.push(deferred.promise);
+        return;
       }
       if(stage == 0){
         singleVm.stage = "Analysing Event";
@@ -455,8 +452,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
       else if(stage == 3){
         singleVm.taskShow = true;
-    }
-    else if(stage == 4){
+      }
+      else if(stage == 4){
         singleVm.stage = "Searching for Facilities";
       }
       else if(stage == 5){
@@ -465,7 +462,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
       else if(stage == 6){
         singleVm.radarShow = true;
-    }
+      }
 
 
       stage++;

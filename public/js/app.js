@@ -19,8 +19,22 @@ app.config(function($routeProvider) {
 		templateUrl: "facilityWindow.html"
 
 	})
-})
+});
 
 app.config(function (localStorageServiceProvider){
 	localStorageServiceProvider.setPrefix('meanMapApp');
-})
+});
+
+app.factory('selectedFacility', function(){
+	var savedSelectedInfo = {};
+	function set(data){
+		savedSelectedInfo = data;
+	}
+	function get(){
+		return savedSelectedInfo;
+	}
+	return {
+		set: set,
+		get: get
+	}
+});
