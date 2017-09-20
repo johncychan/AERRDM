@@ -276,26 +276,35 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                }
 
       }).then(function success(response) {
-        // console.log(response.data);
+        console.log(response.data);
         //store facility information 
         // facilityInfo = angular.fromJson(response.data);
         // facilityInfo = JSON.parse(response.data);
         // for(var i in response.data)
         //  facilityInfo.push([i, response.data[i]]);
         // Object.assign(facilityInfo, response.data);
-        for(var i = 0; i < response.data.fire_station.length; ++i){
-          putFire(response.data.fire_station[i]);
-          // startLoc.push(response.data.fire_station[i].location);
-        }
-        for(var i = 0; i < response.data.police.length; ++i){
-          putPolice(response.data.police[i]);
-          // startLoc.push(response.data.police[i].location);
-        }
-        for(var i = 0; i < response.data.hospital.length; ++i){
-          putHospital(response.data.hospital[i]);
-          tmp = response.data.hospital[i].location;
-          startLoc.push(tmp);
-          // console.log(startLoc.length);
+        // for(var i = 0; i < response.data.fire_station.length; ++i){
+        //   putFire(response.data.fire_station[i]);
+        //   // startLoc.push(response.data.fire_station[i].location);
+        // }
+        // for(var i = 0; i < response.data.police.length; ++i){
+        //   putPolice(response.data.police[i]);
+        //   // startLoc.push(response.data.police[i].location);
+        // }
+        // for(var i = 0; i < response.data.hospital.length; ++i){
+        //   putHospital(response.data.hospital[i]);
+        //   tmp = response.data.hospital[i].location;
+        //   startLoc.push(tmp);
+        //   // console.log(startLoc.length);
+        // }
+
+        for(var i = 0; i < response.data.facilities.length; ++i){
+          if(response.data.facilities[i].type == "hospital")
+            putHospital(response.data.facilities[i]);
+          else if(response.data.facilities[i].type == "police")
+            putPolice(response.data.facilities[i]);
+          else if(response.data.facilities[i].type == "fire_station")
+            putFire(response.data.facilities[i]);
         }
 
         // deferred.resolve();
