@@ -13,7 +13,7 @@
 
   <div id="progressStatus">
     <div id="stageInfo">
-      <blink id="stage">{{singleVm.stage}}</blink>
+      <blink id="stage"><b>{{singleVm.stage}}</b></blink>
     </div>
     <div id="progressBar">
       <div layout="row" layout-sm="column" layout-align="space-around">
@@ -25,7 +25,7 @@
     </div>
   </div>
 	<div id="progress-content" class="{{singleVm.contentExtend}}">
-    <div class="info-row">
+    <div class="info-row clearfix">
   		<div id="event-info-container"  ng-show = "singleVm.eventShow" ng-cloak>
   			<table id="event-info-table"> 
           <tr>
@@ -60,14 +60,23 @@
             <td class="factor-value">{{singleVm.factor['Deadline']}} mins</td>
           </tr>
           <tr ng-repeat="service in singleVm.services">
-
             <td class="factor-key"> Required Service {{$index + 1}}</td>
             <td class="factor-value">{{service['number']}} - {{service['resource']}}</td>
           </tr>
         </table>
       </div>
-      <div>
-        <!-- deploy information -->
+    </div>
+    <div class="facility-row">
+      <div id="facility-info-container" ng-show = "singleVm.facilityShow" ng-cloak>
+        <table id="event-info-table"> 
+          <tr>
+            <th colspan="2">Facility Resouce Information</th>
+          </tr>
+          <tr ng-repeat="(key, value) in singleVm.facilitiesSum ">
+            <td class="factor-key">{{key}}</td>
+            <td class="factor-value">{{value}}</td>
+          </tr>
+        </table>
       </div>
     </div>
 	</div>

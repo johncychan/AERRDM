@@ -53,7 +53,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   NgMap.getMap("map").then(function(map){
     singleVm.map = map;
     singleVm.map.setZoom(14);
+    // open hamburger menu as default
+    singleVm.hamCheck = true;
+    // show search box as defualt
+    singleVm.searchExtend();
   });
+
+
 
   function clearMapClickEvent(){
     //clear onclick event in map
@@ -217,7 +223,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     });
   }
 
-  singleVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage", "Conflagration"];
+  singleVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
 
   singleVm.levelGenerator = function(){
     return Math.floor((Math.random()*5)+1);
@@ -311,13 +317,18 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // close factor menu
     var progressStage = 0;
     $mdDialog.hide();
+
+    // close hamburger menu
+    singleVm.hamCheck = false;
+    // hide search box
+    singleVm.searchExtend();
     // close info window
     singleVm.closeInfoWin();
-    //clear onclick event in map
+    // clear onclick event in map
     clearMapClickEvent();
-
+    // change back to default google map cursor
     defaultCursor();
-
+    // start progress menu animation
     progressInfoControl(0);
 
     // $timeout(searchCircle(), 500000);
@@ -366,16 +377,28 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         // for(var i in response.data)
         //  facilityInfo.push([i, response.data[i]]);
         // Object.assign(facilityInfo, response.data);
+        var totalFacilites = 0;
+        var totalPoliceStation = 0;
+        var totalHospital = 0;
+        var totalFireStation = 0;
 
         for(var i = 0; i < response.data.facilities.length; ++i){
-          if(response.data.facilities[i].type == "hospital")
+          totalFacilites++;
+          if(response.data.facilities[i].type == "hospital"){
             putHospital(response.data.facilities[i]);
-          else if(response.data.facilities[i].type == "police")
+            totalHospital++;
+          }
+          else if(response.data.facilities[i].type == "police"){
             putPolice(response.data.facilities[i]);
-          else if(response.data.facilities[i].type == "fire_station")
+            totalPoliceStation++;
+          }
+          else if(response.data.facilities[i].type == "fire_station"){
             putFire(response.data.facilities[i]);
-
+            totalFireStation++;
+          }
         }
+
+        singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
         // deferred.resolve();
         // promises.push(deferred.promise);
@@ -396,6 +419,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
     singleVm.panelShow = "true";
   } 
+
+  singleVm.facilitesSummary = function(totalFacilites, totalHospital, totalPoliceStation, totalFireStation) {
+    singleVm.facilitiesSum = {
+      'Total': totalFacilites,
+      'Hospital': totalHospital,
+      'Polication Station': totalPoliceStation,
+      'Fire Station': totalFireStation
+    }
+  }
 
   singleVm.setDataField = function(){
     // generate factor
@@ -427,7 +459,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     var currentProgressStage = 0;
     var progressHandle = [];
     // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
-    var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500];
+    var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500];
 
 
     function progressInfoControl(stage){
@@ -451,11 +483,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         singleVm.stage = "Searching for Facilities";
       }
       else if(stage == 5){
-        singleVm.containerExtend = 'progress-extend';
+        singleVm.containerExtend = 'progress-first-extend';
         singleVm.contentExtend = 'progress-content-extend';
       }
       else if(stage == 6){
         singleVm.radarShow = true;
+      }
+      else if(stage == 7){
+        singleVm.containerExtend = 'progress-second-extend';
+        singleVm.facilityShow = true;
       }
 
 
