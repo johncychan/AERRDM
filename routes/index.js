@@ -121,7 +121,6 @@ module.exports = function(passport){
 			var promises = [];
 
 			for(var i = 0; i < resource_names.length; i++)
-
 			{
 				promises.push(simulation.FindMobileResources(sim_details, resource_names[i], req.db));
 			}
