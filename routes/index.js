@@ -6,6 +6,7 @@ var assert 		= require('assert');
 var Promise 	= require('promise');
 var gplace		= require('./gplace.js');
 var dbquery		= require('./dbquery.js');
+var simulation	= require('./simulation.js');
 
 
 // Variables
@@ -75,62 +76,69 @@ module.exports = function(passport){
 		res.sendFile(path.join(public_dir + '/map.html'));
 	});
 
-	// POST Google Places.
-/*	router.post('/Simulate', function(req, res, next) {
-
-		console.log(req.body);
-		var lat = req.body.lat;
-		var lng = req.body.lng;
-		var radius = req.body.radius;
-		var place_request = google_map_api.replace('_LOCATION', lat + "," + lng);
-		place_request = place_request.replace('_RADIUS', radius);
-		console.log(place_request);
-		var types = ["police", "hospital", "fire_station"];
-		var promises = [];
-		for(var i = 0; i < types.length; i++)
-		{
-			promises.push(gplace.RequestPlace(place_request, types[i]));
-		}
-
-		Promise.all(promises).then(function(allData) {
-			var rtval = allData[0].concat(allData[1], allData[2]);
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write(JSON.stringify(rtval));
-			return res.end();
-		});	
-	});
-*/
 	// Single Event Initiate
 	router.post('/singleEvent', function(req, res, next) {
-		// console.log(req.body);
-		
-		dbquery.InsertSimulation(req, function(err, r) {
 
-			var resources_list = dbquery.RequiredResources(req.db, req.body.Category, req.body.Severity);
+		console.log(req.body);
+		var radius = 5000;
+
+		dbquery.RequiredResources(req.db, req.body.Category, req.body.Severity, function (err, resources_list) {
+			if(err)
+				throw err;
+			
+			dbquery.InsertSimulation(req, resources_list, radius, function(err, r) {
 		
-			var resource_names = Object.keys(resources_list);	
+				var resource_names = Object.keys(resources_list);
+				console.log(resource_names);	
+				var promises = [];
+
+				for(var i = 0; i < resource_names.length; i++)
+				{
+					var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
+					promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, req.db));
+				}
+
+				Promise.all(promises).then(function(allData) {
+					var rtval = {resources: resources_list, sim_id: r.insertedId, facilities: []};
+
+					for(var i = 0; i < resource_names.length; i++)
+					{
+						rtval.facilities = rtval.facilities.concat(allData[i]);
+					}
+
+					res.writeHead(200, {'Content-Type': 'application/json'});
+					res.write(JSON.stringify(rtval));
+					return res.end();
+				});
+			});
+		});
+	});
+
+	router.post('/assignResource', function(req, res, next) {
+		
+		dbquery.SimulationDetails(req.db, req.body.sim_id, function(err, sim_details) {
+			var resource_names = Object.keys(sim_details.RequiredResources);
 			var promises = [];
 
 			for(var i = 0; i < resource_names.length; i++)
-			{	
-				// console.log(resource_names[i]);
-				var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
-				promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.ResourceCost, r, req.db));
+
+			{
+				promises.push(simulation.FindMobileResources(sim_details, resource_names[i], req.db));
 			}
 
 			Promise.all(promises).then(function(allData) {
-				var rtval = {resources: resources_list, sim_id: r.insertedId};
-				
-				for(var i = 0; i < resource_names.length; i++)
+				console.log("after");
+				console.log(allData.length);
+				var rtval = [];
+				for(var i = 0; i < allData.length; i++)
 				{
-					rtval[resource_names[i]] = allData[i];
+					rtval = rtval.concat(allData[i]);
 				}
-
 				res.writeHead(200, {'Content-Type': 'application/json'});
 				res.write(JSON.stringify(rtval));
 				return res.end();
 			});
-		});
+		}); 
 	});
 
 	router.post('/test', function(req, res, next) {
@@ -146,6 +154,7 @@ module.exports = function(passport){
 		dbquery.UpdateLocation(req);
 	});
 
+	// Change to search based on mobile location
 	router.post('/activeSims', function(req, res, next) {
 		var rtval = [];
 
@@ -169,10 +178,14 @@ module.exports = function(passport){
 		});
 	});
 
+	router.post('/singleEvent/UpdatedGPS', function(req, res, next) {
+		dbquery.UpdatedGPS(db, req.sim_id, function(err, mobileResources) {
+			res.writeHead(200, {'Content-Type': 'application/json'});
+			res.write(JSON.stringify(mobileResources));
+			return res.end();
+		});
+	});
+
 	return router;
 }
-
-
-
-
 

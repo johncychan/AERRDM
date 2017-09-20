@@ -40,6 +40,7 @@ module.exports = function(passport){
                         newUser.email = req.param('email');
                         newUser.firstName = req.param('firstName');
                         newUser.lastName = req.param('lastName');
+						newUser.facility = req.param('facility');
 
                         // save the user
                         db.insertOne(newUser, function(err, r) {
