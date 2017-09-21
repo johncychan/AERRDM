@@ -586,7 +586,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       animation: google.maps.Animation.DROP
     })
 
-    var facilityElement = facilitiesInfo(facilityObj, "police");
+    var facilityElement = "";
+
+    facilityElement = facilitiesInfo(facilityObj, "police");
 
     var compiled = $compile(facilityElement)($scope)
     marker.infoWin = new google.maps.InfoWindow({
@@ -621,8 +623,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       icon: "./img/hospital.svg",
       animation: google.maps.Animation.DROP
     })
-
-    var facilityElement = facilitiesInfo(facilityObj, "hospital");
+    var facilityElement = "";
+    facilityElement = facilitiesInfo(facilityObj, "hospital");
 
     var compiled = $compile(facilityElement)($scope)
     marker.infoWin = new google.maps.InfoWindow({
@@ -658,7 +660,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       animation: google.maps.Animation.DROP
     })
 
-    var facilityElement = facilitiesInfo(facilityObj, "fire_station");
+    var facilityElement = "";
+    facilityElement = facilitiesInfo(facilityObj, "fire_station");
 
     var compiled = $compile(facilityElement)($scope)
     marker.infoWin = new google.maps.InfoWindow({
@@ -674,12 +677,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // return marker;
   }
 
-  function resourcesNumberGenerate(num){
-    return new Array (num);
-  }
-
   function facilitiesInfo(facilityObj, facility_type){
     var type = "";
+    var resource_number = 0;
+    singleVm.number = 0;
     if(facility_type == "police")
       type = "Police Car";
     else if(facility_type == "hospital")
@@ -687,11 +688,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     else if(facility_type == "fire_station")
       type = "Fire Truck";
 
-    var max = 6;
-    var min = 4;
-    var number = Math.floor(Math.random() * (max - min + 1)) + min;
-    singleVm.number = resourcesNumberGenerate(number);
+    var resource_number = facilityObj.resourceNum;
 
+    console.log(resource_number);
     var facility_name = facilityObj.name;
     var element =   "<div>"+
               "<div class=\"infoWin-header-container\">"+
@@ -707,9 +706,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                           "<th class=\"sub-header\">ID</th>"+
                           "<th class=\"sub-header\">Type</th>"+
                         "</tr>"+
-                        "<tr ng-repeat=\"i in singleVm.number track by $index\">"+
-                          "<td class=\"\">{{$index + 1}}</td>"+
-                          "<td class=\"\">"+type+"</td>"+
+                        "<tr>"+
+                          
                         "</tr>"+
                       "</table>"+
                     "</div>"+
@@ -756,10 +754,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
       var directionDisplay = new Array();
       var startLocLength;
-      // $timeout(function(){
-      //  startLocLength = startLoc.length;
-      //  console.log(startLocLength);
-      // }, 1000);
+
       var rendererOptions = {
         map: singleVm.map,
         suppressMarkers : true,
@@ -771,7 +766,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       var travelMode = google.maps.DirectionsTravelMode.DRIVING;
       var requests = new Array();
       for(var i = 0; i < startLoc.length; ++i){
-        console.log(i);
         requests[i] = {
           origin: startLoc[i],
           destination: singleVm.marker.position,
