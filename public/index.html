@@ -25,10 +25,12 @@
         <script src="../bower_components/angular-route/angular-route.js"></script>
         <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
         <script src="../bower_components/ngmap/build/scripts/ng-map.min.js"></script>
+        <script src="../bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
         <!-- Angular Scripts -->
         <script src="js/app.js"></script>
         <script src="js/singleEventCtrl.js"></script>
+        <script src="js/multiEventsCtrl.js"></script>
         <script src="js/directives.js"></script>
 
         <!-- Dropdown menu script -->
@@ -37,7 +39,6 @@
 
         <!-- sidenav script -->
         <script src="js/menu.js"></script>   
-
         
         <!-- AngularJS material -->
         <link rel = "stylesheet" href = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
@@ -48,15 +49,21 @@
         <script src = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
         <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
 
+        <!-- ngDialog -->
         <link rel = "stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.4.0/css/ngDialog.min.css">
         <link rel = "stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.4.0/css/ngDialog-theme-default.min.css">
         <link rel = "stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.4.0/css/ngDialog-theme-plain.min.css">
         <script src="//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.4.0/js/ngDialog.min.js"></script>
 
+        <!-- simulation setting panel -->
+        <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+
+		<!-- Socket.io -->
+    	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 
     </head>
     
-    <body ng-app="meanMapApp" ng-controller = "mainContrl as vm">
+    <body ng-app="meanMapApp">
 
       <!-- header -->
       <div id="header" class="clearfix">
@@ -72,10 +79,10 @@
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu" id="option-container">
                       <li>
-                          <a href="#" class="event-option">Single Event</a>
+                          <a href="/#/" class="event-option">Single Event</a>
                       </li>
                       <li>
-                          <a href="#" class="event-option">Multiple Events</a>
+                          <a href="/#/multiEvent" class="event-option">Multiple Events</a>
                       </li>
                       <li>
                           <a href="#" class="event-option">Dynamic Events</a>
@@ -108,8 +115,10 @@
               </li>
               <li class="dropdownList">
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Facilities
-                    <span class="caret"></span></button>
+                    <button class="btn btn-primary btn-event-adjust" type="button">
+                      <a href="/facilityWindow.html" target="_blank" id="facility-btn"> Facilities</a>
+                    </button>
+                    <!-- <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                       <li>
                           <a href="#"><h2>Facility 1</h2>
@@ -126,52 +135,41 @@
                           <p>Details</p>
                           <p>Details</p></a>
                       </li>
-                    </ul>
+                    </ul> -->
                 </div>
               </li>
-              <li class="menu-btn-group" >
+              <!-- <li class="menu-btn-group" >
                 <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-wrench" id="setting-menu" ></span>
                 <span style="font-size:16px;cursor:pointer;" class="glyphicon glyphicon-option-vertical" id="events-facilities-container"></span>
-              </li>
+              </li> -->
           </ul>
         </nav>
       </div>
       <!-- header end -->
         
       <!-- Leftside nav (hamburger menu) -->
-      <div ng-controller="AppCtrl">
+      <!-- <div ng-controller="AppCtrl">
         <md-sidenav md-disable-backdrop class="leftSideNav" md-component-id="left">
           <span class="closebtn" ng-click="toggleLeft()">&times;</span>
-          <span href="#">About</span>
-          <span href="#">Services</span>
+          <span ><a href="http://rapidajacky.com" target="_blank">About</a></span>
           <span href="#">Clients</span>
           <span href="#">Contact</span>
         </md-sidenav>
-      </div>
-
-      <!-- right side nav (Not necessary) -->
-      <!-- <div id="rightSideNav" class="rightSideNav clearfix">
-        <a href="javascript:void(0)" class="closebtn" id="rightNavClose">&times;</a>
-        <a href="#">About</a>
-        <a href="#">Services</a>
-        <a href="#">Clients</a>
-        <a href="#">Contact</a>
       </div> -->
 
       <!-- search box and hamburger menu -->
-      <div class="search-container" >
+     <!--  <div class="search-container" >
           <div class="searchbox-hamburger" >
             <div ng-controller="AppCtrl">
               <span class="hamburger-menu controls" ng-click="toggleLeft()">&#9776;</span>
               <input id="pac-input" class="controls" type="text" placeholder="Search Box">
             </div>
           </div>
-      </div>
+      </div> -->
 
-    <ng-map  id="map" center='current-position'
-    geo-fallback-center="[40.74, -74.18]"
-    map-type-control="false" on-click="vm.placeMarker()" fullscreen-control="false"
-    ></ng-map>
+
+      <ng-view></ng-view>
+
   </body>
 
 </html>

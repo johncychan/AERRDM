@@ -41,7 +41,7 @@ function FilterResults(rtval, type, rnum, rcost, dbr, db)
 			if(name.includes(type_ws))
 			{ 
 				facility.push(new Place(rtval.results[j], type, rnum, rcost));
-				dbquery.InsertFacility(dbr, facility[counter], db);
+				dbquery.InsertFacility(db, dbr, facility[counter]);
 				counter++;
 			}
 		}
@@ -61,7 +61,7 @@ function FilterResults(rtval, type, rnum, rcost, dbr, db)
 			if(name.includes(type) && icon == f_icon)
 			{ 
 				facility.push(new Place(rtval.results[j], type, rnum, rcost));
-				dbquery.InsertFacility(dbr, facility[counter], db);
+				dbquery.InsertFacility(db, dbr, facility[counter]);
 				counter++;
 			}
 		}
@@ -80,9 +80,7 @@ function FacilitiesSearch(url, type, rnum, rcost, dbr, db)
 				return reject(error);
 			}
 			var rtval = JSON.parse(body);
-			console.log("1");
 			var filterFacilities = FilterResults(rtval, type, rnum, rcost, dbr, db);
-			console.log("2");
 			return resolve(filterFacilities);
 		});
 	});

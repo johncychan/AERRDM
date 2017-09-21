@@ -6,47 +6,64 @@ url = 'mongodb://localhost:27017/passport';
 // Required resources for event type and severity
 function RequiredResources(db, category, severity, callback)
 {
-	var resources = { };
+	//var resources = { };
 
 	db.collection("EventTypeInfo").findOne({Category:category, Severity: severity}, {"Resources":1}, function(err, doc) {
 		callback(err, doc.Resources);
 	});	
 }
 
-function UpdateLocation(req)
+function UpdateLocation(db, req)
 {
-	var user = req.session.user;
-	var db = req.db;
+	var user = req.user;
 
 	db.collection("usersLocation").save({ "_id" : mongodb.ObjectId(user._id),
 		"Username" : user.username, 
 		"Sim_id" : req.body.sim_id,
-		"Location" : req.body.location,
-		"Facility:" : user.facility,
+		"Location" : {lat: req.body.lat, lng: req.body.lng},
+		"Facility" : user.facility,
 		"Timestamp" : new Date()
 	});
 }
 
-function InsertSimulation(req, resources_list, radius, callback)
+function FindAvaliableUser(db, sim_details, resouce, callback)
 {
-	var db = req.db;
+	db.collection("users").findOneAndUpdate({Location: resource.Facility, active:{$exists: false}}, 
+	{$set: {active: { sim_id: sim_details._id, Category: sim_details.category,
+			StartPoint: resource.Location, EndPoint: sim_details.location, Deadline: sim_details.Deadline}
+	}}, function(err, doc) {
+		callback(err, doc._id);
+	});
+}
+
+function CheckJobRequest(db, user_id, callback)
+{
+	db.collection("users").findOne({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {active:1}, function (err, doc) {
+		callback(err, doc);
+	});
+}
+
+function InsertSimulation(db, req, resources_list, radius, callback)
+{
 	var content = req.body;
 
 	db.collection("Simulations").insertOne({Category: content.Category, Severity: content.Severity, 
 		Location: content.Location, Expenditure: content.Expenditure, Velocity: content.Velocity,
 		ResourceNum: content.ResourceNum, Deadline: content.Deadline, RequiredResources: resources_list, 
-		Radius: radius, start: new Date(), active: "Search"},
+		Radius: radius, start: new Date(), Initiator: req.body.ip, ResRequired: 0, ResCompleted: 0},
 		function (err, r) {
 			callback(err, r);
 		}); 
 }
 
-function InsertFacility(dbr, place, db)
+function SetSimResouceCount(sim_id, req_count)
 {
-	console.log("Inserted:" + place.name);
-	console.log("simid: " + dbr.insertedId);
-	db.collection("Facilities").insertOne({Sim_id: mongodb.ObjectId(dbr.insertedId), Place: place});
+	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set: {ResRequired: req_count}});
+}
 
+function InsertFacility(db, dbr, place)
+{
+	db.collection("Facilities").insertOne({Sim_id: mongodb.ObjectId(dbr.insertedId), Place: place});
 }
 
 function FindFacilities(db, id, type, callback)
@@ -58,10 +75,8 @@ function FindFacilities(db, id, type, callback)
 
 }
 
-function ActiveSims(req, callback)
-{
-	var db = req.db;
-	
+function ActiveSims(db, req, callback)
+{	
 	db.collection("Simulations").find({active: 1}).toArray(function(err, docs) {
 		callback(err, docs);
 	});
@@ -102,3 +117,6 @@ module.exports.ActiveSims = ActiveSims;
 module.exports.UpdatedGPS = UpdatedGPS;
 module.exports.SimulationDetails = SimulationDetails;
 module.exports.FindFacilities = FindFacilities;
+module.exports.FindAvaliableUser = FindAvaliableUser;
+module.exports.SetSimResouceCount = SetSimResouceCount;
+module.exports.CheckJobRequest = CheckJobRequest;

@@ -24,7 +24,7 @@ var isAuthenticated = function (req, res, next) {
 	res.redirect('/');
 }
 
-module.exports = function(passport){
+module.exports = function(passport, clients, db){
 
 	/* GET index page. */
 	router.get('/', function(req, res) {
@@ -81,41 +81,50 @@ module.exports = function(passport){
 		console.log(req.body);
 		var radius = 5000;
 
-		dbquery.RequiredResources(req.db, req.body.Category, req.body.Severity, function (err, resources_list) {
+		dbquery.RequiredResources(db, req.body.Category, req.body.Severity, function (err, resources_list) {
 			if(err)
 				throw err;
-			
-			dbquery.InsertSimulation(req, resources_list, radius, function(err, r) {
+
+			if(resource_list)
+			{
+				dbquery.InsertSimulation(db, req, resources_list, radius, function(err, r) {
 		
-				var resource_names = Object.keys(resources_list);
-				console.log(resource_names);	
-				var promises = [];
-
-				for(var i = 0; i < resource_names.length; i++)
-				{
-					var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
-					promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, req.db));
-				}
-
-				Promise.all(promises).then(function(allData) {
-					var rtval = {resources: resources_list, sim_id: r.insertedId, facilities: []};
+					var resource_names = Object.keys(resources_list);
+					console.log(resource_names);	
+					var promises = [];
 
 					for(var i = 0; i < resource_names.length; i++)
 					{
-						rtval.facilities = rtval.facilities.concat(allData[i]);
+						var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
+						promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, req.db));
 					}
 
-					res.writeHead(200, {'Content-Type': 'application/json'});
-					res.write(JSON.stringify(rtval));
-					return res.end();
+					Promise.all(promises).then(function(allData) {
+						var rtval = {resources: resources_list, sim_id: r.insertedId, facilities: []};
+
+						for(var i = 0; i < resource_names.length; i++)
+						{
+							rtval.facilities = rtval.facilities.concat(allData[i]);
+						}
+
+						res.writeHead(200, {'Content-Type': 'application/json'});
+						res.write(JSON.stringify(rtval));
+						return res.end();
+					});
 				});
-			});
+			}
+
+			else
+			{
+				res.writeHead(200, {'Content-Type': 'application/json'});
+				return res.end();
+			}
 		});
 	});
 
 	router.post('/assignResource', function(req, res, next) {
 		
-		dbquery.SimulationDetails(req.db, req.body.sim_id, function(err, sim_details) {
+		dbquery.SimulationDetails(db, req.body.sim_id, function(err, sim_details) {
 			var resource_names = Object.keys(sim_details.RequiredResources);
 			var promises = [];
 
@@ -125,18 +134,67 @@ module.exports = function(passport){
 			}
 
 			Promise.all(promises).then(function(allData) {
-				console.log("after");
-				console.log(allData.length);
 				var rtval = [];
+				var count = 0;
+ 
 				for(var i = 0; i < allData.length; i++)
 				{
-					rtval = rtval.concat(allData[i]);
+					count = count + allData[i].actualCount;
+					rtval = rtval.concat(allData[i].res);
 				}
 				res.writeHead(200, {'Content-Type': 'application/json'});
-				res.write(JSON.stringify(rtval));
+
+				if(count == 0)
+					res.write(JSON.stringify(rtval));
+				else
+				{
+					//update database
+					dbquery.SetSimResouceCount(req.sim_id, count);
+					res.write('{"message": "Waiting for mobile response."}');
+				}
 				return res.end();
 			});
 		}); 
+	});
+
+	router.post('/mobile/requestResponse')
+	{
+		//find Sim
+		//UpdateSimCounts
+		//if decline update user_id to ""
+		//if req = respond emit message to sim initiator
+	}
+
+	router.get('/mobile/jobRequest', isAuthenticated, function(req, res){
+		dbquery.CheckJobRequest(db, req.user._id, function(err, doc) {
+			if(err)
+				throw err;
+
+			res.writeHead(200, {'Content-Type': 'application/json'});
+			
+			if(doc)
+				res.write(JSON.stringify(doc.active));
+			
+			return res.end();						
+		});
+	});
+
+	router.post('/mobile/login', passport.authenticate('login', {
+		successRedirect: '/mobile/login/success',
+		failureRedirect: '/mobile/login/fail',
+		failureFlash : false  
+	}));
+
+	router.get('/mobile/login/success', isAuthenticated, function(req, res){
+		res.writeHead(200, {'Content-Type': 'application/json'});
+		res.write("Success");
+		return res.end();
+	});
+
+	router.get('/mobile/login/fail', function(req, res, next) {
+		res.writeHead(200, {'Content-Type': 'application/json'});
+		res.write("Fail");
+		return res.end();
 	});
 
 	router.post('/test', function(req, res, next) {
@@ -148,15 +206,15 @@ module.exports = function(passport){
 		return res.end();
 	});
 
-	router.post('/currentLocation', isAuthenticated, function(req, res, next) {
-		dbquery.UpdateLocation(req);
+	router.post('/mobile/currentLocation', isAuthenticated, function(req, res, next) {
+		dbquery.UpdateLocation(db, req);
 	});
 
 	// Change to search based on mobile location
 	router.post('/activeSims', function(req, res, next) {
 		var rtval = [];
 
-		dbquery.ActiveSims(req, function(err, sims) {
+		dbquery.ActiveSims(db, req, function(err, sims) {
 			if(err)
 				throw err
 			
