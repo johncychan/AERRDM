@@ -806,12 +806,36 @@
         width: 20px;
       }
 
+      .confirm-menu-container{
+        margin-top: 200px;
+        /*height: 180px !important;*/
+      }
+
+      #confirm-content .modal-footer{
+        margin-top: 10px !important;
+        padding-right: 55px;
+      }
+
+      #confirm-content{
+        width: 90%;
+        margin: 10px auto;
+        /*padding: 5px 20px;*/
+        height: 90px;
+      }
+
+      #confirm-content p{
+        text-align: center;
+        width: 85%;
+        font-size: 17px;
+        margin: 0 auto;
+      }
+
       /* event progress */
 
       #progress-menu-container{
         position: relative;
         height: 285px;
-        /*overflow: hidden;*/
+        overflow: hidden;
       }
 
       .progress-first-extend{
@@ -963,7 +987,7 @@
       #stageInfo{
         padding: 20px 0 10px 0;
 
-        font-size: 13px;
+        font-size: 14px;
         text-align: center;
         color: #4d6b79;
       }
