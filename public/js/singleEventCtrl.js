@@ -419,7 +419,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
           return response.data;
-        }
       });
   }
 
