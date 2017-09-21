@@ -21,7 +21,8 @@ var isAuthenticated = function (req, res, next) {
 	if (req.isAuthenticated())
 		return next();
 	// if the user is not authenticated then redirect him to the login page
-	res.redirect('/');
+	console.log(req.url);
+	res.redirect('/mobile/login/fail');
 }
 
 module.exports = function(passport, clients, db){
@@ -85,7 +86,7 @@ module.exports = function(passport, clients, db){
 			if(err)
 				throw err;
 
-			if(resource_list)
+			if(resources_list)
 			{
 				dbquery.InsertSimulation(db, req, resources_list, radius, function(err, r) {
 		
@@ -96,7 +97,7 @@ module.exports = function(passport, clients, db){
 					for(var i = 0; i < resource_names.length; i++)
 					{
 						var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
-						promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, req.db));
+						promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, db));
 					}
 
 					Promise.all(promises).then(function(allData) {
@@ -130,7 +131,7 @@ module.exports = function(passport, clients, db){
 
 			for(var i = 0; i < resource_names.length; i++)
 			{
-				promises.push(simulation.FindMobileResources(sim_details, resource_names[i], req.db));
+				promises.push(simulation.FindMobileResources(sim_details, resource_names[i], db));
 			}
 
 			Promise.all(promises).then(function(allData) {
@@ -154,18 +155,19 @@ module.exports = function(passport, clients, db){
 				}
 				return res.end();
 			});
-		}); 
+		}); Success
 	});
 
-	router.post('/mobile/requestResponse')
+	/*router.post('/mobile/requestResponse')
 	{
 		//find Sim
 		//UpdateSimCounts
 		//if decline update user_id to ""
 		//if req = respond emit message to sim initiator
-	}
+	}*/
 
-	router.get('/mobile/jobRequest', isAuthenticated, function(req, res){
+	router.get('/mobile/jobRequest', function(req, res, next) {
+		console.log(req.user);
 		dbquery.CheckJobRequest(db, req.user._id, function(err, doc) {
 			if(err)
 				throw err;
@@ -186,14 +188,16 @@ module.exports = function(passport, clients, db){
 	}));
 
 	router.get('/mobile/login/success', isAuthenticated, function(req, res){
+		var rtval = "success";
 		res.writeHead(200, {'Content-Type': 'application/json'});
-		res.write("Success");
+		res.write(JSON.stringify(rtval));
 		return res.end();
 	});
 
 	router.get('/mobile/login/fail', function(req, res, next) {
+		var rtval = "fail";
 		res.writeHead(200, {'Content-Type': 'application/json'});
-		res.write("Fail");
+		res.write(JSON.stringify(rtval));
 		return res.end();
 	});
 
