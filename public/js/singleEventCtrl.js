@@ -114,7 +114,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.placeChanged = function(){
     singleVm.place = this.getPlace();
     singleVm.map.setCenter(singleVm.place.geometry.location);
-    singleVm.placeMarkerByRandomAndSearch(singleVm.place.geometry.location);
+    // singleVm.placeMarkerByRandomAndSearch(singleVm.place.geometry.location);
   }
   
   // place a marker of current location
@@ -217,7 +217,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     });
   }
 
-  singleVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage", "Conflagration"];
+  singleVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
 
   singleVm.levelGenerator = function(){
     return Math.floor((Math.random()*5)+1);
@@ -304,8 +304,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       });
     };
 
-    var promises = [];
-
   // now start the simulation
   singleVm.startSingleEvent = function(){
     // close factor menu
@@ -320,28 +318,38 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
     progressInfoControl(0);
 
-    // $timeout(searchCircle(), 500000);
     // open progress menu
     progrssMenuOpen();
     // redirect info window to progress menu
     singleVm.infoWinRedirect("progrssMenuOpen");
 
-    // console.log($scope.factor);
-    // singleVm.map.setZoom(16);
     singleVm.map.setCenter(singleVm.marker.position);
 
+    //search 
+    searchCircle();
 
-    // post data to back-end
-    var eventData = {
-      location: singleVm.marker.position,
-      eventId: singleVm.eId,
-      SeverityLevel: singleVm.level
-    }
-    //send request to server for searching facilities
-    // var facilityInfo = new Array();
-    // var deferred = $q.defer();
-    var facilityInfo = new Object();
-    var tmp;
+    //two http request chainning together
+    //first $http get all facility location and display
+    //second $http request filter the facilities remove the unused facilities location
+    // displayTask = function () {
+    //   singleVm.getFaciLoc().then(getTasks);
+    // }
+    singleVm.getFaciLoc();
+
+    //hard code start location
+    startLoc[0] = 'Sydney';
+    startLoc[1] = 'Moore Park';
+    startLoc[2] = 'The university of sydney';
+
+    setRoutes();
+    // searchCircle();
+
+
+    singleVm.panelShow = "true";
+  } 
+
+
+  singleVm.getFaciLoc = function(){
     $http({
 
       method  : 'POST',
@@ -359,43 +367,35 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                 }
 
       }).then(function success(response) {
-        console.log(response.data);
-        //store facility information 
-        // facilityInfo = angular.fromJson(response.data);
-        // facilityInfo = JSON.parse(response.data);
-        // for(var i in response.data)
-        //  facilityInfo.push([i, response.data[i]]);
-        // Object.assign(facilityInfo, response.data);
+        // console.log(response.data);
+          for(var i = 0; i < response.data.facilities.length; ++i){
+            if(response.data.facilities[i].type == "hospital")
+              putHospital(response.data.facilities[i]);
+            else if(response.data.facilities[i].type == "police")
+              putPolice(response.data.facilities[i]);
+            else if(response.data.facilities[i].type == "fire_station")
+              putFire(response.data.facilities[i]);
 
-        for(var i = 0; i < response.data.facilities.length; ++i){
-          if(response.data.facilities[i].type == "hospital")
-            putHospital(response.data.facilities[i]);
-          else if(response.data.facilities[i].type == "police")
-            putPolice(response.data.facilities[i]);
-          else if(response.data.facilities[i].type == "fire_station")
-            putFire(response.data.facilities[i]);
-
+          // return response.data;
+          getTasks(response.data);
         }
 
-        // deferred.resolve();
-        // promises.push(deferred.promise);
       });
-      
+  }
 
-    // console.log(startLoc);
+  getTasks = function(dataObj){
+    $http({
 
-    startLoc[0] = 'Sydney';
-    startLoc[1] = 'Moore Park';
-    startLoc[2] = 'The university of sydney';
-    // startLoc[3] = 'USD';
-
-    setRoutes();
-    receiveEventTask();
-    searchCircle();
-
-
-    singleVm.panelShow = "true";
-  } 
+      method  : 'POST',
+      url     : '/assignResource',
+      headers : { 'Content-Type': 'application/json' },
+      data    : {
+                  sim_id: dataObj.sim_id
+      }
+    }).then(function success(response){
+        console.log(response.data);
+    })
+  }
 
   singleVm.setDataField = function(){
     // generate factor
@@ -508,15 +508,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function putPolice(facilityObj, label, type){
     var iconUrl;
-    // if(type == 'hospital')
-    //  iconUrl = './img/hospital.svg';
-    // else if(type == 'police')
-    //  iconUrl = './img/polica-station.svg';
-    // else if(type == 'fire_station')
-    //  iconUrl = './img/fire-station.svg';
-    // if(type == 'hospital'){
-
-    // }
     var latlng = facilityObj.location;
     var marker = new google.maps.Marker({
       position: latlng,
@@ -544,15 +535,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function putHospital(facilityObj, label, type){
     var iconUrl;
-    // if(type == 'hospital')
-    //  iconUrl = './img/hospital.svg';
-    // else if(type == 'police')
-    //  iconUrl = './img/polica-station.svg';
-    // else if(type == 'fire_station')
-    //  iconUrl = './img/fire-station.svg';
-    // if(type == 'hospital'){
-
-    // }
     var latlng = facilityObj.location;
     var marker = new google.maps.Marker({
       position: latlng,
@@ -580,15 +562,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function putFire(facilityObj, label, type){
     var iconUrl;
-    // if(type == 'hospital')
-    //  iconUrl = './img/hospital.svg';
-    // else if(type == 'police')
-    //  iconUrl = './img/polica-station.svg';
-    // else if(type == 'fire_station')
-    //  iconUrl = './img/fire-station.svg';
-    // if(type == 'hospital'){
-
-    // }
     var latlng = facilityObj.location;
     var marker = new google.maps.Marker({
       position: latlng,
@@ -630,7 +603,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     var max = 6;
     var min = 4;
     var number = Math.floor(Math.random() * (max - min + 1)) + min;
-    console.log(number);
+    // console.log(number);
     singleVm.number = resourcesNumberGenerate(number);
 
     var facility_name = facilityObj.name;
@@ -697,11 +670,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
       var directionDisplay = new Array();
       var startLocLength;
-      console.log("in");
-      // $timeout(function(){
-      //  startLocLength = startLoc.length;
-      //  console.log(startLocLength);
-      // }, 1000);
+      
       var rendererOptions = {
         map: singleVm.map,
         suppressMarkers : true,
@@ -713,7 +682,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       var travelMode = google.maps.DirectionsTravelMode.DRIVING;
       var requests = new Array();
       for(var i = 0; i < startLoc.length; ++i){
-        console.log(i);
         requests[i] = {
           origin: startLoc[i],
           destination: singleVm.marker.position,
@@ -721,13 +689,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         };
         directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
       }
-      // var request = {
-      //  origin: startLoc[0],
-      //  destination: singleVm.marker.position,
-      //  travelMode: travelMode
-
-      // }
-      // directionsService.route(request, makeRouteCallback(0, directionDisplay[0]));
 
       
       function makeRouteCallback(routeNum, dip){
@@ -845,9 +806,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //reset map
     //clear current event
     console.log("Stop simulation and redraw the map");
-    // google.maps.event.addListenerOnce(singleVm.map, 'idle', function() {
-    //  google.maps.event.trigger(singleVm.map, 'resize');
-    // });
 
     NgMap.getMap("map").then(function(){
       google.maps.event.trigger(singleVm, 'resize');
@@ -886,12 +844,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           timerHandle[1] = $timeout(function() {
             animate(1, (current_point + singleVm.step*5));
           }, tick);
-        // for(var i = 0; i < startLoc.length; i++){
-        //  console.log("Restart" + i);
-        //  timerHandle[i] = $timeout(function() {
-        //      animate(i, (current_point + singleVm.step*5));
-        //     }, tick);
-        // }
       }
 
       singleVm.pause = "";
@@ -905,10 +857,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     function animate(index,d) {
       markerStarted = true;
       current_point = d;
-      // for(var i = 0; i < startLoc.length; ++i){
-      
-      // }
-      // console.log(index + " " + d);
       if (d > eol[index]) {
           marker[index].setPosition(endLocation[index].latlng);
           return;
@@ -927,20 +875,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
       poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
               strokeColor:"#FFFF00", strokeWeight:3});
-
-
-      // animate(index, 50);
-
-      $q.all(promises).then(
-        function(){
-          animate(index, 50);
-        },
-        function(){
-          console.log("Fail");
-        }
-      ).finally(function(){
-        console.log("Done");
-      });
     }
 
     function receiveEventTask(){
