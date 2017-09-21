@@ -349,11 +349,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // singleVm.getFaciLoc();
 
     //hard code start location
-    startLoc[0] = 'Sydney';
-    startLoc[1] = 'Moore Park';
-    startLoc[2] = 'The university of sydney';
-
-    setRoutes();
+    
+    // setRoutes();
     // searchCircle();
 
 
@@ -419,6 +416,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
         return response.data;
+
       });
   }
 
@@ -433,6 +431,16 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }).then(function success(response){
         console.log(response.data);
+        for(var i = 0; i < response.data.length; ++i){
+          startLoc.push(response.data[i].Location);
+        }
+
+        progressHandle[stage] = $timeout(function(){
+      progressInfoControl(stage);
+    }, delayArray[stage]);
+
+        $timeout(function(){
+          setRoutes()}, 5000);
     })
   }
 
