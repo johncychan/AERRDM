@@ -416,7 +416,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
         return response.data;
-        
+
       });
   }
 
@@ -495,7 +495,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var currentProgressStage = 0;
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
-  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500];
+  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500, 950, 1500];
 
 
   function progressInfoControl(stage){
@@ -528,6 +528,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     else if(stage == 7){
       singleVm.containerExtend = 'progress-second-extend';
       singleVm.facilityShow = true;
+    }
+    else if(stage == 8){
+      singleVm.radarShow = false;
+    }
+    else if(stage == 9){
+      singleVm.stage = "Sending Tasks Info to Facilities";
+      singleVm.dotShow = true;
     }
 
 
@@ -692,8 +699,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
     var resource_number = facilityObj.resourceNum;
 
-
-    // console.log(resource_number);
     var facility_name = facilityObj.name;
     var element =   "<div>"+
               "<div class=\"infoWin-header-container\">"+
@@ -965,6 +970,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
       animate(index, 50);
     }
+
 
 });
 
