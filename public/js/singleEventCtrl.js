@@ -120,7 +120,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.placeChanged = function(){
     singleVm.place = this.getPlace();
     singleVm.map.setCenter(singleVm.place.geometry.location);
-    singleVm.placeMarkerByRandomAndSearch(singleVm.place.geometry.location);
+    // singleVm.placeMarkerByRandomAndSearch(singleVm.place.geometry.location);
   }
   
   // place a marker of current location
@@ -300,7 +300,16 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }
 
-    var promises = [];
+
+    singleVm.progrssMenuOpen = function () {
+      ngDialog.open({ 
+        template: 'eventProgress.html',
+        overlay: false,
+        showClose: false,
+        scope: $scope,
+        className: 'ngdialog-theme-default progress-menu draggable'       
+      });
+    };
 
   // now start the simulation
   singleVm.startSingleEvent = function(){
@@ -321,29 +330,40 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // start progress menu animation
     progressInfoControl(0);
 
-    // $timeout(searchCircle(), 500000);
     // open progress menu
     singleVm.progrssMenuOpen();
     // redirect info window to progress menu
     singleVm.infoWinRedirect("progrssMenuOpen");
 
-    // console.log($scope.factor);
-    // singleVm.map.setZoom(16);
     singleVm.map.setCenter(singleVm.marker.position);
 
+    //search 
+    searchCircle();
 
-    // post data to back-end
-    var eventData = {
-      location: singleVm.marker.position,
-      eventId: singleVm.eId,
-      SeverityLevel: singleVm.level
-    }
-    //send request to server for searching facilities
-    // var facilityInfo = new Array();
-    // var deferred = $q.defer();
-    var facilityInfo = new Object();
-    var tmp;
-    $http({
+    //two http request chainning together
+    //first $http get all facility location and display
+    //second $http request filter the facilities remove the unused facilities location
+    
+    singleVm.getFaciLoc().then(getTasks);
+    
+    // singleVm.getFaciLoc();
+
+    //hard code start location
+    startLoc[0] = 'Sydney';
+    startLoc[1] = 'Moore Park';
+    startLoc[2] = 'The university of sydney';
+
+    setRoutes();
+    // searchCircle();
+
+
+    singleVm.panelShow = "true";
+  } 
+
+
+  singleVm.getFaciLoc = function(){
+    console.log("getFaciLoc");
+    return $http({
 
       method  : 'POST',
       url     : '/singleEvent',
@@ -360,6 +380,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                 }
 
       }).then(function success(response) {
+
         console.log(response.data);
         //store facility information 
         // facilityInfo = angular.fromJson(response.data);
@@ -397,23 +418,24 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
+          return response.data;
+        }
       });
-      
+  }
 
-    // console.log(startLoc);
+  getTasks = function(dataObj){
+    return $http({
 
-    startLoc[0] = 'Sydney';
-    startLoc[1] = 'Moore Park';
-    startLoc[2] = 'The university of sydney';
-    // startLoc[3] = 'USD';
-
-    setRoutes();
-    receiveEventTask();
-    searchCircle();
-
-
-    singleVm.panelShow = "true";
-  } 
+      method  : 'POST',
+      url     : '/assignResource',
+      headers : { 'Content-Type': 'application/json' },
+      data    : {
+                  sim_id: dataObj.sim_id
+      }
+    }).then(function success(response){
+        console.log(response.data);
+    })
+  }
 
 
   function receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum){
@@ -568,15 +590,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function putPolice(facilityObj, label, type){
     var iconUrl;
-    // if(type == 'hospital')
-    //  iconUrl = './img/hospital.svg';
-    // else if(type == 'police')
-    //  iconUrl = './img/polica-station.svg';
-    // else if(type == 'fire_station')
-    //  iconUrl = './img/fire-station.svg';
-    // if(type == 'hospital'){
-
-    // }
     var latlng = facilityObj.location;
     var marker = new google.maps.Marker({
       position: latlng,
@@ -606,15 +619,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function putHospital(facilityObj, label, type){
     var iconUrl;
-    // if(type == 'hospital')
-    //  iconUrl = './img/hospital.svg';
-    // else if(type == 'police')
-    //  iconUrl = './img/polica-station.svg';
-    // else if(type == 'fire_station')
-    //  iconUrl = './img/fire-station.svg';
-    // if(type == 'hospital'){
-
-    // }
     var latlng = facilityObj.location;
     var marker = new google.maps.Marker({
       position: latlng,
@@ -642,15 +646,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function putFire(facilityObj, label, type){
     var iconUrl;
-    // if(type == 'hospital')
-    //  iconUrl = './img/hospital.svg';
-    // else if(type == 'police')
-    //  iconUrl = './img/polica-station.svg';
-    // else if(type == 'fire_station')
-    //  iconUrl = './img/fire-station.svg';
-    // if(type == 'hospital'){
-
-    // }
     var latlng = facilityObj.location;
     var marker = new google.maps.Marker({
       position: latlng,
@@ -689,6 +684,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       type = "Fire Truck";
 
     var resource_number = facilityObj.resourceNum;
+
 
     console.log(resource_number);
     var facility_name = facilityObj.name;
@@ -773,13 +769,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         };
         directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
       }
-      // var request = {
-      //  origin: startLoc[0],
-      //  destination: singleVm.marker.position,
-      //  travelMode: travelMode
-
-      // }
-      // directionsService.route(request, makeRouteCallback(0, directionDisplay[0]));
 
       
       function makeRouteCallback(routeNum, dip){
@@ -897,9 +886,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //reset map
     //clear current event
     console.log("Stop simulation and redraw the map");
-    // google.maps.event.addListenerOnce(singleVm.map, 'idle', function() {
-    //  google.maps.event.trigger(singleVm.map, 'resize');
-    // });
 
     NgMap.getMap("map").then(function(){
       google.maps.event.trigger(singleVm, 'resize');
@@ -938,12 +924,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           timerHandle[1] = $timeout(function() {
             animate(1, (current_point + singleVm.step*5));
           }, tick);
-        // for(var i = 0; i < startLoc.length; i++){
-        //  console.log("Restart" + i);
-        //  timerHandle[i] = $timeout(function() {
-        //      animate(i, (current_point + singleVm.step*5));
-        //     }, tick);
-        // }
       }
 
       singleVm.pause = "";
@@ -957,10 +937,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     function animate(index,d) {
       markerStarted = true;
       current_point = d;
-      // for(var i = 0; i < startLoc.length; ++i){
-      
-      // }
-      // console.log(index + " " + d);
       if (d > eol[index]) {
           marker[index].setPosition(endLocation[index].latlng);
           return;
@@ -979,20 +955,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
       poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
               strokeColor:"#FFFF00", strokeWeight:3});
-
-
-      // animate(index, 50);
-
-      $q.all(promises).then(
-        function(){
-          animate(index, 50);
-        },
-        function(){
-          console.log("Fail");
-        }
-      ).finally(function(){
-        console.log("Done");
-      });
     }
 
 });
