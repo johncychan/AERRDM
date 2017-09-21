@@ -331,10 +331,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //two http request chainning together
     //first $http get all facility location and display
     //second $http request filter the facilities remove the unused facilities location
-    // displayTask = function () {
-    //   singleVm.getFaciLoc().then(getTasks);
-    // }
-    singleVm.getFaciLoc();
+    
+    singleVm.getFaciLoc().then(getTasks);
+    
+    // singleVm.getFaciLoc();
 
     //hard code start location
     startLoc[0] = 'Sydney';
@@ -350,7 +350,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
 
   singleVm.getFaciLoc = function(){
-    $http({
+    console.log("getFaciLoc");
+    return $http({
 
       method  : 'POST',
       url     : '/singleEvent',
@@ -367,7 +368,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                 }
 
       }).then(function success(response) {
-        // console.log(response.data);
           for(var i = 0; i < response.data.facilities.length; ++i){
             if(response.data.facilities[i].type == "hospital")
               putHospital(response.data.facilities[i]);
@@ -376,15 +376,16 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
             else if(response.data.facilities[i].type == "fire_station")
               putFire(response.data.facilities[i]);
 
-          // return response.data;
-          getTasks(response.data);
+          console.log(response.data);
+          return response.data;
+          // getTasks(response.data);
         }
 
       });
   }
 
   getTasks = function(dataObj){
-    $http({
+    return $http({
 
       method  : 'POST',
       url     : '/assignResource',
