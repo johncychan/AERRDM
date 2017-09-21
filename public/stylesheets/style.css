@@ -810,18 +810,18 @@
 
       #progress-menu-container{
         position: relative;
-
-        height: 260px;
+        height: 285px;
+        /*overflow: hidden;*/
       }
 
       .progress-first-extend{
         transition: all linear 0.9s;
-        height: 400px !important;
+        height: 425px !important;
       }
 
       .progress-second-extend{
         transition: all linear 0.6s;
-        height: 550px !important;
+        height: 575px !important;
       }
 
       .progress-content-extend{
@@ -851,7 +851,7 @@
         bottom: auto !important;
         padding-top: 10px !important;
         padding-bottom: 10px !important;
-        margin: 320px 0 20px 10px;
+        margin: 200px 0 20px 10px;
         width: 550px;
         position: absolute !important;
         opacity: 0.9;
@@ -900,7 +900,7 @@
       #event-info-container{
         transition: all linear 0.8s;
         /*position: relative;*/
-        width: 55%;
+        width: 52%;
         float: left;
         /*display:table-cell;*/
       }
@@ -908,7 +908,7 @@
       #task-info-container{
         transition: all linear 0.9s;
         /*position: relative;*/
-        width: 45%;
+        width: 48%;
         float: left;
         /*display:table-cell;*/
       }
@@ -937,7 +937,7 @@
       #event-info-container #event-info-table .factor-value{
         padding: 0 10px;
         border-right: 1px solid #999999;
-        width: 126px;
+        width: 130px;
       }
 
       #event-info-table tr:first-child .factor-value{
@@ -1005,6 +1005,10 @@
 
       #facility-info-container #event-info-table .factor-key{
         width: 120px;
+      }
+
+      #task-info-container #event-info-table .factor-value{
+        width: 113px;
       }
 
       .simulation-menu.ng-hide{

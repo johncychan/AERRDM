@@ -300,16 +300,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }
 
-    singleVm.progrssMenuOpen = function () {
-      ngDialog.open({ 
-        template: 'eventProgress.html',
-        overlay: false,
-        showClose: false,
-        scope: $scope,
-        className: 'ngdialog-theme-default progress-menu draggable'       
-      });
-    };
-
     var promises = [];
 
   // now start the simulation
@@ -333,7 +323,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
     // $timeout(searchCircle(), 500000);
     // open progress menu
-    progrssMenuOpen();
+    singleVm.progrssMenuOpen();
     // redirect info window to progress menu
     singleVm.infoWinRedirect("progrssMenuOpen");
 
@@ -381,27 +371,32 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         var totalPoliceStation = 0;
         var totalHospital = 0;
         var totalFireStation = 0;
+        var ambulanceNum = 0;
+        var policeCarNum = 0;
+        var fireTruckNum = 0;
 
         for(var i = 0; i < response.data.facilities.length; ++i){
           totalFacilites++;
           if(response.data.facilities[i].type == "hospital"){
             putHospital(response.data.facilities[i]);
+            ambulanceNum = response.data.resources.hospital.num;
             totalHospital++;
           }
           else if(response.data.facilities[i].type == "police"){
             putPolice(response.data.facilities[i]);
+            policeCarNum = response.data.resources.police.num;
             totalPoliceStation++;
           }
           else if(response.data.facilities[i].type == "fire_station"){
             putFire(response.data.facilities[i]);
+            fireTruckNum = response.data.resources.fire_station.num;
             totalFireStation++;
           }
         }
 
+        receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
-        // deferred.resolve();
-        // promises.push(deferred.promise);
       });
       
 
@@ -419,6 +414,18 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
     singleVm.panelShow = "true";
   } 
+
+
+  function receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum){
+    singleVm.totalResources = ambulanceNum+policeCarNum+fireTruckNum;
+    singleVm.ambulance = ambulanceNum;
+    singleVm.police = policeCarNum;
+    singleVm.fireTruck = fireTruckNum;
+  }
+
+  singleVm.taskSummary = function(){
+
+  }
 
   singleVm.facilitesSummary = function(totalFacilites, totalHospital, totalPoliceStation, totalFireStation) {
     singleVm.facilitiesSum = {
@@ -451,95 +458,112 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   // close dialog
   singleVm.close = function () {
-      $mdDialog.cancel();
+    $mdDialog.cancel();
+  }
+
+
+  var totalProgressStage = 6;
+  var currentProgressStage = 0;
+  var progressHandle = [];
+  // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
+  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500];
+
+
+  function progressInfoControl(stage){
+    // currentProgressStage = stage;
+    if(stage > delayArray.length){
+      return;
+    }
+    if(stage == 0){
+      singleVm.stage = "Analysing Event";
+    }
+    else if(stage == 1){
+      singleVm.eventShow = true;
+    }
+    else if(stage == 2){
+    singleVm.stage = "Establishing Plan";
+    }
+    else if(stage == 3){
+      singleVm.taskShow = true;
+    }
+    else if(stage == 4){
+      singleVm.stage = "Searching for Facilities";
+    }
+    else if(stage == 5){
+      singleVm.containerExtend = 'progress-first-extend';
+      singleVm.contentExtend = 'progress-content-extend';
+    }
+    else if(stage == 6){
+      singleVm.radarShow = true;
+    }
+    else if(stage == 7){
+      singleVm.containerExtend = 'progress-second-extend';
+      singleVm.facilityShow = true;
     }
 
 
-    var totalProgressStage = 6;
-    var currentProgressStage = 0;
-    var progressHandle = [];
-    // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
-    var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500];
+    stage++;
+    currentProgressStage = stage;
+    progressHandle[stage] = $timeout(function(){
+      progressInfoControl(stage);
+    }, delayArray[stage]);
 
+  }
 
-    function progressInfoControl(stage){
-      // currentProgressStage = stage;
-      if(stage > delayArray.length){
-        return;
-      }
-      if(stage == 0){
-        singleVm.stage = "Analysing Event";
-      }
-      else if(stage == 1){
-        singleVm.eventShow = true;
-      }
-      else if(stage == 2){
-      singleVm.stage = "Establishing Plan";
-      }
-      else if(stage == 3){
-        singleVm.taskShow = true;
-      }
-      else if(stage == 4){
-        singleVm.stage = "Searching for Facilities";
-      }
-      else if(stage == 5){
-        singleVm.containerExtend = 'progress-first-extend';
-        singleVm.contentExtend = 'progress-content-extend';
-      }
-      else if(stage == 6){
-        singleVm.radarShow = true;
-      }
-      else if(stage == 7){
-        singleVm.containerExtend = 'progress-second-extend';
-        singleVm.facilityShow = true;
-      }
-
-
-      stage++;
-      currentProgressStage = stage;
-      progressHandle[stage] = $timeout(function(){
-        progressInfoControl(stage);
-      }, delayArray[stage]);
-
+  singleVm.searchExtend = function(){
+    defaultCursor();
+    singleVm.searchBoxExtend = "";
+    if(!singleVm.searchShow){
+      singleVm.searchBoxExtend = "animated fadeIn";
+      singleVm.searchShow = true;
     }
-
-    singleVm.searchExtend = function(){
-      defaultCursor();
-      singleVm.searchBoxExtend = "";
-      if(!singleVm.searchShow){
-        singleVm.searchBoxExtend = "animated fadeIn";
-        singleVm.searchShow = true;
-      }
-      else{
-        singleVm.searchBoxExtend = "animated fadeOut ";
-        singleVm.searchShow = false;
-      }
+    else{
+      singleVm.searchBoxExtend = "animated fadeOut ";
+      singleVm.searchShow = false;
     }
+  }
 
-    function progrssMenuOpen(){
-      var dialog = ngDialog.open({ 
-
+  singleVm.progressMenuIsOpen = false;
+  singleVm.progrssMenuOpen = function(){
+    // progress menu first open
+    if(!singleVm.progressMenuIsOpen){
+      singleVm.dialog = ngDialog.open({ 
+        template: 'eventProgress.html',
+        overlay: false,
+        showClose: false,
+        scope: $scope,  
+        className: 'ngdialog-theme-default progress-menu draggable'       
+      });
+      singleVm.progressMenuIsOpen = true;
+    }
+    else{
+      // progress menu opened for first time, then check whether it is opened atm
+      if(!ngDialog.isOpen(singleVm.dialog.id)){
+        console.log("in");
+        singleVm.dialog = ngDialog.open({ 
           template: 'eventProgress.html',
           overlay: false,
           showClose: false,
-          scope: $scope,
+          scope: $scope,  
           className: 'ngdialog-theme-default progress-menu draggable'       
         });
-    };
+      }
+    }
+  };
 
 
-    function createMarker(latlng, label, html) {
-      var marker = new google.maps.Marker({
-          position: latlng,
-          map: singleVm.map,
-          title: label,
-          // zIndex: Math.round(latlng.lat()*-100000)<<5,
-          icon: "./img/police-car.svg",
-          animation: google.maps.Animation.DROP
-          });
-          marker.myname = label;
+  function createMarker(latlng, label, html) {
+    var marker = new google.maps.Marker({
+        position: latlng,
+        map: singleVm.map,
+        title: label,
+        // zIndex: Math.round(latlng.lat()*-100000)<<5,
+        icon: "./img/police-car.svg",
+        animation: google.maps.Animation.DROP
+        });
+        marker.myname = label;
 
-      return marker;
+    return marker;
   }  
 
   function putPolice(facilityObj, label, type){
@@ -666,7 +690,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     var max = 6;
     var min = 4;
     var number = Math.floor(Math.random() * (max - min + 1)) + min;
-    console.log(number);
     singleVm.number = resourcesNumberGenerate(number);
 
     var facility_name = facilityObj.name;
@@ -733,7 +756,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
       var directionDisplay = new Array();
       var startLocLength;
-      console.log("in");
       // $timeout(function(){
       //  startLocLength = startLoc.length;
       //  console.log(startLocLength);
@@ -977,28 +999,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       ).finally(function(){
         console.log("Done");
       });
-    }
-
-    function receiveEventTask(){
-
-      singleVm.services = [];
-      //for loop to receive type of resources needed
-       //push()
-        singleVm.services =
-
-        [{
-          resource: 'Police car',
-          number: 2
-        },{
-          resource: 'Ambulance',
-          number: 3
-        }];
-        singleVm.totalResource = 0;
-        for(var i = 0; i < singleVm.services.length; i++){
-          singleVm.totalResource += singleVm.services[i].number;
-    }
-
-
     }
 
 });

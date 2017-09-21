@@ -41,8 +41,6 @@
           </tr>
           <tr ng-repeat="service in singleVm.services">
 
-            <td class="factor-key"> Required Service {{$index + 1}}</td>
-            <td class="factor-value">{{service['resource']}}</td>
           </tr>
         </table>
   		</div>
@@ -53,15 +51,23 @@
           </tr>
           <tr>
             <td class="factor-key">Num. of resources</td>
-            <td class="factor-value">{{singleVm.totalResource}}</td>
+            <td class="factor-value">{{singleVm.totalResources}}</td>
           </tr>
           <tr>
             <td class="factor-key">Average deadline</td>
             <td class="factor-value">{{singleVm.factor['Deadline']}} mins</td>
           </tr>
-          <tr ng-repeat="service in singleVm.services">
-            <td class="factor-key"> Required Service {{$index + 1}}</td>
-            <td class="factor-value">{{service['number']}} - {{service['resource']}}</td>
+          <tr >
+            <td class="factor-key">Ambulance</td>
+            <td class="factor-value">{{singleVm.ambulance}}</td>
+          </tr>
+          <tr >
+            <td class="factor-key">Police Car</td>
+            <td class="factor-value">{{singleVm.police}}</td>
+          </tr>
+          <tr >
+            <td class="factor-key">Fire Truck</td>
+            <td class="factor-value">{{singleVm.fireTruck}}</td>
           </tr>
         </table>
       </div>
