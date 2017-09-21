@@ -993,8 +993,12 @@
         opacity: 0;
       }
 
+      #dot-search.ng-hide{
+        opacity: 0;
+      }
+
       .facility-row{
-        padding: 5px 0 0 0;
+        padding: 2px 0 0 0;
         width: 50%;
         margin: 0 auto;
       }
@@ -1065,6 +1069,10 @@
         position: absolute;
         z-index: 10;
         top: 170px;
+      }
+
+      #dot-search{
+        transition: all linear 2s;
       }
 
       #task-info-container.ng-hide {
@@ -1760,3 +1768,64 @@
       animation-duration: 0.3s;
       animation-name: slideInDown;
     }
+
+
+    dot, dot::before, dot::after {
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+dot {
+  width: 300px;
+  height: 150px;
+  margin: auto;
+  /*display: block;*/
+  left: 20%;
+  background: no-repeat;
+  background-image: radial-gradient(closest-side, #333333 90%, rgba(0, 0, 0, 0)), radial-gradient(closest-side, #333333 90%, rgba(0, 0, 0, 0));
+  background-size: 75px 75px;
+  background-position: 0%, 50%;
+  position: absolute;
+  transform: translateZ(0) scale(0.25);
+  animation-name: slide;
+}
+dot::before, dot::after {
+  content: '';
+  width: 75px;
+  height: 75px;
+  background: radial-gradient(closest-side, #333333 90%, rgba(0, 0, 0, 0));
+  position: absolute;
+  top: 50%;
+  margin-top: -37.5px;
+  animation-name: reveal;
+}
+dot::before {
+  left: 1%;
+  animation-delay: 40ms;
+}
+dot::after {
+  right: 1%;
+  animation-direction: reverse;
+}
+
+@keyframes slide {
+  from {
+    background-position: 0%, 50%;
+  }
+  to {
+    background-position: 50%, 100%;
+  }
+}
+@keyframes reveal {
+  from {
+    transform: scale(0.001);
+  }
+  to {
+    transform: scale(1);
+  }
+}
