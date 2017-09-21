@@ -349,11 +349,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // singleVm.getFaciLoc();
 
     //hard code start location
-    startLoc[0] = 'Sydney';
-    startLoc[1] = 'Moore Park';
-    startLoc[2] = 'The university of sydney';
-
-    setRoutes();
+    
+    // setRoutes();
     // searchCircle();
 
 
@@ -434,6 +431,16 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }).then(function success(response){
         console.log(response.data);
+        for(var i = 0; i < response.data.length; ++i){
+          startLoc.push(response.data[i].Location);
+        }
+
+        progressHandle[stage] = $timeout(function(){
+      progressInfoControl(stage);
+    }, delayArray[stage]);
+
+        $timeout(function(){
+          setRoutes()}, 5000);
     })
   }
 
@@ -686,7 +693,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     var resource_number = facilityObj.resourceNum;
 
 
-    console.log(resource_number);
+    // console.log(resource_number);
     var facility_name = facilityObj.name;
     var element =   "<div>"+
               "<div class=\"infoWin-header-container\">"+
@@ -955,6 +962,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
       poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
               strokeColor:"#FFFF00", strokeWeight:3});
+
+      animate(index, 50);
     }
 
 });
