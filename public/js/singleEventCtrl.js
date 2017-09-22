@@ -324,6 +324,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.startSingleEvent = function(){
     // close factor menu
     singleVm.eventStarted = true;
+    // set marker undraggable when event started
+    singleVm.marker.setDraggable(false);
 
     var progressStage = 0;
     $mdDialog.hide();
