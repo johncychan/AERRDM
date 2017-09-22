@@ -1,4 +1,4 @@
-app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, selectedFacility){
+app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, selectedFacility, $window){
 
   //map initialization
   var singleVm = this;
@@ -7,6 +7,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var stepDisplay;
   $scope.headerMes = "Single Event";
 
+  singleVm.eventStarted = false;
 
   var position;
   var marker = [];
@@ -79,6 +80,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   // random location
   singleVm.randomLocation = function(){
+
     var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House", "Moonlight Ciinema Sydney", "Jubilee Park", "Woolahra", "Kensington"];
     var max = place.length-1;
     var min = 0;
@@ -93,34 +95,40 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   // enable user to click on the map to place marker
   singleVm.putMarker = function(){
-    // change cursor to marker
-    singleVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
+    if(!singleVm.eventStarted){
+      // change cursor to marker
+      singleVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
 
-    // add click event on map
-    google.maps.event.addListener(singleVm.map, 'click', function(event){      
-      singleVm.placeMarker(event);
-    });
+      // add click event on map
+      google.maps.event.addListener(singleVm.map, 'click', function(event){      
+        singleVm.placeMarker(event);
+      });
+    }
   }
 
   // current location
   singleVm.currentLocation = function(){
-    navigator.geolocation.getCurrentPosition(function(position){
-      var pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
+    if(!singleVm.eventStarted){
+      navigator.geolocation.getCurrentPosition(function(position){
+        var pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
 
-      singleVm.map.setCenter(new google.maps.LatLng(pos.lat, pos.lng));
-      console.log("processing");
-      singleVm.placeMarkerCurrent(pos);
-    });
+        singleVm.map.setCenter(new google.maps.LatLng(pos.lat, pos.lng));
+        console.log("processing");
+        singleVm.placeMarkerCurrent(pos);
+      });
+    }
   }
 
   // triggered when place changed
   singleVm.placeChanged = function(){
-    singleVm.place = this.getPlace();
-    singleVm.map.setCenter(singleVm.place.geometry.location);
-    // singleVm.placeMarkerByRandomAndSearch(singleVm.place.geometry.location);
+    if(!singleVm.eventStarted){
+      singleVm.place = this.getPlace();
+      singleVm.map.setCenter(singleVm.place.geometry.location);
+      singleVm.placeMarkerByRandomAndSearch(singleVm.place.geometry.location);
+    }
   }
   
   // place a marker of current location
@@ -312,8 +320,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     };
 
   // now start the simulation
+
   singleVm.startSingleEvent = function(){
     // close factor menu
+    singleVm.eventStarted = true;
+
     var progressStage = 0;
     $mdDialog.hide();
 
@@ -487,6 +498,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.fireTruck = fireTruckNum;
   }
 
+  singleVm.resourceAllocation = function(resourceObj){
+    singleVm.allocatedResources = []
+    for(var i = 0; i < resourceObj.length; i++){
+
+    }
+  }
+
   singleVm.taskSummary = function(){
 
   }
@@ -530,7 +548,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var currentProgressStage = 0;
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
-  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500, 950, 1500];
+  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500, 950, 1500, 5500, 5500, 5500];
 
 
   function progressInfoControl(stage){
@@ -570,6 +588,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     else if(stage == 9){
       singleVm.stage = "Sending Tasks Info to Facilities";
       singleVm.dotShow = true;
+    }
+    else if(stage == 10){
+      singleVm.stage = "Receiving Response from Facilities";
+    }
+    else if(stage == 11){
+      singleVm.stage = "Analysing Response from Facilities";
+    }
+    else if(stage == 12){
+      singleVm.stage = "Resources Allocaton";
     }
 
 
@@ -733,8 +760,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       type = "Fire Truck";
 
     var resource_number = facilityObj.resourceNum;
-
     var facility_name = facilityObj.name;
+
     var element =   "<div>"+
               "<div class=\"infoWin-header-container\">"+
                 "<p id=\"infoWin-header\" class=\"facility-header\">Location</p>"+"<span class=\"facility-name\">"+facility_name+"</span>"+
@@ -881,9 +908,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           polyline[routeNum].setMap(singleVm.map);             
 
           //map.fitBounds(bounds);
+
           $timeout(function(){
             startAnimation(routeNum)
-          }, 10000);           
+          }, 10000);     
         }
       } 
     }
@@ -935,11 +963,31 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //reset map
     //clear current event
     console.log("Stop simulation and redraw the map");
-
-    NgMap.getMap("map").then(function(){
-      google.maps.event.trigger(singleVm, 'resize');
-
-    });
+      ngDialog.openConfirm({
+          template:'\
+            <div>\
+              <div class="modal-header safari_top_radius">\
+                <div id="progress-title-content">\
+                  <div class="icon-container">\
+                    <span id="progress-title-icon"></span>\
+                  </div>\
+                  <span class="progress-title">Confirmation</span>\
+                </div>  \
+              </div>\
+              <div id="confirm-content">\
+                <p>Are you sure you want to stop the simulation?</p>\
+                <div class="ngdialog-buttons modal-footer ">\
+                    <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog(0)">No</button>\
+                    <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Yes</button>\
+                </div>\
+              </div>\
+            </div>',
+          plain: true,
+          showClose: false,
+          className: 'ngdialog-theme-default confirm-menu-container'
+      }).then(function(value){
+        $window.location.reload();
+      });
   }
 
   // pause simulation
