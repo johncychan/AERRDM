@@ -464,6 +464,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.fireTruck = fireTruckNum;
   }
 
+  singleVm.resourceAllocation = function(resourceObj){
+    singleVm.allocatedResources = []
+    for(var i = 0; i < resourceObj.length; i++){
+
+    }
+  }
+
   singleVm.taskSummary = function(){
 
   }
@@ -507,7 +514,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var currentProgressStage = 0;
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
-  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500, 950, 1500, 5500, 5500];
+  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500, 950, 1500, 5500, 5500, 5500];
 
 
   function progressInfoControl(stage){
@@ -549,10 +556,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.dotShow = true;
     }
     else if(stage == 10){
-      singleVm.stage = "Receiving Response from Facilities"
+      singleVm.stage = "Receiving Response from Facilities";
     }
     else if(stage == 11){
-      singleVm.stage = "Analysing Response from Facilities"
+      singleVm.stage = "Analysing Response from Facilities";
+    }
+    else if(stage == 12){
+      singleVm.stage = "Resources Allocaton";
     }
 
 
@@ -716,8 +726,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       type = "Fire Truck";
 
     var resource_number = facilityObj.resourceNum;
-
     var facility_name = facilityObj.name;
+
     var element =   "<div>"+
               "<div class=\"infoWin-header-container\">"+
                 "<p id=\"infoWin-header\" class=\"facility-header\">Location</p>"+"<span class=\"facility-name\">"+facility_name+"</span>"+
@@ -929,7 +939,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
               </div>\
               <div id="confirm-content">\
                 <p>Are you sure you want to stop the simulation?</p>\
-                <div class="ngdialog-buttons modal-footer">\
+                <div class="ngdialog-buttons modal-footer ">\
                     <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog(0)">No</button>\
                     <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Yes</button>\
                 </div>\

@@ -45,6 +45,7 @@ function CreateMobileResource(sim_details, facility)
 	this.Expenditure = Math.random() * (sim_details.Expenditure.max-sim_details.Expenditure.min+1) + sim_details.Expenditure.min;
 	this.Expenditure = this.Expenditure.toFixed(2);
 	this.Velocity = Math.random() * (sim_details.Velocity.max-sim_details.Velocity.min+1) + sim_details.Velocity.min;
+	this.type = facility.Place.type;
 	this.Cost = Cost(sim_details, this);
 	//Insert into database
 //	//console.log(this);
