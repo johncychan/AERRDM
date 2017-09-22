@@ -420,7 +420,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
               putFire(response.data.facilities[i]);
             }
           }
-        }, 5000);
+        }, 10000);
         // sendReqtToFac(response.data);
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
@@ -477,6 +477,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }).then(function success(response){
         console.log(response.data);
+        singleVm.resourceAllocation(response.data);
         for(var i = 0; i < response.data.length; ++i){
           startLoc.push(response.data[i].Location);
         }
@@ -486,7 +487,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     }, delayArray[stage]);
 
         $timeout(function(){
-          setRoutes()}, 5000);
+          setRoutes()}, 10000);
     })
   }
 
@@ -501,8 +502,21 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.resourceAllocation = function(resourceObj){
     singleVm.allocatedResources = []
     for(var i = 0; i < resourceObj.length; i++){
+      var type = " ";
+      if(resourceObj[i].type == "fire_station")
+        type = "Fire Truck";
+      else if(resourceObj[i].type == "hospital")
+        type = "Ambulance";
+      else if(resourceObj[i].type == "police")
+        type = "Police Car";
 
+      singleVm.allocatedResources[i] = {
+        Type: type,
+        Expenditure: resourceObj[i].Expenditure,
+        Velocity: resourceObj[i].Velocity
+      };
     }
+    console.log(singleVm.allocatedResources);
   }
 
   singleVm.taskSummary = function(){
@@ -543,16 +557,14 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     $mdDialog.cancel();
   }
 
-
-  var totalProgressStage = 6;
   var currentProgressStage = 0;
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
-  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500, 950, 1500, 5500, 5500, 5500];
+  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500, 950, 1500, 5500, 5500, 5500, 1000, 2000];
 
 
   function progressInfoControl(stage){
-    // currentProgressStage = stage;
+    currentProgressStage = stage;
     if(stage > delayArray.length){
       return;
     }
@@ -597,6 +609,16 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     }
     else if(stage == 12){
       singleVm.stage = "Resources Allocaton";
+    }
+    else if(stage == 13){
+      singleVm.dotShow = false;
+      singleVm.eventShow = false;
+      singleVm.taskShow = false;
+      singleVm.facilityShow = false;
+    }
+    else if(stage == 14){
+      singleVm.resourceShow = true;
+      singleVm.autoExtend = "progress-content-auto";
     }
 
 
@@ -911,7 +933,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
           $timeout(function(){
             startAnimation(routeNum)
-          }, 10000);     
+          }, 18000);     
         }
       } 
     }
