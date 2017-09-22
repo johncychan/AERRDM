@@ -380,25 +380,36 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         var policeCarNum = 0;
         var fireTruckNum = 0;
 
+
         for(var i = 0; i < response.data.facilities.length; ++i){
           totalFacilites++;
           if(response.data.facilities[i].type == "hospital"){
-            putHospital(response.data.facilities[i]);
             ambulanceNum = response.data.resources.hospital.num;
             totalHospital++;
           }
           else if(response.data.facilities[i].type == "police"){
-            putPolice(response.data.facilities[i]);
             policeCarNum = response.data.resources.police.num;
             totalPoliceStation++;
           }
           else if(response.data.facilities[i].type == "fire_station"){
-            putFire(response.data.facilities[i]);
             fireTruckNum = response.data.resources.fire_station.num;
             totalFireStation++;
           }
         }
 
+        $timeout(function(){
+          for(var i = 0; i < response.data.facilities.length; ++i){
+            if(response.data.facilities[i].type == "hospital"){
+              putHospital(response.data.facilities[i]);
+            }
+            else if(response.data.facilities[i].type == "police"){
+              putPolice(response.data.facilities[i]);
+            }
+            else if(response.data.facilities[i].type == "fire_station"){
+              putFire(response.data.facilities[i]);
+            }
+          }
+        }, 5000);
         // sendReqtToFac(response.data);
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
@@ -750,7 +761,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   }
 
   function searchCircle(){
-    var _radius = 10000;
+    var _radius = 5000;
     var rMin = _radius * 4/5;
     var rMax = _radius;
     var direction = 1;
@@ -761,7 +772,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       fillOpacity: 0.6,
       map: singleVm.map,
 
-      radius: 10000,
+      radius: 5000,
       strokeColor: '#3878c7',
           strokeOpacity: 1,
           strokeWeight: 0.5
@@ -870,7 +881,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           polyline[routeNum].setMap(singleVm.map);             
 
           //map.fitBounds(bounds);
-            startAnimation(routeNum);           
+          $timeout(function(){
+            startAnimation(routeNum)
+          }, 10000);           
         }
       } 
     }
