@@ -80,18 +80,17 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   // random location
   singleVm.randomLocation = function(){
-    if(!singleVm.eventStarted){
-      var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House"];
-      var max = place.length-1;
-      var min = 0;
-      var index = Math.floor((Math.random()*(max-min+1))+min);
 
-      var geocoder = new google.maps.Geocoder();
-      geocoder.geocode({'address': place[index]}, function(results, status){
-        singleVm.map.setCenter(results[0].geometry.location);
-        singleVm.placeMarkerByRandomAndSearch(results[0].geometry.location)
-      });
-    }
+    var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House", "Moonlight Ciinema Sydney", "Jubilee Park", "Woolahra", "Kensington"];
+    var max = place.length-1;
+    var min = 0;
+    var index = Math.floor((Math.random()*(max-min+1))+min);
+
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'address': place[index]}, function(results, status){
+      singleVm.map.setCenter(results[0].geometry.location);
+      singleVm.placeMarkerByRandomAndSearch(results[0].geometry.location)
+    });
   }
 
   // enable user to click on the map to place marker
@@ -352,20 +351,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //search 
     searchCircle();
 
+    // sendReqtToFac();
     //two http request chainning together
     //first $http get all facility location and display
     //second $http request filter the facilities remove the unused facilities location
     
     singleVm.getFaciLoc().then(getTasks);
     
-    // singleVm.getFaciLoc();
-
-    //hard code start location
-    
-    // setRoutes();
-    // searchCircle();
-
-
     singleVm.panelShow = "true";
   } 
 
@@ -391,12 +383,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }).then(function success(response) {
 
         console.log(response.data);
-        //store facility information 
-        // facilityInfo = angular.fromJson(response.data);
-        // facilityInfo = JSON.parse(response.data);
-        // for(var i in response.data)
-        //  facilityInfo.push([i, response.data[i]]);
-        // Object.assign(facilityInfo, response.data);
         var totalFacilites = 0;
         var totalPoliceStation = 0;
         var totalHospital = 0;
@@ -405,25 +391,37 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         var policeCarNum = 0;
         var fireTruckNum = 0;
 
+
         for(var i = 0; i < response.data.facilities.length; ++i){
           totalFacilites++;
           if(response.data.facilities[i].type == "hospital"){
-            putHospital(response.data.facilities[i]);
             ambulanceNum = response.data.resources.hospital.num;
             totalHospital++;
           }
           else if(response.data.facilities[i].type == "police"){
-            putPolice(response.data.facilities[i]);
             policeCarNum = response.data.resources.police.num;
             totalPoliceStation++;
           }
           else if(response.data.facilities[i].type == "fire_station"){
-            putFire(response.data.facilities[i]);
             fireTruckNum = response.data.resources.fire_station.num;
             totalFireStation++;
           }
         }
 
+        $timeout(function(){
+          for(var i = 0; i < response.data.facilities.length; ++i){
+            if(response.data.facilities[i].type == "hospital"){
+              putHospital(response.data.facilities[i]);
+            }
+            else if(response.data.facilities[i].type == "police"){
+              putPolice(response.data.facilities[i]);
+            }
+            else if(response.data.facilities[i].type == "fire_station"){
+              putFire(response.data.facilities[i]);
+            }
+          }
+        }, 5000);
+        // sendReqtToFac(response.data);
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
@@ -431,6 +429,42 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
       });
   }
+
+  sendReqtToFac = function(dataObj){
+    console.log(dataObj.facilities.length);
+    for(var i = 0; i < dataObj.facilities.length; ++i){
+      endLoc[i] = dataObj.facilities.location;
+      polylines[i] = new google.maps.Polyline({
+        path: [singleVm.marker.position, dataObj.facilities.location],
+        geodestic: true,
+        strokeColor: '#178cd',
+        strokeOpacity: 0.6,
+        strokeWeight: 2
+      });
+      requestMarker[i] = new google.maps.Marker({
+        position: singleVm.marker.position,
+        map: singleVm.map,
+        icon: "img/bomb.svg"
+      });
+    }
+    moveReqMarker(endLoc, polylines, requestMarker);
+  }
+
+  moveReqMarker = function(endLoc, polyline, marker){
+    var eol = [];
+    var poly2 = [];
+    var timerHandle = [];
+    for (var i = 0; i < polyline.length; i++) {
+        var dfd = $.Deferred();
+        poly2[i] = new google.maps.Polyline({
+            path: []
+        });
+        marker[i].setMap(map);
+        polyline[i].setMap(map);
+        startAnimation(i);
+    }
+  }
+
 
   getTasks = function(dataObj){
     return $http({
@@ -754,7 +788,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   }
 
   function searchCircle(){
-    var _radius = 10000;
+    var _radius = 5000;
     var rMin = _radius * 4/5;
     var rMax = _radius;
     var direction = 1;
@@ -765,7 +799,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       fillOpacity: 0.6,
       map: singleVm.map,
 
-      radius: 10000,
+      radius: 5000,
       strokeColor: '#3878c7',
           strokeOpacity: 1,
           strokeWeight: 0.5
@@ -874,7 +908,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           polyline[routeNum].setMap(singleVm.map);             
 
           //map.fitBounds(bounds);
-          startAnimation(routeNum);           
+
+          $timeout(function(){
+            startAnimation(routeNum)
+          }, 10000);     
         }
       } 
     }
