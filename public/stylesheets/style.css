@@ -835,7 +835,7 @@
       #progress-menu-container{
         position: relative;
         height: 285px;
-        /*overflow: hidden;*/
+        overflow: hidden;
       }
 
       .progress-first-extend{
@@ -948,6 +948,7 @@
         /*width: 50%;*/
         padding: 10px 0 0 0;
         margin: 0 auto;
+        overflow: hidden;
       }
 
       #event-info-table{
@@ -1172,7 +1173,7 @@
 
       .resouces-info-row{
         position: absolute;
-        overflow: scroll;
+        /*overflow-y: scroll;*/
         top: 35%;
         left: 19%;
       }
@@ -1180,7 +1181,7 @@
       #resource-info-container{
         height: 180px;
         position:relative;
-        overflow-y: scroll;
+        overflow-y: auto;
       }
 
       #resource-info-container #event-info-table #resource-header{

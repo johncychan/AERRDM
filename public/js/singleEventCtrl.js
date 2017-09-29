@@ -143,7 +143,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       draggable: true,
       animation: google.maps.Animation.DROP
     });
-
+    singleVm.map.setZoom(14);
     singleVm.markerElement();
   }
 
@@ -159,7 +159,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       draggable: true,
       animation: google.maps.Animation.DROP
     });
-
+  singleVm.map.setZoom(14);
     singleVm.markerElement();
   }
 
@@ -175,7 +175,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       draggable: true,
       animation: google.maps.Animation.DROP
     });
-
+    singleVm.map.setZoom(14);
     singleVm.markerElement();
   }
 
