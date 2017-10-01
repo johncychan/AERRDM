@@ -486,7 +486,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     }, delayArray[stage]);
 
         $timeout(function(){
-          setRoutes()}, 5000);
+          setRoutes()}, 20000);
     })
   }
 
@@ -548,7 +548,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var currentProgressStage = 0;
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
-  var delayArray = [0, 1500, 2000, 1500, 2000, 100, 500, 1500, 950, 1500, 5500, 5500, 5500];
+  var delayArray = [0, 5000, 5000, 5000, 5000, 100, 500, 500, 950, 1500, 5500, 5500, 5500];
 
 
   function progressInfoControl(stage){
@@ -911,7 +911,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
           $timeout(function(){
             startAnimation(routeNum)
-          }, 10000);     
+          }, 25000);     
         }
       } 
     }
@@ -1069,19 +1069,3 @@ app.controller('AppCtrl', function ($scope, $mdSidenav) {
       };
     }
 });
-
-
-app.directive("showForm", function(){
-  return {
-    restrict: 'E',
-    templateUrl: 'setDataForm.html'
-  }
-});
-
-app.directive("showTag", function(){
-  return{
-    template: "<div><h1><button ng-click=singleVm.setDataField()>" + "Start simulation" + "</button></h1></div>"
-    // template: "<p><p>"
-  };
-});
-
