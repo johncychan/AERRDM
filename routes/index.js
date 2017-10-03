@@ -146,12 +146,18 @@ module.exports = function(passport, clients, db){
 				res.writeHead(200, {'Content-Type': 'application/json'});
 
 				if(count == 0)
-					res.write(JSON.stringify(rtval));
+				{
+				//	res.write(JSON.stringify(rtval));
+					var response = "Plan generated";
+					res.write(JSON.stringify(response));
+					clients[req.body.ip].emit(clients).emit("chat message", "Plan is now avaliable");
+				}
 				else
 				{
 					//update database
 					dbquery.SetSimResouceCount(req.sim_id, count);
-					res.write('{"message": "Waiting for mobile response."}');
+					var response = "Waiting for mobile response";
+					res.write(JSON.stringify(response));
 				}
 				return res.end();
 			});
