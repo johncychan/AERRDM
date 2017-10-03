@@ -789,19 +789,19 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function searchCircle(){
     var _radius = 5000;
-    var rMin = _radius * 4/5;
+    var rMin = _radius * 2/5;
     var rMax = _radius;
     var direction = 1;
 
     var circleOption = {
       center: singleVm.marker.position,
       fillColor: '#3878c7',
-      fillOpacity: 0.6,
+      fillOpacity: 0.2,
       map: singleVm.map,
 
-      radius: 5000,
+      radius: rMin,
       strokeColor: '#3878c7',
-          strokeOpacity: 1,
+          strokeOpacity: 0.2,
           strokeWeight: 0.5
     }
     var circle = new google.maps.Circle(circleOption);
