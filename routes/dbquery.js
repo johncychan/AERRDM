@@ -28,12 +28,15 @@ function UpdateLocation(db, req)
 
 function FindAvaliableUser(db, sim_details, resouce, callback)
 {
-	db.collection("users").findOneAndUpdate({Location: resource.Facility, active:{$exists: false}}, 
-	{$set: {active: { sim_id: sim_details._id, Category: sim_details.category,
-			StartPoint: resource.Location, EndPoint: sim_details.location, Deadline: sim_details.Deadline}
-	}}, function(err, doc) {
-		callback(err, doc._id);
-	});
+	console.log("startfinduser");
+	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}}, 
+		{$set: {active: { sim_id: sim_details._id, Category: sim_details.category,
+				StartPoint: resource.Location, EndPoint: sim_details.location, Deadline: sim_details.Deadline}}}, 
+		function(err, doc) {
+			console.log("endfinduser");
+			callback(err, doc._id);
+		}
+	);
 }
 
 function CheckJobRequest(db, user_id, callback)
@@ -50,7 +53,7 @@ function InsertSimulation(db, req, resources_list, radius, callback)
 	db.collection("Simulations").insertOne({Category: content.Category, Severity: content.Severity, 
 		Location: content.Location, Expenditure: content.Expenditure, Velocity: content.Velocity,
 		ResourceNum: content.ResourceNum, Deadline: content.Deadline, RequiredResources: resources_list, 
-		Radius: radius, start: new Date(), Initiator: req.body.ip, ResRequired: 0, ResCompleted: 0},
+		Radius: radius, start: new Date(), Initiator: req.connection.remoteAddress, ResRequired: 0, ResCompleted: 0},
 		function (err, r) {
 			callback(err, r);
 		}); 
@@ -109,6 +112,13 @@ function SimulationDetails(db, sim_id, callback)
 	});
 }
 
+function SetPlan(db, sim_id, plan)
+{
+	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set:{"Plan":plan}}, function(err, results) {
+		console.log("Plan saved.");
+	});
+}
+
 module.exports.RequiredResources = RequiredResources;
 module.exports.UpdateLocation = UpdateLocation;
 module.exports.InsertSimulation = InsertSimulation;
@@ -120,3 +130,4 @@ module.exports.FindFacilities = FindFacilities;
 module.exports.FindAvaliableUser = FindAvaliableUser;
 module.exports.SetSimResouceCount = SetSimResouceCount;
 module.exports.CheckJobRequest = CheckJobRequest;
+module.exports.SetPlan = SetPlan;

@@ -1,0 +1,68 @@
+<md-dialog id="attribute-dialog"  class="safari_radius draggable">
+  <md-dialog-content class="safari_radius">
+    <!-- <div class="modal-content"> -->
+      <div class="modal-header safari_top_radius">
+        <button type="button" class="close" ng-click="singleVm.close()">&times;</button>
+        <div id="factor-setting-title-container">
+          <div class="icon-container">
+            <span class="glyphicon glyphicon-cog" id="factor-menu-title-icon"></span>
+          </div>
+          <span class="modal-title safari_dialog_header">Factor Setting</span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="table-container">
+          <form name="factorForm" novalidate>
+            <table id="factorTable">
+              <tr>
+                <td class="factor-key"> ID </td>
+                <td class="factor-value non-input-adjust">{{singleVm.factor['ID']}}</td>
+              </tr>
+              <tr>
+                <td class="factor-key"> Severity Level </td>
+
+                <td class="factor-value" colspan="2"><input placeholder = "1 - 5" min = "1" max = "5" type="number" ng-model="singleVm.factor['Severity Level']" class="factor-input level-input" name="level" required/></td>
+              </tr>
+              <tr>
+                <td class="factor-key"> Category </td>
+                <td class="factor-value non-input-adjust" colspan="2">
+                  <md-select ng-model="singleVm.factor['Category']" class="factor-cate-input">
+                    <md-option ng-value="cate" ng-repeat="cate in singleVm.category_list">{{cate}}</md-option>
+                  </md-select>
+                </td>
+              </tr>
+              <tr>
+
+                <td class="factor-key"> Resourcs expenditure </td>
+                <td class="factor-value minValue">
+                  <input type="number"  ng-model = "singleVm.factor['Min expenditure']" class="factor-input" name="min_expenditure" min="0" max="100" required placeholder = "min. 0"/><span style="padding-left: 9px; color: #666666">to</span>
+                </td>
+                <td class="factor-value maxValue">
+                  <input type="number"  ng-model = "singleVm.factor['Max expenditure']" class="factor-input" name="max_expenditure" min="101" max="200" required placeholder = "max. 200"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="factor-key"> Resources velocity (km/h) </td>
+                <td class="factor-value minValue">
+                  <input type="number"  ng-model = "singleVm.factor['Min velocity']" class="factor-input" name="min_velocity" min="20" max="60" required placeholder = "min. 20"/><span style="padding-left: 9px; color: #666666">to</span>
+                </td>
+                <td class="factor-value maxValue">
+                  <input type="number"  ng-model = "singleVm.factor['Max velocity']" class="factor-input" name="max_velocity" min="61" max="100" required placeholder = "max. 100"/><!-- <span class="factor-unit">km/h</td> -->
+                </td>
+              </tr>
+              <tr>
+                <td class="factor-key"> Deadline (mins) </td>
+                <td class="factor-value" colspan="2"><input type="number" ng-model="singleVm.factor['Deadline']" class="factor-input deadline-input" name="deadline" required/><!-- <span class="factor-unit">mins</td> -->
+              </tr>
+            </table>
+            <div class="modal-footer">
+              <button type="button" class="button event-setting-reset ripple" ng-click="singleVm.reset()">Reset</button>
+
+              <input ng-disabled="factorForm.deadline.$invalid || factorForm.level.$invalid || factorForm.velocity.$invalid || factorForm.min_expenditure.$invalid || factorForm.max_expenditure.$invalid || factorForm.min_velocity.$invalid || factorForm.max_velocity.$invalid " type="submit" value="ok" class="button event-start" ng-click="singleVm.startSingleEvent()" />
+            </div>
+          </form>
+        </div>
+      </div>
+    <!-- </div> -->
+  </md-dialog-content>
+</md-dialog>

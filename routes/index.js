@@ -143,6 +143,9 @@ module.exports = function(passport, clients, db){
 					count = count + allData[i].actualCount;
 					rtval = rtval.concat(allData[i].res);
 				}
+
+				console.log("setPlan");
+				dbquery.SetPlan(db, req.sim_id, rtval);
 				res.writeHead(200, {'Content-Type': 'application/json'});
 
 				if(count == 0)
@@ -150,7 +153,7 @@ module.exports = function(passport, clients, db){
 				//	res.write(JSON.stringify(rtval));
 					var response = "Plan generated";
 					res.write(JSON.stringify(response));
-					clients[req.body.ip].emit(clients).emit("chat message", "Plan is now avaliable");
+					clients[req.connection.remoteAddress].emit("sim update", "Plan is now avaliable");
 				}
 				else
 				{
@@ -161,7 +164,7 @@ module.exports = function(passport, clients, db){
 				}
 				return res.end();
 			});
-		}); Success
+		});
 	});
 
 	/*router.post('/mobile/requestResponse')
@@ -213,6 +216,12 @@ module.exports = function(passport, clients, db){
 		console.log(req.body);
 		res.writeHead(200, {'Content-Type': 'application/json'});
 		res.write(JSON.stringify(Test));
+		return res.end();
+	});
+
+	router.post('/test2', function(req, res, next) {
+		console.log("ip: " + req.connection.remoteAddress);
+		res.writeHead(200, {'Content-Type': 'application/json'});
 		return res.end();
 	});
 

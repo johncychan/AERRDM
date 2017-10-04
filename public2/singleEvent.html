@@ -1,0 +1,155 @@
+<div class="search-container" >
+  <section class="menu menu--circle">
+    <input type="checkbox" id="menu__active"/>
+    <label for="menu__active" class="menu__active">
+      <div class="menu__toggle" ng-click="singleVm.searchExtend()">
+        <div class="icon">
+          <div class="hamburger"></div>
+        </div>
+      </div>
+      <input type="radio" name="arrow--up" id="degree--up-0"/>
+      <input type="radio" name="arrow--up" id="degree--up-1" />
+      <input type="radio" name="arrow--up" id="degree--up-2" />
+      <div class="menu__listings">
+        <ul class="circle">
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a href="" class="button">
+                  <i class="fa fa-map-marker" aria-hidden="true"></i>
+                  <md-tooltip md-direction="right" > Place Marker </md-tooltip>
+                </a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a href="" class="button hamburger-menu-icon-left">
+                  <i class="fa fa-crosshairs" aria-hidden="true"></i>
+                  <md-tooltip md-direction="right" > Current Location </md-tooltip>
+                </a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a href="#">&nbsp</a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a href="#">&nbsp</a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a href="#">&nbsp</a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a href="#">&nbsp</a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a href="#">&nbsp</a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a href="#">&nbsp</a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a href="#">&nbsp</a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="placeholder">
+              <div class="upside">
+                <a class="button" >
+                  <i class="fa fa-random" aria-hidden="true"></i>
+                  <md-tooltip md-direction="bottom" > Randodm Location </md-tooltip>
+                </a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <!-- <div class="menu__arrow menu__arrow--top">
+        <ul>
+          <li>
+            <label for="degree--up-0"><div class="arrow"></div></label>
+            <label for="degree--up-1"><div class="arrow"></div></label>
+            <label for="degree--up-2"><div class="arrow"></div></label>
+          </li>
+        </ul>
+      </div> -->
+    </label>
+  </section>
+
+  <input id="pac-input" class="controls animate-show {{singleVm.searchBoxExtend}}" type="text" placeholder="Search Box" ng-show = "singleVm.searchShow"/>
+
+</div>
+<ng-map  id="map" center='Sydney'
+    geo-fallback-center="[40.74, -74.18]"
+    map-type-control="false" on-click="singleVm.placeMarker()" fullscreen-control="false"
+></ng-map>
+
+<!-- ng-show = "singleVm.panelShow" -->
+<nav class="simulation-menu draggable"  ng-show = "singleVm.panelShow">
+  <input type="checkbox" href="#" class="simulation-menu-open" name="simulation-menu-open" id="simulation-menu-open" />
+  <label class="simulation-menu-open-button" for="simulation-menu-open">
+    <md-tooltip md-direction="top" md-delay="300"> Simluation Setting </md-tooltip>
+    <i class="fa fa-gear gear" aria-hidden="true"></i>
+    <span class="sim-hamburger sim-hamburger-1"></span>
+    <span class="sim-hamburger sim-hamburger-2"></span>
+    <span class="sim-hamburger sim-hamburger-3"></span>
+  </label>
+
+  <a ng-click = "singleVm.placeMarker()" class="simulation-menu-item ripple"> 
+    <i class="fa fa-map-marker" aria-hidden="true"></i> 
+    <md-tooltip md-direction="top" > Place Marker </md-tooltip>
+  </a>
+  <a ng-click = "singleVm.stepControl(+0.5)" class="simulation-menu-item ripple"> 
+    <i class="fa fa-forward"></i>
+    <md-tooltip md-direction="top"> Speed Up </md-tooltip>
+  </a>
+  <a ng-click = "singleVm.stepControl(-0.5)" class="simulation-menu-item ripple"> 
+    <i class="fa fa-backward"></i> 
+    <md-tooltip md-direction="bottom"> Speed Down </md-tooltip>
+  </a>
+  <a ng-click = "singleVm.stopTimeout()" class="simulation-menu-item ripple"> 
+    <i class="fa fa-stop"></i> 
+    <md-tooltip md-direction="bottom"> Stop Simulation </md-tooltip>
+  </a>
+  <a ng-click = "singleVm.pauseTimeout()" class="simulation-menu-item ripple"> 
+    <i class="fa fa-pause"> </i> 
+    <md-tooltip md-direction="bottom"> Pause Simulation </md-tooltip>
+  </a>
+  <a ng-click = "singleVm.restartTimeout()" class="simulation-menu-item ripple">
+    <i class="fa fa-play"></i> 
+    <md-tooltip md-direction="top"> Play Simulation </md-tooltip>
+  </a>
+</nav>
+
+<div id="footer">
+<!-- -->
+</div>

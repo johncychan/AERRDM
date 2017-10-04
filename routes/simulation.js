@@ -7,12 +7,12 @@ var Mongodb		= require('mongodb');
 function FindMobileResources(sim_details, type, db)
 {
 	return new Promise(function(resolve, reject) {
+		console.log("start " + type);
 		dbquery.FindFacilities(db, sim_details._id, type, function (err, facilities) {
 			if(err)
 				return reject(err);
 
 		//	var mobileResources = [];
-
 			var heap = new Heap(function(a, b) {
 				return a.Cost - b.Cost;
 			});		
@@ -31,11 +31,13 @@ function FindMobileResources(sim_details, type, db)
 			for(var i = 0; i <  sim_details.RequiredResources[type].num; i++)
 			{
 				var mobileRes = heap.pop();
+				console.log("checkAva");
 				promises.push(CheckAvailability(db, sim_details, mobileRes));
 			}
 			
 			Promise.all(promises).then(function(mobileResources) {
 				var count = ActualMobile(mobileResources);
+				console.log("end " + type);
 				return resolve({res: mobileResources, actualCount: count});
 			});
 		});
@@ -57,8 +59,10 @@ function ActualMobile(mobileResources)
 
 function CheckAvailability (db, sim_details, mobileRes)
 {
-	return new Promise(function(resolve, reject) { 
-		dbquery.FindAvailableUser(db, sim_details, mobileRes, function (err, user_id) {
+	return new Promise(function(resolve, reject) {
+console.log("testca"); 
+		dbquery.FindAvaliableUser(db, sim_details, mobileRes, function (err, user_id) {
+console.log("testca1");
 			if(err)
 				return reject(err);
 
@@ -73,7 +77,7 @@ function CreateMobileResource(sim_details, facility)
 {
 	this.id = new Mongodb.ObjectId();
 	this.Location = facility.Place.location;
-	this.Facility = facililty.Place.name;
+	this.Facility = facility.Place.name;
 	this.Expenditure = Math.random() * (sim_details.Expenditure.max-sim_details.Expenditure.min+1) + sim_details.Expenditure.min;
 	this.Expenditure = this.Expenditure.toFixed(2);
 	this.Velocity = Math.random() * (sim_details.Velocity.max-sim_details.Velocity.min+1) + sim_details.Velocity.min;
