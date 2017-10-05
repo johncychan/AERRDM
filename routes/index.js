@@ -140,29 +140,37 @@ module.exports = function(passport, clients, db){
  
 				for(var i = 0; i < allData.length; i++)
 				{
+					console.log("mobile user: " + allData[i].actualCount);
 					count = count + allData[i].actualCount;
 					rtval = rtval.concat(allData[i].res);
 				}
 
 				console.log("setPlan");
-				dbquery.SetPlan(db, req.sim_id, rtval);
-				res.writeHead(200, {'Content-Type': 'application/json'});
+				dbquery.SetPlan(db, req.sim_id, rtval, function (err, results) {
+					res.writeHead(200, {'Content-Type': 'application/json'});
 
-				if(count == 0)
-				{
-				//	res.write(JSON.stringify(rtval));
-					var response = "Plan generated";
-					res.write(JSON.stringify(response));
-					clients[req.connection.remoteAddress].emit("sim update", "Plan is now avaliable");
-				}
-				else
-				{
-					//update database
-					dbquery.SetSimResouceCount(req.sim_id, count);
-					var response = "Waiting for mobile response";
-					res.write(JSON.stringify(response));
-				}
-				return res.end();
+					if(count == 0)
+					{
+					//	res.write(JSON.stringify(rtval));
+						var response = "Plan generated";
+						res.write(JSON.stringify(response));
+						console.log("write");
+						clients[req.connection.remoteAddress].emit("sim update", "Plan is now avaliable");
+						console.log("socket");
+						console.log("end");
+						return res.end();
+					}
+					else
+					{
+						//update database
+						dbquery.SetSimResouceCount(db, req.sim_id, count, function (err, results) {
+							var response = "Waiting for mobile response";
+							res.write(JSON.stringify(response));
+							console.log("wait");
+							return res.end();
+						});
+					}
+				});
 			});
 		});
 	});

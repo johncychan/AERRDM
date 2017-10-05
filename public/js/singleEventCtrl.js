@@ -484,7 +484,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }).then(function success(response){
         console.log(response.data);
-        for(var i = 0; i < response.data.length; ++i){
+  /*      for(var i = 0; i < response.data.length; ++i){
           startLoc.push(response.data[i].Location);
         }
 
@@ -493,7 +493,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     }, delayArray[stage]);
 
         $timeout(function(){
-          setRoutes()}, 5000);
+          setRoutes()}, 5000);*/
     })
   }
 

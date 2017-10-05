@@ -26,14 +26,15 @@ function UpdateLocation(db, req)
 	});
 }
 
-function FindAvaliableUser(db, sim_details, resouce, callback)
+function FindAvaliableUser(db, sim_details, resource, callback)
 {
 	console.log("startfinduser");
+
 	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}}, 
 		{$set: {active: { sim_id: sim_details._id, Category: sim_details.category,
 				StartPoint: resource.Location, EndPoint: sim_details.location, Deadline: sim_details.Deadline}}}, 
 		function(err, doc) {
-			console.log("endfinduser");
+			console.log("endfinduser" + doc._id);
 			callback(err, doc._id);
 		}
 	);
@@ -59,9 +60,12 @@ function InsertSimulation(db, req, resources_list, radius, callback)
 		}); 
 }
 
-function SetSimResouceCount(sim_id, req_count)
+function SetSimResouceCount(db, sim_id, req_count, callback)
 {
-	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set: {ResRequired: req_count}});
+	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set: {ResRequired: req_count}}, function (err, r)
+	{
+		callback(err, r);
+	});
 }
 
 function InsertFacility(db, dbr, place)
@@ -112,10 +116,11 @@ function SimulationDetails(db, sim_id, callback)
 	});
 }
 
-function SetPlan(db, sim_id, plan)
+function SetPlan(db, sim_id, plan, callback)
 {
 	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set:{"Plan":plan}}, function(err, results) {
 		console.log("Plan saved.");
+		callback(err, results);
 	});
 }
 

@@ -31,13 +31,12 @@ function FindMobileResources(sim_details, type, db)
 			for(var i = 0; i <  sim_details.RequiredResources[type].num; i++)
 			{
 				var mobileRes = heap.pop();
-				console.log("checkAva");
 				promises.push(CheckAvailability(db, sim_details, mobileRes));
 			}
 			
 			Promise.all(promises).then(function(mobileResources) {
 				var count = ActualMobile(mobileResources);
-				console.log("end " + type);
+				console.log("end " + type + " " + count);
 				return resolve({res: mobileResources, actualCount: count});
 			});
 		});
@@ -50,7 +49,7 @@ function ActualMobile(mobileResources)
 
 	for(var i = 0; i < mobileResources.length; i++)
 	{
-		if(mobileResources.User_id != '')
+		if(mobileResources.User_id)
 			count++;
 	}
 
@@ -60,13 +59,12 @@ function ActualMobile(mobileResources)
 function CheckAvailability (db, sim_details, mobileRes)
 {
 	return new Promise(function(resolve, reject) {
-console.log("testca"); 
 		dbquery.FindAvaliableUser(db, sim_details, mobileRes, function (err, user_id) {
-console.log("testca1");
 			if(err)
 				return reject(err);
 
-			mobileRes.User_id = user_id;
+			if(user_id)
+				mobileRes.User_id = user_id;
 
 			return resolve(mobileRes);
 		});
