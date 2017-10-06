@@ -140,25 +140,20 @@ module.exports = function(passport, clients, db){
  
 				for(var i = 0; i < allData.length; i++)
 				{
-					console.log("mobile user: " + allData[i].actualCount);
 					count = count + allData[i].actualCount;
 					rtval = rtval.concat(allData[i].res);
 				}
 
 				console.log("setPlan");
-				dbquery.SetPlan(db, req.sim_id, rtval, function (err, results) {
+				dbquery.SetPlan(db, req.body.sim_id, rtval, function (err, results) {
 					res.writeHead(200, {'Content-Type': 'application/json'});
 
 					if(count == 0)
 					{
-					//	res.write(JSON.stringify(rtval));
-						var response = "Plan generated";
 						res.write(JSON.stringify(response));
-						console.log("write");
+						res.end();
 						clients[req.connection.remoteAddress].emit("sim update", "Plan is now avaliable");
 						console.log("socket");
-						console.log("end");
-						return res.end();
 					}
 					else
 					{
@@ -206,15 +201,15 @@ module.exports = function(passport, clients, db){
 
 	router.get('/mobile/login/success', isAuthenticated, function(req, res){
 		var rtval = "success";
-		res.writeHead(200, {'Content-Type': 'application/json'});
-		res.write(JSON.stringify(rtval));
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.write(rtval);
 		return res.end();
 	});
 
 	router.get('/mobile/login/fail', function(req, res, next) {
 		var rtval = "fail";
-		res.writeHead(200, {'Content-Type': 'application/json'});
-		res.write(JSON.stringify(rtval));
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.write(rtval);
 		return res.end();
 	});
 
@@ -266,6 +261,14 @@ module.exports = function(passport, clients, db){
 			res.writeHead(200, {'Content-Type': 'application/json'});
 			res.write(JSON.stringify(mobileResources));
 			return res.end();
+		});
+	});
+
+	router.post('/singleEvent/GetPlan', function(req, res, next) {
+		dbquery.GetPlan(db, req.body.sim_id, function(err, plan) {
+			res.writeHead(200, {'Content-Type': 'application/json'});
+			res.write(JSON.stringify(plan));
+			res.end();
 		});
 	});
 

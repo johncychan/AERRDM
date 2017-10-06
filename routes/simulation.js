@@ -12,7 +12,6 @@ function FindMobileResources(sim_details, type, db)
 			if(err)
 				return reject(err);
 
-		//	var mobileResources = [];
 			var heap = new Heap(function(a, b) {
 				return a.Cost - b.Cost;
 			});		
@@ -76,6 +75,7 @@ function CreateMobileResource(sim_details, facility)
 	this.id = new Mongodb.ObjectId();
 	this.Location = facility.Place.location;
 	this.Facility = facility.Place.name;
+	this.Type = facility.Place.type;
 	this.Expenditure = Math.random() * (sim_details.Expenditure.max-sim_details.Expenditure.min+1) + sim_details.Expenditure.min;
 	this.Expenditure = this.Expenditure.toFixed(2);
 	this.Velocity = Math.random() * (sim_details.Velocity.max-sim_details.Velocity.min+1) + sim_details.Velocity.min;
