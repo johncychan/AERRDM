@@ -17,24 +17,23 @@ function UpdateLocation(db, req)
 {
 	var user = req.user;
 
-	db.collection("usersLocation").save({ "_id" : mongodb.ObjectId(user._id),
-		"Username" : user.username, 
-		"Sim_id" : req.body.sim_id,
-		"Location" : {lat: req.body.lat, lng: req.body.lng},
-		"Facility" : user.facility,
-		"Timestamp" : new Date()
-	});
+	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user._id)}, 
+		{
+			$set: {			
+			"Sim_id" : req.body.sim_id,
+			"Location" : {lat: req.body.lat, lng: req.body.lng},
+			"Timestamp" : new Date()
+			}
+		}
+	);
 }
 
 function FindAvaliableUser(db, sim_details, resource, callback)
 {
-	console.log("startfinduser");
-
 	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}}, 
 		{$set: {active: { sim_id: sim_details._id, Category: sim_details.category,
 				StartPoint: resource.Location, EndPoint: sim_details.location, Deadline: sim_details.Deadline}}}, 
 		function(err, doc) {
-			console.log("endfinduser" + doc._id);
 			callback(err, doc._id);
 		}
 	);
@@ -91,7 +90,7 @@ function ActiveSims(db, req, callback)
 
 function UpdatedGPS(db, sim_id, callback)
 {
-	db.collection("usersLocation").find({sim_id: sim_id}, {sim_id: 0, timestamp: 0}).toArray(function(err, docs) {
+	db.collection("users").find({sim_id: sim_id}, {_id: 1, Location: 1}).toArray(function(err, docs) {
 		if(err)
 			throw err;
 	
@@ -99,7 +98,7 @@ function UpdatedGPS(db, sim_id, callback)
 
 		for(var i = 0; i < docs.length; i++)
 		{
-			resources[docs[i]._id] = docs[i].location;
+			resources[docs[i]._id] = docs[i].Location;
 		}
 
 		callback(resources);
@@ -118,9 +117,22 @@ function SimulationDetails(db, sim_id, callback)
 
 function SetPlan(db, sim_id, plan, callback)
 {
+
 	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set:{"Plan":plan}}, function(err, results) {
 		console.log("Plan saved.");
 		callback(err, results);
+	});
+}
+
+function GetPlan(db, sim_id, callback)
+{
+	db.collection("Simulations").findOne({_id: mongodb.ObjectId(sim_id)}, {"Plan": 1}, 
+	function (err, results)
+	{
+		if(err)
+			throw err;
+
+		callback(err, results.Plan);
 	});
 }
 
@@ -136,3 +148,4 @@ module.exports.FindAvaliableUser = FindAvaliableUser;
 module.exports.SetSimResouceCount = SetSimResouceCount;
 module.exports.CheckJobRequest = CheckJobRequest;
 module.exports.SetPlan = SetPlan;
+module.exports.GetPlan = GetPlan;
