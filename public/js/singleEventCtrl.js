@@ -789,25 +789,25 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function searchCircle(){
     var _radius = 5000;
-    var rMin = _radius * 2/5;
+    var rMin = _radius * 4/5;
     var rMax = _radius;
     var direction = 1;
 
     var circleOption = {
       center: singleVm.marker.position,
       fillColor: '#3878c7',
-      fillOpacity: 0.2,
+      fillOpacity: 0.6,
       map: singleVm.map,
 
-      radius: rMin,
+      radius: 5000,
       strokeColor: '#3878c7',
-          strokeOpacity: 0.2,
+          strokeOpacity: 1,
           strokeWeight: 0.5
     }
-    var circle = new google.maps.Circle(circleOption);
+    singleVm.circle = new google.maps.Circle(circleOption);
 
     var circleTimer = $interval(function(){
-      var radius = circle.getRadius();
+      var radius = singleVm.circle.getRadius();
       if((radius > rMax) || (radius) < rMin){
         direction *= -1;
       }
@@ -816,12 +816,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       circleOption.radius = radius + direction * 10;
       circleOption.fillOpacity = 0.6 * _par;
 
-      circle.setOptions(circleOption);
-    }, 20);
+      singleVm.circle.setOptions(circleOption);
+    }, 20, 500);
   }
 
     function setRoutes(){
-
+      console.log("setRoutes");
+      singleVm.circle.setMap(null);
       var directionDisplay = new Array();
       var startLocLength;
 

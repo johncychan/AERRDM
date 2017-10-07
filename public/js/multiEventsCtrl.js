@@ -5,7 +5,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   var directionDisplay;
   var directionsService;
   var stepDisplay;
-  $scope.headerMes = "Single Event";
+  $scope.headerMes = "Multi Event";
 
   multiVm.eventStarted = false;
 
@@ -81,16 +81,48 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   // random location
   multiVm.randomLocation = function(){
 
-    var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House", "Moonlight Ciinema Sydney", "Jubilee Park", "Woolahra", "Kensington"];
-    var max = place.length-1;
-    var min = 0;
-    var index = Math.floor((Math.random()*(max-min+1))+min);
+    // var place = [
+    // "-33.86035933, 151.2050238",
+    // "151.2050238, 151.19059978",
+    // "-33.89035505, 151.2260241",
+    // "-33.87666251, 151.19473463",
+    // "-33.85315971, 151.18648391",
+    // "-33.86033052, 151.21215368",
+    // "-33.88528746, 151.19362093",
+    // "-33.88556935, 151.18516061",
+    // "-33.87114333, 151.20569572",
+    // "-33.86434054, 151.20310438",
+    // "-33.88490885, 151.23425777",
+    // "-33.8906694, 151.21657942"
+    // ];
 
-    var geocoder = new google.maps.Geocoder();
-    geocoder.geocode({'address': place[index]}, function(results, status){
-      multiVm.map.setCenter(results[0].geometry.location);
-      multiVm.placeMarkerByRandomAndSearch(results[0].geometry.location)
-    });
+    // var max = 5;
+    // var min = 2;
+    // var placeArrLen = place.length;
+    // var eventNum = Math.floor((Math.random()*(max-min+1)) + min);
+    // console.log(eventNum);
+    // var index = Math.floor((Math.random()*(max-min+1))+min);
+    // var eventArr = [];
+    // while(eventArr.length < eventNum){
+    // 	var randomnumber = Math.ceil(Math.random()*placeArrLen);
+    // 	if(eventArr.indexOf(randomnumber) > -1) continue;
+    // 	eventArr[eventArr.length] = randomnumber;
+    // }
+    // for(var i = 0; i < eventArr.length; ++i){
+    // 	// var geocoder = new google.maps.Geocoder();
+    // 	// console.log(eventArr);
+    // 	var myLatLng = new google.maps.LatLng(parseFloat(place[eventArr[i].]))
+    // 	multiVm.placeMarkerByRandomAndSearch(place[eventArr[i]]);
+    	
+    // }
+
+
+    // var geocoder = new google.maps.Geocoder();
+    // geocoder.geocode({'address': place[index]}, function(results, status){
+    //   multiVm.map.setCenter(results[0].geometry.location);
+    //   var latLng = new google.maps.LatLng(parseFloat(place[.geo.lat))
+    //   multiVm.placeMarkerByRandomAndSearch(results[0].geometry.location)
+    // });
   }
 
   // enable user to click on the map to place marker
@@ -130,28 +162,13 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       multiVm.placeMarkerByRandomAndSearch(multiVm.place.geometry.location);
     }
   }
-  
-  // place a marker of current location
-  multiVm.placeMarkerCurrent = function(pos){
-    if(multiVm.marker){
-      multiVm.marker.setMap(null);
-    }
-    multiVm.marker = new google.maps.Marker({
-      position: {lat: pos.lat, lng: pos.lng},
-      map: multiVm.map,
-      icon: "./img/marker.svg",
-      draggable: true,
-      animation: google.maps.Animation.DROP
-    });
-
-    multiVm.markerElement();
-  }
 
   //place a marker by clicking mouse
   multiVm.placeMarker = function(e){
-    if(multiVm.marker){
-      multiVm.marker.setMap(null);
-    }
+    // if(multiVm.marker){
+    //   multiVm.marker.setMap(null);
+    // }
+    console.log("put marker");
     multiVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: multiVm.map,
@@ -160,7 +177,18 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       animation: google.maps.Animation.DROP
     });
 
-    multiVm.markerElement();
+    // multiVm.markerElement();
+    var htmlElement = "  <div><div><p id=\"infoWin-header\">Single Event Setting</p></div> " + 
+    "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField()\">" + "Set event data" + "</button></div></div>"
+    compiled = $compile(htmlElement)($scope);
+    multiVm.marker.infoWin = new google.maps.InfoWindow({
+    	content: compiled[0]
+    })
+    multiVm.marker.addListener('click', function($scope){
+      multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
+    });
+
+   // multiVm.lastOpenedInfoWindow = multiVm.marker.infoWin;
   }
 
   //place a marker by random and search
@@ -177,6 +205,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     });
 
     multiVm.markerElement();
+
   }
 
   // add element to marker
@@ -524,7 +553,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     $mdDialog.show(
       {
-        templateUrl: "factorDialog.html",
+        templateUrl: "multiFactorDialog.html",
         clickOutsideToClose: true,
             scope: $scope,
             preserveScope: true,
