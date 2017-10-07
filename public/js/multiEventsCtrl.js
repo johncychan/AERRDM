@@ -1,4 +1,4 @@
-app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, selectedFacility, $window){
+app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window){
 
   //map initialization
   var multiVm = this;

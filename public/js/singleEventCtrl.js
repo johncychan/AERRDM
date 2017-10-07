@@ -569,7 +569,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 5000, 5000, 5000, 5000, 100, 500, 500, 950, 1500, 5500, 5500, 5500];
+  var delayArray = [0, 5000, 5000, 5000, 5000, 100, 500, 500, 950, 1500, 5500, 5500, 5500, 1000, 2000];
 
 
   function progressInfoControl(stage){
