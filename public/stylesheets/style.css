@@ -853,6 +853,12 @@
         margin-top: 150px !important;
       }
 
+      .progress-content-auto{
+        transition: all linear 0.5s;
+        height: auto !important;
+        min-height: 350px;
+      }
+
       #progress-menu-container .modal-header{
         padding: 3px 15px;
       }
@@ -901,7 +907,7 @@
 
       #progress-content{
         padding: 10px;
-        overflow:hidden;
+        /*overflow:hidden;*/
         /*display:table;*/
         width: 100%;
 
@@ -942,6 +948,7 @@
         /*width: 50%;*/
         padding: 10px 0 0 0;
         margin: 0 auto;
+        overflow: hidden;
       }
 
       #event-info-table{
@@ -1162,6 +1169,45 @@
         position: absolute;
         margin: 40px 0 0 20px;
         /*color: white;*/
+      }
+
+      .resouces-info-row{
+        position: absolute;
+        /*overflow-y: scroll;*/
+        top: 35%;
+        left: 19%;
+      }
+
+      #resource-info-container{
+        height: 180px;
+        position:relative;
+        overflow-y: auto;
+      }
+
+      #resource-info-container #event-info-table #resource-header{
+        border-bottom: 2px solid #FFF !important;
+      }
+
+      #resource-info-container #expenditure{
+        width: 100px;
+        padding: 0 10px 0 15px !important;
+        border-right: 0;
+      }
+
+      #resource-info-container #type{
+        border-left: 1px solid #999;
+      }
+
+      #resource-info-container tr:last-child #type{
+        border-bottom: 1px solid #999;
+      }
+
+      #resource-info-container td{
+        padding: 3px 10px !important;
+      }
+
+      #resource-info-container.ng-hide{
+        opacity: 0;
       }
       /* end event progress */
 
