@@ -1,4 +1,4 @@
-app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, selectedFacility, $window){
+app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window){
 
   //map initialization
   var singleVm = this;
@@ -8,6 +8,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   $scope.headerMes = "Single Event";
 
   singleVm.eventStarted = false;
+  // open hamburger menu as default
+  singleVm.hamCheck = true;
 
   var position;
   var marker = [];
@@ -54,8 +56,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   NgMap.getMap("map").then(function(map){
     singleVm.map = map;
     singleVm.map.setZoom(14);
-    // open hamburger menu as default
-    singleVm.hamCheck = true;
     // show search box as defualt
     singleVm.searchExtend();
   });
@@ -353,6 +353,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //search 
     searchCircle();
 
+    // selectedFacility.setFacility("ABC");
+
     // sendReqtToFac();
     //two http request chainning together
     //first $http get all facility location and display
@@ -411,6 +413,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         }
 
         $timeout(function(){
+          var index = 0;
           for(var i = 0; i < response.data.facilities.length; ++i){
             if(response.data.facilities[i].type == "hospital"){
               putHospital(response.data.facilities[i]);
@@ -483,6 +486,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         for(var i = 0; i < response.data.length; ++i){
           startLoc.push(response.data[i].Location);
         }
+
+        window.localStorage['selectedFacility'] = angular.toJson(response.data);
 
         progressHandle[stage] = $timeout(function(){
       progressInfoControl(stage);
@@ -772,10 +777,18 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // return marker;
   }
 
+  singleVm.getNumber = function(num) {
+    var x = new Array(); 
+    for(var i=0;i<num;i++){ 
+      x.push(i+1); 
+    } 
+    return x;
+  }
+
+  singleVm.facilityIndex = 0;
+  singleVm.facilityResourceList = [{}];
   function facilitiesInfo(facilityObj, facility_type){
     var type = "";
-    var resource_number = 0;
-    singleVm.number = 0;
     if(facility_type == "police")
       type = "Police Car";
     else if(facility_type == "hospital")
@@ -784,7 +797,20 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       type = "Fire Truck";
 
     var resource_number = facilityObj.resourceNum;
+
     var facility_name = facilityObj.name;
+
+    singleVm.facilityIndex++;
+    var x=[];
+    for(var i=0;i<resource_number;i++){ 
+      x.push(i+1); 
+    }
+
+    var resource_list = "";
+    for(var i = 0; i < resource_number; i++){
+      var index = i+1;
+      resource_list += "<tr><td>"+index+"</td><td>"+type+"</td></tr>"; 
+    }
 
     var element =   "<div>"+
               "<div class=\"infoWin-header-container\">"+
@@ -800,9 +826,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                           "<th class=\"sub-header\">ID</th>"+
                           "<th class=\"sub-header\">Type</th>"+
                         "</tr>"+
-                        "<tr>"+
-                          
-                        "</tr>"+
+                        resource_list+
                       "</table>"+
                     "</div>"+
               "</div>"+
