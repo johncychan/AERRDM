@@ -15,13 +15,17 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
  
   socket.on('sim update', function(msg){
    console.log(msg);
-   if(msg === "Plan is now available"){
+   if(msg == "Plan is now available"){
       // http service to get the tasks
-      console("getting tasks");
+      console.log("getting tasks");
+
    }
-   else if(msg === "expend"){
+   else if(msg == "expend"){
       //expend sear
       console.log("expending searching area");
+   }
+   else{
+      console.log("loop");
    }
   });
 
@@ -273,8 +277,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     return Math.floor((Math.random()*(max-min+1))+min);
   }
   singleVm.deadlineGenerator = function(){
-    var max = 15;
-    var min = 5;
+    var max = 120;
+    var min = 40;
     return Math.floor((Math.random()*(max-min+1))+min);
   }
 
@@ -380,7 +384,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //first $http get all facility location and display
     //second $http request filter the facilities remove the unused facilities location
     
-    singleVm.getFaciLoc().then(getTasks);
+    singleVm.getFaciLoc().then(checkPlan).then(getTasks);
     
     singleVm.panelShow = "true";
   } 
@@ -498,7 +502,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   }
 
 
-  getTasks = function(dataObj){
+  checkPlan = function(dataObj){
     return $http({
 
       method  : 'POST',
@@ -536,23 +540,34 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
             $window.location.reload();
           });
         }
-        // singleVm.resourceAllocation(response.data);
-        // for(var i = 0; i < response.data.length; ++i){
-        //   startLoc.push(response.data[i].Location);
-        // }
-
-        // window.localStorage['selectedFacility'] = angular.toJson(response.data);
-
-    //     progressHandle[stage] = $timeout(function(){
-    //   progressInfoControl(stage);
-    // }, delayArray[stage]);
-
-    //     $timeout(function(){
-
-    //       setRoutes()}, 20000);
+    return dataObj;
     })
   }
 
+  getTasks = function(dataObj){
+    console.log(dataObj);
+    return $http({
+
+      method  : 'POST',
+      url     : '/singleEvent/GetPlan',
+      headers : { 'Content-Type': 'application/json' },
+      data    : {
+                  sim_id: dataObj.sim_id
+      }
+    }).then(function success(response){
+        console.log(response.data);
+        for(var i = 0; i < response.data.length; ++i){
+          startLoc.push(response.data[i].Location);
+        }
+
+        progressHandle[stage] = $timeout(function(){
+      progressInfoControl(stage);
+    }, delayArray[stage]);
+
+        $timeout(function(){
+          setRoutes()}, 20000);
+    })
+  }
 
   function receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum){
     singleVm.totalResources = ambulanceNum+policeCarNum+fireTruckNum;

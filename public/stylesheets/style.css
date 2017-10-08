@@ -830,7 +830,6 @@
         margin: 0 auto;
       }
 
-<<<<<<< HEAD
       #multi-start{
         margin: 50px 0 0 210px;
       }
@@ -839,8 +838,6 @@
         box-shadow: 1px 1px 8px #000000;
       }
 
-=======
->>>>>>> e8fdbd3658a047e7d76b72aba2e5460e6ba4a986
       /* event progress */
 
       #progress-menu-container{
@@ -862,15 +859,12 @@
       .progress-content-extend{
         transition: all linear 0.9s;
         margin-top: 150px !important;
-<<<<<<< HEAD
       }
 
       .progress-content-auto{
         transition: all linear 0.5s;
         height: auto !important;
         min-height: 350px;
-=======
->>>>>>> e8fdbd3658a047e7d76b72aba2e5460e6ba4a986
       }
 
       #progress-menu-container .modal-header{
