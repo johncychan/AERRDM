@@ -505,6 +505,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         //   startLoc.push(response.data[i].Location);
         // }
 
+
         // window.localStorage['selectedFacility'] = angular.toJson(response.data);
 
     //     progressHandle[stage] = $timeout(function(){
