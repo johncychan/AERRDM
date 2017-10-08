@@ -830,6 +830,14 @@
         margin: 0 auto;
       }
 
+      #multi-start{
+        margin: 50px 0 0 210px;
+      }
+
+      #multi-start button{
+        box-shadow: 1px 1px 8px #000000;
+      }
+
       /* event progress */
 
       #progress-menu-container{

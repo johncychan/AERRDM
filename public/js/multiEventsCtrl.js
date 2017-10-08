@@ -164,11 +164,13 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   }
 
   //place a marker by clicking mouse
+  multiVm.markerIndex = 0;
   multiVm.placeMarker = function(e){
-    // if(multiVm.marker){
-    //   multiVm.marker.setMap(null);
-    // }
+    if(multiVm.marker){
+      multiVm.markerIndex++;
+    }
     console.log("put marker");
+    console.log(multiVm.markerIndex);
     multiVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: multiVm.map,
@@ -177,18 +179,40 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       animation: google.maps.Animation.DROP
     });
 
+
     // multiVm.markerElement();
-    var htmlElement = "  <div><div><p id=\"infoWin-header\">Single Event Setting</p></div> " + 
-    "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField()\">" + "Set event data" + "</button></div></div>"
+    multiVm.factorGenerate(multiVm.markerIndex);
+
+    var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting</p></div> " + 
+    "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(multiVm.markerIndex)\">" + "Set event data" + "</button></div></div>"
     compiled = $compile(htmlElement)($scope);
     multiVm.marker.infoWin = new google.maps.InfoWindow({
     	content: compiled[0]
     })
-    multiVm.marker.addListener('click', function($scope){
-      multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
+    // multiVm.marker.addListener('click', function($scope){
+    //   multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
+    // });
+    multiVm.marker.addListener('click', function() {  
+        multiVm.marker.infoWin.open(multiVm.map, this);
     });
+    // multiVm.lastOpenedInfoWindow = multiVm.marker.infoWin;
+  }
 
-   // multiVm.lastOpenedInfoWindow = multiVm.marker.infoWin;
+  multiVm.placeMarkerCurrent = function(pos){
+    if(multiVm.marker){
+      multiVm.markerIndex++;
+    }
+
+    multiVm.marker = new google.maps.Marker({
+      position: {lat: pos.lat, lng: pos.lng},
+      map: multiVm.map,
+      icon: "./img/marker.svg",
+      draggable: true,
+      animation: google.maps.Animation.DROP
+    });
+    multiVm.factorGenerate(multiVm.markerIndex);
+    multiVm.map.setZoom(14);
+    // multiVm.markerElement();
   }
 
   //place a marker by random and search
@@ -307,7 +331,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     return Math.floor((Math.random()*(max-min+1))+min);
   }
 
-  multiVm.factorGenerate = function(){
+  multiVm.eventList = [];
+  multiVm.factorGenerate = function(index){
     multiVm.level = multiVm.levelGenerator();
     multiVm.category = multiVm.categoryGenerator();
     multiVm.expenditure = multiVm.expenditureGenerator();
@@ -334,8 +359,12 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       'Resource avg. velocity': multiVm.velocity,
       'Deadline': multiVm.deadline,
       'Location': multiVm.marker.position.toUrlValue()
-      }
     }
+
+
+    multiVm.eventList[index] = new Array();
+    multiVm.eventList[index] = multiVm.factor;
+  }
 
 
     multiVm.progrssMenuOpen = function () {
@@ -348,46 +377,69 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       });
     };
 
+
+  multiVm.apply = function(){
+    $mdDialog.hide();
+  }
+
+
+  multiVm.confirmStart = function(){
+    $mdDialog.hide();
+    console.log(multiVm.eventList);
+
+    //pop out overview event windows
+    //multiVm.overviewMenu();
+  }
+
+  multiVm.overviewMenu = function () {
+    ngDialog.open({ 
+      template: '',
+      overlay: false,
+      showClose: false,
+      scope: $scope,
+      className: 'ngdialog-theme-default progress-menu draggable'       
+    });
+  };
   // now start the simulation
 
-  multiVm.startSingleEvent = function(){
+  multiVm.startMultiEvent = function(){
     // close factor menu
     multiVm.eventStarted = true;
 
-    var progressStage = 0;
-    $mdDialog.hide();
+    // var progressStage = 0;
+    // $mdDialog.hide();
 
-    // close hamburger menu
-    multiVm.hamCheck = false;
-    // hide search box
-    multiVm.searchExtend();
-    // close info window
-    multiVm.closeInfoWin();
-    // clear onclick event in map
-    clearMapClickEvent();
-    // change back to default google map cursor
-    defaultCursor();
-    // start progress menu animation
-    progressInfoControl(0);
+    // // close hamburger menu
+    // multiVm.hamCheck = false;
+    // // hide search box
+    // multiVm.searchExtend();
+    // // close info window
+    // multiVm.closeInfoWin();
+    // // clear onclick event in map
+    // clearMapClickEvent();
+    // // change back to default google map cursor
+    // defaultCursor();
+    // // start progress menu animation
+    // progressInfoControl(0);
 
-    // open progress menu
-    multiVm.progrssMenuOpen();
-    // redirect info window to progress menu
-    multiVm.infoWinRedirect("progrssMenuOpen");
+    // // open progress menu
+    // multiVm.progrssMenuOpen();
+    // // redirect info window to progress menu
+    // multiVm.infoWinRedirect("progrssMenuOpen");
 
-    multiVm.map.setCenter(multiVm.marker.position);
+    // multiVm.map.setCenter(multiVm.marker.position);
 
-    //search 
-    searchCircle();
+    // //search 
+    // searchCircle();
 
-    // sendReqtToFac();
-    //two http request chainning together
-    //first $http get all facility location and display
-    //second $http request filter the facilities remove the unused facilities location
+    // // sendReqtToFac();
+    // //two http request chainning together
+    // //first $http get all facility location and display
+    // //second $http request filter the facilities remove the unused facilities location
     
-    multiVm.getFaciLoc().then(getTasks);
+    // multiVm.getFaciLoc().then(getTasks);
     
-    multiVm.panelShow = "true";
+    // multiVm.panelShow = "true";
   } 
 
 
@@ -547,9 +599,10 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     }
   }
 
-  multiVm.setDataField = function(){
+  multiVm.setDataField = function(index){
     // generate factor
-    multiVm.factorGenerate();
+    console.log(index);
+    multiVm.factorGenerate(index);
 
     $mdDialog.show(
       {
