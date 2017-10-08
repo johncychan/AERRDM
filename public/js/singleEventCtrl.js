@@ -499,7 +499,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }).then(function success(response){
         console.log(response.data);
-        singleVm.resourceAllocation(response.data);
+
+       /* singleVm.resourceAllocation(response.data);
         for(var i = 0; i < response.data.length; ++i){
           startLoc.push(response.data[i].Location);
         }
@@ -512,7 +513,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
         $timeout(function(){
 
-          setRoutes()}, 20000);
+          setRoutes()}, 20000);*/
     })
   }
 

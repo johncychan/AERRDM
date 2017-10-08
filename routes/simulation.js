@@ -39,10 +39,11 @@ function FindMobileResources(sim_details, type, db)
 				else
 				{
 					insufficient_res = true;
+					console.log("insufficient");
 				}
 			}
 			
-			if(insuffient_res == false)
+			if(insufficient_res == false)
 			{
 				Promise.all(promises).then(function(mobileResources) {
 					var count = ActualMobile(mobileResources);
@@ -78,8 +79,10 @@ function CheckAvailability (db, sim_details, mobileRes)
 				return reject(err);
 
 			if(user_id)
+			{
+				console.log("User: "+ user_id);
 				mobileRes.User_id = user_id;
-
+			}
 			return resolve(mobileRes);
 		});
 	});
