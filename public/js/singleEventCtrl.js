@@ -15,6 +15,14 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
  
   socket.on('sim update', function(msg){
    console.log(msg);
+   if(msg === "Plan is now available"){
+      // http service to get the tasks
+      console("getting tasks");
+   }
+   else if(msg === "expend"){
+      //expend sear
+      console.log("expending searching area");
+   }
   });
 
 
@@ -399,6 +407,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }).then(function success(response) {
 
         console.log(response.data);
+        
         var totalFacilites = 0;
         var totalPoliceStation = 0;
         var totalHospital = 0;
@@ -500,11 +509,37 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }).then(function success(response){
         console.log(response.data);
+        if(response.data === "Unable to generate plan"){
+            ngDialog.openConfirm({
+              template:'\
+                <div>\
+                  <div class="modal-header safari_top_radius">\
+                    <div id="progress-title-content">\
+                      <div class="icon-container">\
+                        <span id="progress-title-icon"></span>\
+                      </div>\
+                      <span class="progress-title">Confirmation</span>\
+                    </div>  \
+                  </div>\
+                  <div id="confirm-content">\
+                    <p>Are you sure you want to stop the simulation?</p>\
+                    <div class="ngdialog-buttons modal-footer ">\
+                        <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog(0)">No</button>\
+                        <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Yes</button>\
+                    </div>\
+                  </div>\
+                </div>',
+              plain: true,
+              showClose: false,
+              className: 'ngdialog-theme-default confirm-menu-container'
+          }).then(function(value){
+            $window.location.reload();
+          });
+        }
         // singleVm.resourceAllocation(response.data);
         // for(var i = 0; i < response.data.length; ++i){
         //   startLoc.push(response.data[i].Location);
         // }
-
 
         // window.localStorage['selectedFacility'] = angular.toJson(response.data);
 
