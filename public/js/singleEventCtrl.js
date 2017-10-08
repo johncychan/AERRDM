@@ -155,6 +155,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     if(singleVm.marker){
       singleVm.marker.setMap(null);
     }
+
+    console.log(e.latLng);
     singleVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: singleVm.map,

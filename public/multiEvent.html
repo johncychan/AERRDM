@@ -93,19 +93,14 @@
           </li>
         </ul>
       </div>
-      <!-- <div class="menu__arrow menu__arrow--top">
-        <ul>
-          <li>
-            <label for="degree--up-0"><div class="arrow"></div></label>
-            <label for="degree--up-1"><div class="arrow"></div></label>
-            <label for="degree--up-2"><div class="arrow"></div></label>
-          </li>
-        </ul>
-      </div> -->
     </label>
   </section>
 
   <input id="pac-input" places-auto-complete on-place-changed="multiVm.placeChanged()" class="controls animate-show {{multiVm.searchBoxExtend}}" type="text" placeholder="Search Box" ng-show = "multiVm.searchShow"/>
+
+  <div id="multi-start">
+    <button type="button" class="button event-setting-reset ripple" ng-click="multiVm.confirmStart()">Start</button>
+  </div>
 
 </div>
 <ng-map  id="map" center='Sydney'
