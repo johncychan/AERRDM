@@ -1,0 +1,37 @@
+<div id="progress-menu-container">
+	<div class="modal-header safari_top_radius">
+		<div id="progress-title-content">
+			<div class="icon-container">
+				<span class="glyphicon glyphicon-info-sign" id="progress-title-icon"></span>
+			</div>
+			<span class="progress-title">Event Overview</span>
+		</div>	
+	</div>
+
+	<div id="overview-content">
+    <div class="info-row clearfix">
+  		<div id="event-info-container">
+  			<table id="event-info-table"> 
+          <tr>
+            <th colspan="4">Events Information</th>
+          </tr>
+          <tr>
+            <th>Category</th>
+            <th>Severity</th>
+            <th>Resources needed</th>
+            <th>Average Deadline</th>
+          </tr>
+          <tr ng-repeat="event in multiVm.eventList">
+            <td>{{event.Category}}</td>
+            <td>Level {{event['Severity Level']}}</td>
+            <td>tbh</td>
+            <td>{{event.Deadline}}</td>
+          </tr>
+        </table>
+        <div class="modal-footer">
+          <button type="button" class="button event-setting-reset ripple" ng-click="closeThisDialog(0)">Cancel</button>
+          <input type="submit" value="ok" class="button event-start" ng-click="confirm(1)" />
+        </div>
+  		</div>
+    </div>
+</div>

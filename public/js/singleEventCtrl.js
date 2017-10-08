@@ -1,4 +1,4 @@
-app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window){
+app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
 
 
   //map initialization
@@ -277,6 +277,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     return Math.floor((Math.random()*(max-min+1))+min);
   }
   singleVm.deadlineGenerator = function(){
+
     var max = 120;
     var min = 40;
     return Math.floor((Math.random()*(max-min+1))+min);
@@ -560,6 +561,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           startLoc.push(response.data[i].Location);
         }
 
+        facilitySelected.setFacility(response.data);
+
+        window.localStorage['selectedFacility'] = angular.toJson(response.data);
+
         progressHandle[stage] = $timeout(function(){
       progressInfoControl(stage);
     }, delayArray[stage]);
@@ -593,7 +598,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         Velocity: resourceObj[i].Velocity
       };
     }
-    console.log(singleVm.allocatedResources);
+    // console.log(singleVm.allocatedResources);
   }
 
   singleVm.taskSummary = function(){

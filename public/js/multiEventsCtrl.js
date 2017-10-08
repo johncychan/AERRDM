@@ -9,6 +9,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   multiVm.eventStarted = false;
 
+  multiVm.markerNotPlace = true;
+
   var position;
   var marker = [];
   var facilityMarker = [];
@@ -21,6 +23,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   var endLoc;
   var startLocation = new Array();
   var endLocation = new Array();
+  multiVm.markerIndex = 0;
+  multiVm.markersList = [];
 
   var speed = 0.000005, wait = 1;
   var infowindow = null;
@@ -130,9 +134,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     if(!multiVm.eventStarted){
       // change cursor to marker
       multiVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
-
       // add click event on map
-      google.maps.event.addListener(multiVm.map, 'click', function(event){      
+      google.maps.event.addListener(multiVm.map, 'click', function(event){
         multiVm.placeMarker(event);
       });
     }
@@ -157,6 +160,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   // triggered when place changed
   multiVm.placeChanged = function(){
     if(!multiVm.eventStarted){
+      multiVm.markerNotPlace = false;
       multiVm.place = this.getPlace();
       multiVm.map.setCenter(multiVm.place.geometry.location);
       multiVm.placeMarkerByRandomAndSearch(multiVm.place.geometry.location);
@@ -164,13 +168,13 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   }
 
   //place a marker by clicking mouse
-  multiVm.markerIndex = 0;
   multiVm.placeMarker = function(e){
     if(multiVm.marker){
       multiVm.markerIndex++;
     }
     console.log("put marker");
     console.log(multiVm.markerIndex);
+
     multiVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: multiVm.map,
@@ -179,22 +183,30 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       animation: google.maps.Animation.DROP
     });
 
+    multiVm.markersList.push(multiVm.marker);
+    if(multiVm.markersList.length > 0){
+      multiVm.markerNotPlace = false;
+    }
+    
+    console.log(multiVm.markersList);
 
-    // multiVm.markerElement();
+    //generate factor
     multiVm.factorGenerate(multiVm.markerIndex);
+    //add element to marker
+    multiVm.markerElement();
 
-    var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting</p></div> " + 
-    "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(multiVm.markerIndex)\">" + "Set event data" + "</button></div></div>"
-    compiled = $compile(htmlElement)($scope);
-    multiVm.marker.infoWin = new google.maps.InfoWindow({
-    	content: compiled[0]
-    })
-    // multiVm.marker.addListener('click', function($scope){
-    //   multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
+    // var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting</p></div> " + 
+    // "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(multiVm.markerIndex)\">" + "Set event data" + "</button></div></div>"
+    // compiled = $compile(htmlElement)($scope);
+    // multiVm.marker.infoWin = new google.maps.InfoWindow({
+    // 	content: compiled[0]
+    // })
+    // // multiVm.marker.addListener('click', function($scope){
+    // //   multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
+    // // });
+    // multiVm.marker.addListener('click', function() {  
+    //     multiVm.marker.infoWin.open(multiVm.map, this);
     // });
-    multiVm.marker.addListener('click', function() {  
-        multiVm.marker.infoWin.open(multiVm.map, this);
-    });
     // multiVm.lastOpenedInfoWindow = multiVm.marker.infoWin;
   }
 
@@ -212,7 +224,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     });
     multiVm.factorGenerate(multiVm.markerIndex);
     multiVm.map.setZoom(14);
-    // multiVm.markerElement();
+    multiVm.markerElement();
   }
 
   //place a marker by random and search
@@ -235,20 +247,34 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   // add element to marker
   multiVm.markerElement = function(){
     //display the marker info
-    multiVm.htmlElement = "  <div><div><p id=\"infoWin-header\">Single Event Setting</p></div> " + 
-    "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField()\">" + "Set event data" + "</button></div></div>"
-    // var htmlElement = "<showTag></showTag>"
-    //need to compile 
+    // multiVm.htmlElement = "  <div><div><p id=\"infoWin-header\">Single Event Setting</p></div> " + 
+    // "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField()\">" + "Set event data" + "</button></div></div>"
+    // // var htmlElement = "<showTag></showTag>"
+    // //need to compile 
 
-    multiVm.compiled = $compile(multiVm.htmlElement)($scope)
+    // multiVm.compiled = $compile(multiVm.htmlElement)($scope)
+    // multiVm.marker.infoWin = new google.maps.InfoWindow({
+    //   // content: "<showTag></showTag>"
+    //   content: multiVm.compiled[0]
+
+    // });
+    // //show the infomation window
+    // multiVm.marker.addListener('click', function($scope){
+    //   multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
+    // });
+    var eventNumber = multiVm.markerIndex;
+
+    var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting ["+eventNumber+"]</p></div> " + 
+    "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(multiVm.markerIndex)\">" + "Set event data" + "</button></div></div>"
+    compiled = $compile(htmlElement)($scope);
     multiVm.marker.infoWin = new google.maps.InfoWindow({
-      // content: "<showTag></showTag>"
-      content: multiVm.compiled[0]
-
-    });
-    //show the infomation window
-    multiVm.marker.addListener('click', function($scope){
-      multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
+      content: compiled[0]
+    })
+    // multiVm.marker.addListener('click', function($scope){
+    //   multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
+    // });
+    multiVm.marker.addListener('click', function() {  
+        multiVm.marker.infoWin.open(multiVm.map, this);
     });
 
     //set info windows
@@ -347,8 +373,10 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     multiVm.eId = 001;
 
+    var eventId = index+1;
+
     multiVm.factor = {
-      'ID': multiVm.eId,
+      'ID': eventId,
       'Severity Level': multiVm.level,
       'Category': multiVm.category_list[multiVm.category],
       'Resource avg. expenditure': multiVm.expenditure,
@@ -388,16 +416,18 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     console.log(multiVm.eventList);
 
     //pop out overview event windows
-    //multiVm.overviewMenu();
+    multiVm.overviewMenu();
   }
 
   multiVm.overviewMenu = function () {
-    ngDialog.open({ 
-      template: '',
-      overlay: false,
+    ngDialog.openConfirm({ 
+      template: 'multiEventOverview.html',
+      overlay: true,
       showClose: false,
       scope: $scope,
-      className: 'ngdialog-theme-default progress-menu draggable'       
+      className: 'ngdialog-theme-default overview-menu draggable'       
+    }).then(function(value){
+        multiVm.startMultiEvent();
     });
   };
   // now start the simulation
@@ -405,9 +435,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.startMultiEvent = function(){
     // close factor menu
     multiVm.eventStarted = true;
-
+    console.log("Start Multi");
     // var progressStage = 0;
-    // $mdDialog.hide();
 
     // // close hamburger menu
     // multiVm.hamCheck = false;

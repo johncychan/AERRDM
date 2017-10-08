@@ -99,7 +99,7 @@
   <input id="pac-input" places-auto-complete on-place-changed="multiVm.placeChanged()" class="controls animate-show {{multiVm.searchBoxExtend}}" type="text" placeholder="Search Box" ng-show = "multiVm.searchShow"/>
 
   <div id="multi-start">
-    <button type="button" class="button event-setting-reset ripple" ng-click="multiVm.confirmStart()">Start</button>
+    <button type="button" class="button multi-event-start ripple animate-show {{multiVm.searchBoxExtend}}" ng-show = "multiVm.searchShow" ng-disabled="multiVm.markerNotPlace" ng-click="multiVm.confirmStart()">Start</button>
   </div>
 
 </div>
