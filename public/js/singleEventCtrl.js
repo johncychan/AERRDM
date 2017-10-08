@@ -20,7 +20,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var timerHandle = [];
   var startLoc = new Array();
   var facilitiesMarker = new Array();
-  var endLoc;
+  var endLoc = [];
+  var mailMarker = [];
+  var polylines = [];
+  var requestMarkers = [];
   var startLocation = new Array();
   var endLocation = new Array();
 
@@ -426,7 +429,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
             }
           }
         }, 10000);
-        // sendReqtToFac(response.data);
+        sendReqtToFac(response.data);
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
@@ -436,23 +439,26 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   }
 
   sendReqtToFac = function(dataObj){
-    console.log(dataObj.facilities.length);
+    console.log(dataObj);
     for(var i = 0; i < dataObj.facilities.length; ++i){
-      endLoc[i] = dataObj.facilities.location;
-      polylines[i] = new google.maps.Polyline({
-        path: [singleVm.marker.position, dataObj.facilities.location],
+      console.log(typeof(dataObj.facilities[i].location));
+      endLoc[i] = dataObj.facilities[i].location;
+      polyline[i] = new google.maps.Polyline({
+        path: [singleVm.marker.position, dataObj.facilities[i].location],
         geodestic: true,
         strokeColor: '#178cd',
         strokeOpacity: 0.6,
         strokeWeight: 2
       });
-      requestMarker[i] = new google.maps.Marker({
+        requestMarkers[i] = new google.maps.Marker({
         position: singleVm.marker.position,
         map: singleVm.map,
-        icon: "img/bomb.svg"
+        icon: "img/mess.svg",
+        animation: google.maps.Animation.BOUNCE
+
       });
     }
-    moveReqMarker(endLoc, polylines, requestMarker);
+    moveReqMarker(endLoc, polylines, requestMarkers);
   }
 
   moveReqMarker = function(endLoc, polyline, marker){
@@ -464,8 +470,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         poly2[i] = new google.maps.Polyline({
             path: []
         });
-        marker[i].setMap(map);
-        polyline[i].setMap(map);
+        marker[i].setMap(singleVm.map);
+        polyline[i].setMap(singleVm.map);
         startAnimation(i);
     }
   }
