@@ -483,7 +483,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                   sim_id: dataObj.sim_id
       }
     }).then(function success(response){
-        console.log(response.data);
+        console.log("Assign Response" + response.data);
   /*      for(var i = 0; i < response.data.length; ++i){
           startLoc.push(response.data[i].Location);
         }

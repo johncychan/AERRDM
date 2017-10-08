@@ -124,7 +124,7 @@ module.exports = function(passport, clients, db){
 	});
 
 	router.post('/assignResource', function(req, res, next) {
-		
+		res.writeHead(200, {'Content-Type': 'application/json'});
 		dbquery.SimulationDetails(db, req.body.sim_id, function(err, sim_details) {
 			var resource_names = Object.keys(sim_details.RequiredResources);
 			var promises = [];
@@ -141,20 +141,21 @@ module.exports = function(passport, clients, db){
 				for(var i = 0; i < allData.length; i++)
 				{
 					count = count + allData[i].actualCount;
-					if(allData[i].res != false)
+					if(allData[i].res != true)
 						rtval = rtval.concat(allData[i].res);
 					else
+					{
 						planGenerated = false;
+					}
 				}
 
 				if(planGenerated == true)
 				{
 					console.log("setPlan");
 					dbquery.SetPlan(db, req.body.sim_id, rtval, function (err, results) {
-						res.writeHead(200, {'Content-Type': 'application/json'});
-
 						if(count == 0)
 						{
+							var response = "Plan is now avaliable";
 							res.write(JSON.stringify(response));
 							res.end();
 							clients[req.connection.remoteAddress].emit("sim update", "Plan is now avaliable");
