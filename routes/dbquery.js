@@ -73,12 +73,12 @@ function SetSimResouceCount(db, sim_id, req_count, callback)
 
 function InsertFacility(db, dbr, place)
 {
-	db.collection("Facilities").insertOne({Sim_id: mongodb.ObjectId(dbr.insertedId), Place: place});
+	db.collection("Facilities").insertOne({Sim_id: mongodb.ObjectId(dbr.insertedId), $push:{Places: $place});
 }
-
+// FIX THE BELOW PROJECTION BASED ON ABOVE FUNCTION
 function FindFacilities(db, id, type, callback)
 {
-	db.collection("Facilities").find({Sim_id: mongodb.ObjectId(id), 'Place.type': type}, {Place: 1}).toArray(function (err, places) {
+	db.collection("Facilities").find({Sim_id: mongodb.ObjectId(id), 'Places.type': type}, {Place: 1}).toArray(function (err, places) {
 	//	console.log("p: " + JSON.stringify(places));
 		callback(err, places);
 	});   
@@ -113,7 +113,7 @@ function Response(db, user_id, sim_id, response, callback)
 {
 	if(response == "Accept")
 	{
-		db.collection("users").find({_id: mongodb.ObjectId(user_id), active:{exists: true}, 
+		db.collection("users").find({_id: mongodb.ObjectId(user_id), active:{$exists: true}, 
 			"active.sim_id": sim_id, "active.Responded": false}, 
 			function (err, results)   
 			{

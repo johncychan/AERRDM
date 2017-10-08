@@ -96,7 +96,7 @@ module.exports = function(passport, clients, db){
 
 					for(var i = 0; i < resource_names.length; i++)
 					{
-						var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
+						var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i], resources_list[resource_names[i]].gname);
 						promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, db));
 					}
 
