@@ -4,16 +4,15 @@ var bCrypt = require('bcrypt-nodejs');
 var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 
-module.exports = function(passport){
+module.exports = function(passport, db){
 
 	passport.use('signup', new LocalStrategy({
             passReqToCallback : true // allows us to pass back the entire request to the callback
         },
         function(req, username, password, done) {
-	    var db = req.db;
             findOrCreateUser = function(){
                 // find a user in Mongo with provided username
-                db.collection("users").findOne({ $or: [ {'username' :  username }, {'email' : req.param('email')} ] }, 
+                db.collection("users").findOne({ $or: [ {'username' :  username }, {'email' : req.body.email} ] }, 
 		  function(err, user) {
                     // In case of any error, return using the done method
                     if (err){
@@ -22,9 +21,9 @@ module.exports = function(passport){
                     }
                     // already exists
                     if (user) {
-			if(username == user.username)
+			if (req.body.username == user.username)
 	                        console.log('User already exists with username: '+username);
-			if(req.param('email') == user.email)
+			if(req.body.email == user.email)
 	                        console.log('User already exists with email: '+req.param('email'));
                         return done(null, false, req.flash('message','User Already Exists'));
                     } 
@@ -32,19 +31,19 @@ module.exports = function(passport){
 		    else {
                         // if there is no user with that email
                         // create the user
-                        var newUser;
+                        var newUser = {username: "", password: "", email: "", firstName: "", lastName: "", facility: ""};
 
                         // set the user's local credentials
                         newUser.username = username;
                         newUser.password = createHash(password);
-                        newUser.email = req.param('email');
-                        newUser.firstName = req.param('firstName');
-                        newUser.lastName = req.param('lastName');
-						newUser.facility = req.param('facility');
+                        newUser.email = req.body.email;
+                        newUser.firstName = req.body.firstName;
+                        newUser.lastName = req.body.lastName;
+						newUser.facility = req.body.facility;
 
                         // save the user
-                        db.insertOne(newUser, function(err, r) {
-                            if (err || r.inserted != 1){
+                        db.collection("users").insertOne(newUser, function(err, r) {
+                            if (err || r.insertedCount != 1){
                                 console.log('Error in Saving user: '+err);  
                                 throw err;  
                             }

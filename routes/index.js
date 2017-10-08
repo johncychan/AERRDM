@@ -21,10 +21,11 @@ var isAuthenticated = function (req, res, next) {
 	if (req.isAuthenticated())
 		return next();
 	// if the user is not authenticated then redirect him to the login page
-	res.redirect('/');
+	console.log(req.url);
+	res.redirect('/mobile/login/fail');
 }
 
-module.exports = function(passport){
+module.exports = function(passport, clients, db){
 
 	/* GET index page. */
 	router.get('/', function(req, res) {
@@ -82,62 +83,184 @@ module.exports = function(passport){
 		console.log(req.body);
 		var radius = 5000;
 
-		dbquery.RequiredResources(req.db, req.body.Category, req.body.Severity, function (err, resources_list) {
+		dbquery.RequiredResources(db, req.body.Category, req.body.Severity, function (err, resources_list) {
 			if(err)
 				throw err;
-			
-			dbquery.InsertSimulation(req, resources_list, radius, function(err, r) {
+
+			if(resources_list)
+			{
+				dbquery.InsertSimulation(db, req, resources_list, radius, function(err, r) {
 		
-				var resource_names = Object.keys(resources_list);
-				console.log(resource_names);	
-				var promises = [];
-
-				for(var i = 0; i < resource_names.length; i++)
-				{
-					var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
-					promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, req.db));
-				}
-
-				Promise.all(promises).then(function(allData) {
-					var rtval = {resources: resources_list, sim_id: r.insertedId, facilities: []};
+					var resource_names = Object.keys(resources_list);
+					console.log(resource_names);	
+					var promises = [];
 
 					for(var i = 0; i < resource_names.length; i++)
 					{
-						rtval.facilities = rtval.facilities.concat(allData[i]);
+						var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
+						promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, db));
 					}
 
-					res.writeHead(200, {'Content-Type': 'application/json'});
-					res.write(JSON.stringify(rtval));
-					return res.end();
+					Promise.all(promises).then(function(allData) {
+						var rtval = {resources: resources_list, sim_id: r.insertedId, facilities: []};
+
+						for(var i = 0; i < resource_names.length; i++)
+						{
+							rtval.facilities = rtval.facilities.concat(allData[i]);
+						}
+
+						res.writeHead(200, {'Content-Type': 'application/json'});
+						res.write(JSON.stringify(rtval));
+						return res.end();
+					});
 				});
-			});
+			}
+
+			else
+			{
+				res.writeHead(200, {'Content-Type': 'application/json'});
+				return res.end();
+			}
 		});
 	});
 
 	router.post('/assignResource', function(req, res, next) {
-		
-		dbquery.SimulationDetails(req.db, req.body.sim_id, function(err, sim_details) {
+		res.writeHead(200, {'Content-Type': 'application/json'});
+		dbquery.SimulationDetails(db, req.body.sim_id, function(err, sim_details) {
 			var resource_names = Object.keys(sim_details.RequiredResources);
 			var promises = [];
 
 			for(var i = 0; i < resource_names.length; i++)
 			{
-				promises.push(simulation.FindMobileResources(sim_details, resource_names[i], req.db));
+				promises.push(simulation.FindMobileResources(sim_details, resource_names[i], db));
 			}
 
 			Promise.all(promises).then(function(allData) {
-				console.log("after");
-				console.log(allData.length);
 				var rtval = [];
+				var count = 0;
+				var planGenerated = true; 
 				for(var i = 0; i < allData.length; i++)
 				{
-					rtval = rtval.concat(allData[i]);
+					count = count + allData[i].actualCount;
+					if(allData[i].res != true)
+						rtval = rtval.concat(allData[i].res);
+					else
+					{
+						planGenerated = false;
+					}
 				}
-				res.writeHead(200, {'Content-Type': 'application/json'});
-				res.write(JSON.stringify(rtval));
-				return res.end();
+
+				if(planGenerated == true)
+				{
+					console.log("setPlan");
+					dbquery.SetPlan(db, req.body.sim_id, rtval, function (err, results) {
+						if(count == 0)
+						{
+							var response = "Plan is now avaliable";
+							res.write(JSON.stringify(response));
+							res.end();
+							clients[req.connection.remoteAddress].emit("sim update", "Plan is now avaliable");
+							console.log("socket");
+						}
+						else
+						{
+							//update database
+							dbquery.SetSimResouceCount(db, req.sim_id, count, function (err, results) {
+								var response = "Waiting for mobile response";
+								res.write(JSON.stringify(response));
+								console.log("wait");
+								return res.end();
+							});
+						}
+					});
+				}
+				
+				else
+				{
+						var response = "Unable to generate plan";
+						res.write(JSON.stringify(response));
+						console.log("failed to generate plan");	
+						return res.end();
+				}
 			});
-		}); 
+		});
+	});
+
+	router.post('/mobile/requestResponse', isAuthenticated, function(req, res){
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		dbquery.Response(db, req.user._id, req.body.sim_id, req.body.response, function (err, flag) {
+			if(flag == 0) // job accept
+			{
+				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
+					if(results.ResWaitOn == 0)
+						clients[results.Initiator].emit("sim update", "Plan is now avaliable");	
+
+					var rtval = "Job has been assigned";				
+					res.write(rtval);
+					return res.end();		
+				});
+			}
+
+			if(flag == 1) // no job requested to user
+			{
+				var rtval = "No job has been assigned to you";				
+				res.write(rtval);
+				return res.end();
+			}
+
+			if(flag == 2) // job declined
+			{
+				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
+					if(results.ResWaitOn == 0)
+						clients[results.Initiator].emit("sim update", "Plan is now avaliable");
+
+					var rtval = "Job has been reassigned";				
+					res.write(rtval);
+					return res.end();
+				});	
+			}
+		});
+		
+	});
+
+	router.get('/mobile/jobRequest', isAuthenticated, function(req, res) {
+		console.log(req.user);
+		dbquery.CheckJobRequest(db, req.user._id, function(err, doc) {
+			if(err)
+				throw err;
+
+			res.writeHead(200, {'Content-Type': 'application/json'});
+			var job = true;
+
+			if(doc != false)
+				res.write(JSON.stringify({Response: job, Job: doc.active}));
+			else
+			{
+				job = false;
+				res.write(JSON.stringify({Response: job}));
+			}
+			return res.end();						
+		});
+	});
+
+	router.post('/mobile/login', passport.authenticate('login', {
+		successRedirect: '/mobile/login/success',
+		failureRedirect: '/mobile/login/fail',
+		failureFlash : false  
+	}));
+
+	router.get('/mobile/login/success', isAuthenticated, function(req, res){
+		var rtval = "success";
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.write(rtval);
+		return res.end();
+	});
+
+	router.get('/mobile/login/fail', function(req, res, next) {
+		var rtval = "fail";
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.write(rtval);
+		return res.end();
 	});
 
 	router.post('/test', function(req, res, next) {
@@ -149,15 +272,21 @@ module.exports = function(passport){
 		return res.end();
 	});
 
-	router.post('/currentLocation', isAuthenticated, function(req, res, next) {
-		dbquery.UpdateLocation(req);
+	router.post('/test2', function(req, res, next) {
+		console.log("ip: " + req.connection.remoteAddress);
+		res.writeHead(200, {'Content-Type': 'application/json'});
+		return res.end();
+	});
+
+	router.post('/mobile/currentLocation', isAuthenticated, function(req, res, next) {
+		dbquery.UpdateLocation(db, req);
 	});
 
 	// Change to search based on mobile location
 	router.post('/activeSims', function(req, res, next) {
 		var rtval = [];
 
-		dbquery.ActiveSims(req, function(err, sims) {
+		dbquery.ActiveSims(db, req, function(err, sims) {
 			if(err)
 				throw err
 			
@@ -182,6 +311,14 @@ module.exports = function(passport){
 			res.writeHead(200, {'Content-Type': 'application/json'});
 			res.write(JSON.stringify(mobileResources));
 			return res.end();
+		});
+	});
+
+	router.post('/singleEvent/GetPlan', function(req, res, next) {
+		dbquery.GetPlan(db, req.body.sim_id, function(err, plan) {
+			res.writeHead(200, {'Content-Type': 'application/json'});
+			res.write(JSON.stringify(plan));
+			res.end();
 		});
 	});
 
