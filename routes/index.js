@@ -137,58 +137,106 @@ module.exports = function(passport, clients, db){
 			Promise.all(promises).then(function(allData) {
 				var rtval = [];
 				var count = 0;
- 
+				var planGenerated = true; 
 				for(var i = 0; i < allData.length; i++)
 				{
 					count = count + allData[i].actualCount;
-					rtval = rtval.concat(allData[i].res);
+					if(allData[i].res != false)
+						rtval = rtval.concat(allData[i].res);
+					else
+						planGenerated = false;
 				}
 
-				console.log("setPlan");
-				dbquery.SetPlan(db, req.body.sim_id, rtval, function (err, results) {
-					res.writeHead(200, {'Content-Type': 'application/json'});
+				if(planGenerated == true)
+				{
+					console.log("setPlan");
+					dbquery.SetPlan(db, req.body.sim_id, rtval, function (err, results) {
+						res.writeHead(200, {'Content-Type': 'application/json'});
 
-					if(count == 0)
-					{
-						res.write(JSON.stringify(response));
-						res.end();
-						clients[req.connection.remoteAddress].emit("sim update", "Plan is now avaliable");
-						console.log("socket");
-					}
-					else
-					{
-						//update database
-						dbquery.SetSimResouceCount(db, req.sim_id, count, function (err, results) {
-							var response = "Waiting for mobile response";
+						if(count == 0)
+						{
 							res.write(JSON.stringify(response));
-							console.log("wait");
-							return res.end();
-						});
-					}
-				});
+							res.end();
+							clients[req.connection.remoteAddress].emit("sim update", "Plan is now avaliable");
+							console.log("socket");
+						}
+						else
+						{
+							//update database
+							dbquery.SetSimResouceCount(db, req.sim_id, count, function (err, results) {
+								var response = "Waiting for mobile response";
+								res.write(JSON.stringify(response));
+								console.log("wait");
+								return res.end();
+							});
+						}
+					});
+				}
+				
+				else
+				{
+						var response = "Unable to generate plan";
+						res.write(JSON.stringify(response));
+						console.log("failed to generate plan");	
+						return res.end();
+				}
 			});
 		});
 	});
 
-	/*router.post('/mobile/requestResponse')
-	{
-		//find Sim
-		//UpdateSimCounts
-		//if decline update user_id to ""
-		//if req = respond emit message to sim initiator
-	}*/
+	router.post('/mobile/requestResponse', isAuthenticated, function(req, res){
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		dbquery.Response(db, req.user._id, req.body.sim_id, req.body.response, function (err, flag) {
+			if(flag == 0) // job accept
+			{
+				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
+					if(results.ResWaitOn == 0)
+						clients[results.Initiator].emit("sim update", "Plan is now avaliable");	
 
-	router.get('/mobile/jobRequest', function(req, res, next) {
+					var rtval = "Job has been assigned";				
+					res.write(rtval);
+					return res.end();		
+				});
+			}
+
+			if(flag == 1) // no job requested to user
+			{
+				var rtval = "No job has been assigned to you";				
+				res.write(rtval);
+				return res.end();
+			}
+
+			if(flag == 2) // job declined
+			{
+				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
+					if(results.ResWaitOn == 0)
+						clients[results.Initiator].emit("sim update", "Plan is now avaliable");
+
+					var rtval = "Job has been reassigned";				
+					res.write(rtval);
+					return res.end();
+				});	
+			}
+		});
+		
+	});
+
+	router.get('/mobile/jobRequest', isAuthenticated, function(req, res) {
 		console.log(req.user);
 		dbquery.CheckJobRequest(db, req.user._id, function(err, doc) {
 			if(err)
 				throw err;
 
 			res.writeHead(200, {'Content-Type': 'application/json'});
-			
-			if(doc)
-				res.write(JSON.stringify(doc.active));
-			
+			var job = true;
+
+			if(doc != false)
+				res.write(JSON.stringify({Response: job, Job: doc.active}));
+			else
+			{
+				job = false;
+				res.write(JSON.stringify({Response: job}));
+			}
 			return res.end();						
 		});
 	});

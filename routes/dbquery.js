@@ -32,7 +32,8 @@ function FindAvaliableUser(db, sim_details, resource, callback)
 {
 	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}}, 
 		{$set: {active: { sim_id: sim_details._id, Category: sim_details.category,
-				StartPoint: resource.Location, EndPoint: sim_details.location, Deadline: sim_details.Deadline}}}, 
+				StartPoint: resource.Location, EndPoint: sim_details.location, Deadline: sim_details.Deadline},
+				Responded: false}}, 
 		function(err, doc) {
 			callback(err, doc._id);
 		}
@@ -41,8 +42,11 @@ function FindAvaliableUser(db, sim_details, resource, callback)
 
 function CheckJobRequest(db, user_id, callback)
 {
-	db.collection("users").findOne({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {active:1}, function (err, doc) {
-		callback(err, doc);
+	db.collection("users").find({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {active:1}, function (err, doc) {
+		if(doc.length == 1)
+			callback(err, doc);
+		else
+			callback(err, false);
 	});
 }
 
@@ -53,7 +57,7 @@ function InsertSimulation(db, req, resources_list, radius, callback)
 	db.collection("Simulations").insertOne({Category: content.Category, Severity: content.Severity, 
 		Location: content.Location, Expenditure: content.Expenditure, Velocity: content.Velocity,
 		ResourceNum: content.ResourceNum, Deadline: content.Deadline, RequiredResources: resources_list, 
-		Radius: radius, start: new Date(), Initiator: req.connection.remoteAddress, ResRequired: 0, ResCompleted: 0},
+		Radius: radius, start: new Date(), Initiator: req.connection.remoteAddress, ResRequired: 0, ResWaitOn: 0},
 		function (err, r) {
 			callback(err, r);
 		}); 
@@ -61,7 +65,7 @@ function InsertSimulation(db, req, resources_list, radius, callback)
 
 function SetSimResouceCount(db, sim_id, req_count, callback)
 {
-	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set: {ResRequired: req_count}}, function (err, r)
+	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set: {ResRequired: req_count, ResWaitOn: req_count}}, function (err, r)
 	{
 		callback(err, r);
 	});
@@ -103,6 +107,45 @@ function UpdatedGPS(db, sim_id, callback)
 
 		callback(resources);
 	});
+}
+
+function Response(db, user_id, sim_id, response, callback)
+{
+	if(response == "Accept")
+	{
+		db.collection("users").find({_id: mongodb.ObjectId(user_id), active:{exists: true}, 
+			"active.sim_id": sim_id, "active.Responded": false}, 
+			function (err, results)   
+			{
+				if(docs.length == 1)
+				{
+					db.collection("users").updateOne({_id: mongodb.ObjectId(user_id)}, {$set: {"active.Responded": true}},
+					function (err, update_results)
+					{		
+						callback(err, 0)
+					});
+				}
+
+				else
+				{
+					callback(err, 1);
+				}
+			});
+	}
+
+	else
+	{
+		callback(err, 2);
+	}
+}
+
+function UpdateSimResponses(db, sim_id, update_value, callback)
+{
+	db.findOneAndUpdate({_id: mongodb.ObjectId(sim_id)}, {$inc: {ResWaitOn: update_value}}, 
+		{returnOriginal: false}, function (err, results) {
+			callback(err, results);
+		}
+	);
 }
 
 function SimulationDetails(db, sim_id, callback)

@@ -21,23 +21,38 @@ function FindMobileResources(sim_details, type, db)
 				for(var j = 0; j < facilities[i].Place.resourceNum; j++)
 				{
 					var temp = new CreateMobileResource(sim_details, facilities[i]);
-					heap.push(temp);
+					if(temp.cost != Infinity)
+						heap.push(temp);
 				}
 			}
 
 			var promises = [];
-
-			for(var i = 0; i <  sim_details.RequiredResources[type].num; i++)
+			var insufficient_res = false;
+			for(var i = 0; i <  sim_details.RequiredResources[type].num && insufficient_res == false; i++)
 			{
-				var mobileRes = heap.pop();
-				promises.push(CheckAvailability(db, sim_details, mobileRes));
+				if(heap.size() != 0)
+				{
+					var mobileRes = heap.pop();
+					promises.push(CheckAvailability(db, sim_details, mobileRes));
+				}
+				
+				else
+				{
+					insufficient_res = true;
+				}
 			}
 			
-			Promise.all(promises).then(function(mobileResources) {
-				var count = ActualMobile(mobileResources);
-				console.log("end " + type + " " + count);
-				return resolve({res: mobileResources, actualCount: count});
-			});
+			if(insuffient_res == false)
+			{
+				Promise.all(promises).then(function(mobileResources) {
+					var count = ActualMobile(mobileResources);
+					console.log("end " + type + " " + count);
+					return resolve({res: mobileResources, actualCount: count});
+				});
+			}
+
+			else
+				resolve({res: insufficient_res});
 		});
 	});
 }
