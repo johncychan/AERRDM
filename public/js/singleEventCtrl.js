@@ -1,5 +1,6 @@
 app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window){
 
+
   //map initialization
   var singleVm = this;
   var directionDisplay;
@@ -8,8 +9,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   $scope.headerMes = "Single Event";
 
   singleVm.eventStarted = false;
-  // open hamburger menu as default
-  singleVm.hamCheck = true;
+
+  var socket = io();
+ 
+  socket.on('sim update', function(msg){
+   console.log(msg);
+  });
+
 
   var position;
   var marker = [];
@@ -24,6 +30,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var mailMarker = [];
   var polylines = [];
   var requestMarkers = [];
+
   var startLocation = new Array();
   var endLocation = new Array();
 
@@ -147,6 +154,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       animation: google.maps.Animation.DROP
     });
     singleVm.map.setZoom(14);
+
     singleVm.markerElement();
   }
 
@@ -156,7 +164,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.marker.setMap(null);
     }
 
-    console.log(e.latLng);
     singleVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: singleVm.map,
@@ -164,7 +171,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       draggable: true,
       animation: google.maps.Animation.DROP
     });
-  singleVm.map.setZoom(14);
+    singleVm.map.setZoom(14);
     singleVm.markerElement();
   }
 
@@ -181,6 +188,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       animation: google.maps.Animation.DROP
     });
     singleVm.map.setZoom(14);
+
     singleVm.markerElement();
   }
 
@@ -358,8 +366,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //search 
     searchCircle();
 
-    // selectedFacility.setFacility("ABC");
-
     // sendReqtToFac();
     //two http request chainning together
     //first $http get all facility location and display
@@ -432,6 +438,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           }
         }, 10000);
         sendReqtToFac(response.data);
+
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
@@ -447,6 +454,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       endLoc[i] = dataObj.facilities[i].location;
       polyline[i] = new google.maps.Polyline({
         path: [singleVm.marker.position, dataObj.facilities[i].location],
+
         geodestic: true,
         strokeColor: '#178cd',
         strokeOpacity: 0.6,
@@ -461,6 +469,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       });
     }
     moveReqMarker(endLoc, polylines, requestMarkers);
+
   }
 
   moveReqMarker = function(endLoc, polyline, marker){
@@ -1091,6 +1100,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     }
   }
 
+
     function animate(index,d) {
       markerStarted = true;
       current_point = d;
@@ -1129,3 +1139,4 @@ app.controller('AppCtrl', function ($scope, $mdSidenav) {
       };
     }
 });
+

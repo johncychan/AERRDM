@@ -7,11 +7,10 @@ var Mongodb		= require('mongodb');
 function FindMobileResources(sim_details, type, db)
 {
 	return new Promise(function(resolve, reject) {
+		console.log("start " + type);
 		dbquery.FindFacilities(db, sim_details._id, type, function (err, facilities) {
 			if(err)
 				return reject(err);
-
-			var mobileResources = [];
 
 			var heap = new Heap(function(a, b) {
 				return a.Cost - b.Cost;
@@ -22,30 +21,80 @@ function FindMobileResources(sim_details, type, db)
 				for(var j = 0; j < facilities[i].Place.resourceNum; j++)
 				{
 					var temp = new CreateMobileResource(sim_details, facilities[i]);
-					heap.push(temp);
+					if(temp.cost != Infinity)
+						heap.push(temp);
 				}
 			}
 
-			for(var i = 0; i <  sim_details.RequiredResources[type].num; i++)
+			var promises = [];
+			var insufficient_res = false;
+			for(var i = 0; i <  sim_details.RequiredResources[type].num && insufficient_res == false; i++)
 			{
-				mobileResources.push(heap.pop());					
+				if(heap.size() != 0)
+				{
+					var mobileRes = heap.pop();
+					promises.push(CheckAvailability(db, sim_details, mobileRes));
+				}
+				
+				else
+				{
+					insufficient_res = true;
+				}
+			}
+			
+			if(insuffient_res == false)
+			{
+				Promise.all(promises).then(function(mobileResources) {
+					var count = ActualMobile(mobileResources);
+					console.log("end " + type + " " + count);
+					return resolve({res: mobileResources, actualCount: count});
+				});
 			}
 
-			//console.log(JSON.stringify(mobileResources) + "\n\n");
-			console.log(type + " finish");
-			return resolve(mobileResources);
+			else
+				resolve({res: insufficient_res});
 		});
 	});
 }
 
+function ActualMobile(mobileResources)
+{
+	var count = 0;
+
+	for(var i = 0; i < mobileResources.length; i++)
+	{
+		if(mobileResources.User_id)
+			count++;
+	}
+
+	return count;
+}
+
+function CheckAvailability (db, sim_details, mobileRes)
+{
+	return new Promise(function(resolve, reject) {
+		dbquery.FindAvaliableUser(db, sim_details, mobileRes, function (err, user_id) {
+			if(err)
+				return reject(err);
+
+			if(user_id)
+				mobileRes.User_id = user_id;
+
+			return resolve(mobileRes);
+		});
+	});
+}
+ 
 function CreateMobileResource(sim_details, facility)
 {
 	this.id = new Mongodb.ObjectId();
 	this.Location = facility.Place.location;
+	this.Facility = facility.Place.name;
+	this.Type = facility.Place.type;
 	this.Expenditure = Math.random() * (sim_details.Expenditure.max-sim_details.Expenditure.min+1) + sim_details.Expenditure.min;
 	this.Expenditure = this.Expenditure.toFixed(2);
 	this.Velocity = Math.random() * (sim_details.Velocity.max-sim_details.Velocity.min+1) + sim_details.Velocity.min;
-	this.type = facility.Place.type;
+	this.User_id = "";
 	this.Cost = Cost(sim_details, this);
 	//Insert into database
 //	//console.log(this);

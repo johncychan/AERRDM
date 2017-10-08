@@ -6,47 +6,74 @@ url = 'mongodb://localhost:27017/passport';
 // Required resources for event type and severity
 function RequiredResources(db, category, severity, callback)
 {
-	var resources = { };
+	//var resources = { };
 
 	db.collection("EventTypeInfo").findOne({Category:category, Severity: severity}, {"Resources":1}, function(err, doc) {
 		callback(err, doc.Resources);
 	});	
 }
 
-function UpdateLocation(req)
+function UpdateLocation(db, req)
 {
-	var user = req.session.user;
-	var db = req.db;
+	var user = req.user;
 
-	db.collection("usersLocation").save({ "_id" : mongodb.ObjectId(user._id),
-		"Username" : user.username, 
-		"Sim_id" : req.body.sim_id,
-		"Location" : req.body.location,
-		"Facility:" : user.facility,
-		"Timestamp" : new Date()
+	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user._id)}, 
+		{
+			$set: {			
+			"Sim_id" : req.body.sim_id,
+			"Location" : {lat: req.body.lat, lng: req.body.lng},
+			"Timestamp" : new Date()
+			}
+		}
+	);
+}
+
+function FindAvaliableUser(db, sim_details, resource, callback)
+{
+	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}}, 
+		{$set: {active: { sim_id: sim_details._id, Category: sim_details.category,
+				StartPoint: resource.Location, EndPoint: sim_details.location, Deadline: sim_details.Deadline},
+				Responded: false}}, 
+		function(err, doc) {
+			callback(err, doc._id);
+		}
+	);
+}
+
+function CheckJobRequest(db, user_id, callback)
+{
+	db.collection("users").find({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {active:1}, function (err, doc) {
+		if(doc.length == 1)
+			callback(err, doc);
+		else
+			callback(err, false);
 	});
 }
 
-function InsertSimulation(req, resources_list, radius, callback)
+function InsertSimulation(db, req, resources_list, radius, callback)
 {
-	var db = req.db;
 	var content = req.body;
 
 	db.collection("Simulations").insertOne({Category: content.Category, Severity: content.Severity, 
 		Location: content.Location, Expenditure: content.Expenditure, Velocity: content.Velocity,
 		ResourceNum: content.ResourceNum, Deadline: content.Deadline, RequiredResources: resources_list, 
-		Radius: radius, start: new Date(), active: "Search"},
+		Radius: radius, start: new Date(), Initiator: req.connection.remoteAddress, ResRequired: 0, ResWaitOn: 0},
 		function (err, r) {
 			callback(err, r);
 		}); 
 }
 
-function InsertFacility(dbr, place, db)
+function SetSimResouceCount(db, sim_id, req_count, callback)
 {
-	console.log("Inserted:" + place.name);
-	console.log("simid: " + dbr.insertedId);
-	db.collection("Facilities").insertOne({Sim_id: mongodb.ObjectId(dbr.insertedId), Place: place});
+	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set: {ResRequired: req_count, ResWaitOn: req_count}}, function (err, r)
+	{
+		callback(err, r);
+	});
+}
 
+function InsertFacility(db, dbr, place)
+{
+	db.collection("Facilities").insertOne({Sim_id: mongodb.ObjectId(dbr.insertedId), Place: place});
 }
 
 function FindFacilities(db, id, type, callback)
@@ -58,10 +85,8 @@ function FindFacilities(db, id, type, callback)
 
 }
 
-function ActiveSims(req, callback)
-{
-	var db = req.db;
-	
+function ActiveSims(db, req, callback)
+{	
 	db.collection("Simulations").find({active: 1}).toArray(function(err, docs) {
 		callback(err, docs);
 	});
@@ -69,7 +94,7 @@ function ActiveSims(req, callback)
 
 function UpdatedGPS(db, sim_id, callback)
 {
-	db.collection("usersLocation").find({sim_id: sim_id}, {sim_id: 0, timestamp: 0}).toArray(function(err, docs) {
+	db.collection("users").find({sim_id: sim_id}, {_id: 1, Location: 1}).toArray(function(err, docs) {
 		if(err)
 			throw err;
 	
@@ -77,11 +102,50 @@ function UpdatedGPS(db, sim_id, callback)
 
 		for(var i = 0; i < docs.length; i++)
 		{
-			resources[docs[i]._id] = docs[i].location;
+			resources[docs[i]._id] = docs[i].Location;
 		}
 
 		callback(resources);
 	});
+}
+
+function Response(db, user_id, sim_id, response, callback)
+{
+	if(response == "Accept")
+	{
+		db.collection("users").find({_id: mongodb.ObjectId(user_id), active:{exists: true}, 
+			"active.sim_id": sim_id, "active.Responded": false}, 
+			function (err, results)   
+			{
+				if(docs.length == 1)
+				{
+					db.collection("users").updateOne({_id: mongodb.ObjectId(user_id)}, {$set: {"active.Responded": true}},
+					function (err, update_results)
+					{		
+						callback(err, 0)
+					});
+				}
+
+				else
+				{
+					callback(err, 1);
+				}
+			});
+	}
+
+	else
+	{
+		callback(err, 2);
+	}
+}
+
+function UpdateSimResponses(db, sim_id, update_value, callback)
+{
+	db.findOneAndUpdate({_id: mongodb.ObjectId(sim_id)}, {$inc: {ResWaitOn: update_value}}, 
+		{returnOriginal: false}, function (err, results) {
+			callback(err, results);
+		}
+	);
 }
 
 function SimulationDetails(db, sim_id, callback)
@@ -94,6 +158,27 @@ function SimulationDetails(db, sim_id, callback)
 	});
 }
 
+function SetPlan(db, sim_id, plan, callback)
+{
+
+	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set:{"Plan":plan}}, function(err, results) {
+		console.log("Plan saved.");
+		callback(err, results);
+	});
+}
+
+function GetPlan(db, sim_id, callback)
+{
+	db.collection("Simulations").findOne({_id: mongodb.ObjectId(sim_id)}, {"Plan": 1}, 
+	function (err, results)
+	{
+		if(err)
+			throw err;
+
+		callback(err, results.Plan);
+	});
+}
+
 module.exports.RequiredResources = RequiredResources;
 module.exports.UpdateLocation = UpdateLocation;
 module.exports.InsertSimulation = InsertSimulation;
@@ -102,3 +187,8 @@ module.exports.ActiveSims = ActiveSims;
 module.exports.UpdatedGPS = UpdatedGPS;
 module.exports.SimulationDetails = SimulationDetails;
 module.exports.FindFacilities = FindFacilities;
+module.exports.FindAvaliableUser = FindAvaliableUser;
+module.exports.SetSimResouceCount = SetSimResouceCount;
+module.exports.CheckJobRequest = CheckJobRequest;
+module.exports.SetPlan = SetPlan;
+module.exports.GetPlan = GetPlan;
