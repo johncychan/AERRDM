@@ -9,6 +9,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   $scope.headerMes = "Single Event";
 
   singleVm.eventStarted = false;
+  singleVm.hamCheck = true;
 
   var socket = io();
  
@@ -437,7 +438,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
             }
           }
         }, 10000);
-        sendReqtToFac(response.data);
+        // sendReqtToFac(response.data);
 
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
@@ -499,20 +500,20 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }).then(function success(response){
         console.log(response.data);
-        singleVm.resourceAllocation(response.data);
-        for(var i = 0; i < response.data.length; ++i){
-          startLoc.push(response.data[i].Location);
-        }
+        // singleVm.resourceAllocation(response.data);
+        // for(var i = 0; i < response.data.length; ++i){
+        //   startLoc.push(response.data[i].Location);
+        // }
 
-        window.localStorage['selectedFacility'] = angular.toJson(response.data);
+        // window.localStorage['selectedFacility'] = angular.toJson(response.data);
 
-        progressHandle[stage] = $timeout(function(){
-      progressInfoControl(stage);
-    }, delayArray[stage]);
+    //     progressHandle[stage] = $timeout(function(){
+    //   progressInfoControl(stage);
+    // }, delayArray[stage]);
 
-        $timeout(function(){
+    //     $timeout(function(){
 
-          setRoutes()}, 20000);
+    //       setRoutes()}, 20000);
     })
   }
 
