@@ -18,7 +18,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
    if(msg == "Plan is now available"){
       // http service to get the tasks
       console.log("getting tasks");
-      
+      // getTasks();
+
    }
    else if(msg == "expend"){
       //expend sear
