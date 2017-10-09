@@ -273,8 +273,12 @@ module.exports = function(passport, clients, db){
 
 	router.post('/test2', function(req, res, next) {
 		console.log("ip: " + req.connection.remoteAddress);
-		res.writeHead(200, {'Content-Type': 'application/json'});
-		return res.end();
+		dbquery.FindFacilities(db, '59da2bc9fdce4f12d8a3e593', 'hospital',function (err, places) {
+			res.writeHead(200, {'Content-Type': 'application/json'});
+			//res.write(JSON.stringify(places));
+			console.log(JSON.stringify(places));
+			return res.end();
+		});
 	});
 
 	router.post('/mobile/currentLocation', isAuthenticated, function(req, res, next) {

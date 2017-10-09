@@ -4,6 +4,7 @@ var request 	= require('request');
 var dbquery	= require('./dbquery.js');
 
 var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
+var google_direction_api = 'https://maps.googleapis.com/maps/api/direction/json?key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
 
 // Place Object
 function Place(p, type, rnum, rcost) {
@@ -98,6 +99,16 @@ function FacilitiesSearch(url, type, rnum, rcost, dbr, db)
 	});
 }
 
+function Directions(start_location, end_location)
+{
+	console.log(start_location);
+	console.log(end_location);
+	
+	var url = google_direction_api.concat("&origin=", start_location.lat,",",start_location.lng);
+	url = url.concat("&destination=", end_location);
+	url = url.concat("&departure_time=", parseInt(new Date().valueOf()/1000));
+}
 
 module.exports.PlaceQuery = PlaceQuery;
 module.exports.FacilitiesSearch = FacilitiesSearch;
+module.exports.Directions = Directions;

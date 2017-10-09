@@ -3,6 +3,7 @@ var Promise 	= require('promise');
 var dbquery		= require('./dbquery.js');
 var Heap		= require('heap');
 var Mongodb		= require('mongodb');
+var gplace		= require('./gplace.js');
 
 function FindMobileResources(sim_details, type, db)
 {
@@ -15,14 +16,18 @@ function FindMobileResources(sim_details, type, db)
 			var heap = new Heap(function(a, b) {
 				return a.Cost - b.Cost;
 			});		
-		
+
 			for(var i = 0; i < facilities.length; i++)
 			{
+				gplace.Directions(facilities[i].Place.location, sim_details.Location);
 				for(var j = 0; j < facilities[i].Place.resourceNum; j++)
 				{
 					var temp = new CreateMobileResource(sim_details, facilities[i]);
-					if(temp.cost != Infinity)
+					console.log("temp cost " + temp.Cost)
+					if(temp.Cost != Infinity)
+					{
 						heap.push(temp);
+					}
 				}
 			}
 
@@ -30,6 +35,7 @@ function FindMobileResources(sim_details, type, db)
 			var insufficient_res = false;
 			for(var i = 0; i <  sim_details.RequiredResources[type].num && insufficient_res == false; i++)
 			{
+				console.log("size: " + heap.size());
 				if(heap.size() != 0)
 				{
 					var mobileRes = heap.pop();
@@ -113,7 +119,7 @@ function Cost(sim_details, resource)
 	var E_m = Normalisation(resource.Expenditure, sim_details.Expenditure.min, sim_details.Expenditure.max);
 	var dline = Deadline(distance, resource.Velocity, sim_details.Deadline);
 	var cost = w_t*E_t+w_m*E_m*dline;
-	//console.log(cost);
+	console.log("Cost: " + cost);
 	return cost; 
 }
 
