@@ -18,7 +18,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
    if(msg == "Plan is now available"){
       // http service to get the tasks
       console.log("getting tasks");
-      // getTasks();
+      getTasks();
 
    }
    else if(msg == "expend"){
@@ -385,7 +385,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //first $http get all facility location and display
     //second $http request filter the facilities remove the unused facilities location
     
-    singleVm.getFaciLoc().then(checkPlan).then(getTasks);
+    singleVm.getFaciLoc().then(checkPlan);
     
     singleVm.panelShow = "true";
   } 
@@ -504,7 +504,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
 
   checkPlan = function(dataObj){
-    return $http({
+    $http({
 
       method  : 'POST',
       url     : '/assignResource',
@@ -513,7 +513,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                   sim_id: dataObj.sim_id
       }
     }).then(function success(response){
-        console.log(response.data);
+        // console.log(response.data);
         if(response.data === "Unable to generate plan"){
             ngDialog.openConfirm({
               template:'\
@@ -527,10 +527,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                     </div>  \
                   </div>\
                   <div id="confirm-content">\
-                    <p>Are you sure you want to stop the simulation?</p>\
+                    <p>Unable to generate a plan, simulation will stop</p>\
                     <div class="ngdialog-buttons modal-footer ">\
-                        <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog(0)">No</button>\
-                        <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Yes</button>\
+                        <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Restart</button>\
                     </div>\
                   </div>\
                 </div>',
@@ -540,8 +539,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           }).then(function(value){
             $window.location.reload();
           });
+          
         }
-    return dataObj;
+        else if(response.data == "Plan is now avaliable"){
+            console.log("Plan is now avaliable");
+            getTasks(dataObj);
+        }
+    // return dataObj;
     })
   }
 
@@ -1064,7 +1068,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     }
 
     function updatePoly(i,d) {
-   // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
+    // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
       if (poly2[i].getPath().getLength() > 20) {
             poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
             // map.addOverlay(poly2)
@@ -1081,8 +1085,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
    }
 
 
-  // stop simulation
-  singleVm.stopTimeout = function(){
+    // stop simulation
+    singleVm.stopTimeout = function(){
     //reset map
     //clear current event
     console.log("Stop simulation and redraw the map");
