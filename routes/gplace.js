@@ -13,6 +13,7 @@ function Place(p, type, rnum, rcost) {
 	this.type = type;
 	this.resourceNum = Math.floor(Math.random() * (rnum.max-rnum.min+1) + rnum.min);
 	this.resourceCost = Math.floor(Math.random() * (rcost.max-rcost.min+1) + rcost.min);
+
 }
 
 function PlaceQuery (location, radius, type, name) {
@@ -112,18 +113,7 @@ function DirectionsURL(start_location, end_location)
 function Directions(start_location, end_location)
 {
 	var url = DirectionsURL(start_location, end_location);
-	var promise = [];
 
-	promise.push(DirectionsRequest(url));
-
-	Promise.all(promise).then(function(duration) {
-		return duration[0];
-	});
-
-}
-
-function DirectionsRequest(url)
-{
 	return new Promise(function(resolve, reject) {
 		request(url, function(error, response, body) {
 			if(error)
@@ -131,10 +121,8 @@ function DirectionsRequest(url)
 				console.log(error);
 				return reject(error);
 			}
+
 			var rtval = JSON.parse(body);
-			//console.log(rtval.routes[0].legs[0].duration_in_traffic.value);
-
-
 			var t = rtval.routes[0].legs[0].duration_in_traffic.value;
 			return resolve(t);
 		});

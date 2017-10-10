@@ -17,50 +17,57 @@ function FindMobileResources(sim_details, type, db)
 				return a.Cost - b.Cost;
 			});		
 
+			var durations = [];
+
 			for(var i = 0; i < facilities.length; i++)
 			{
-				var duration = gplace.Directions(facilities[i].Place.location, sim_details.Location);
+				durations.push(gplace.Directions(facilities[i].Place.location, sim_details.Location));
+			}
 
-				for(var j = 0; j < facilities[i].Place.resourceNum; j++)
+			Promise.all(durations).then(function(duration) {
+				for(var i = 0; i < facilities.length; i++)
 				{
-					var temp = new CreateMobileResource(sim_details, facilities[i], duration);
-
-					if(temp.Cost != Infinity)
+					for(var j = 0; j < facilities[i].Place.resourceNum; j++)
 					{
-						heap.push(temp);
+						var temp = new CreateMobileResource(sim_details, facilities[i], duration[i]);
+
+						if(temp.Cost != Infinity)
+						{
+							heap.push(temp);
+						}
 					}
 				}
-			}
 
-			var promises = [];
-			var insufficient_res = false;
-			console.log("size: " + heap.size());
-			for(var i = 0; i <  sim_details.RequiredResources[type].num && insufficient_res == false; i++)
-			{
-				if(heap.size() != 0)
+				var promises = [];
+				var insufficient_res = false;
+				console.log("size: " + heap.size());
+				for(var i = 0; i <  sim_details.RequiredResources[type].num && insufficient_res == false; i++)
 				{
-					var mobileRes = heap.pop();
-					promises.push(CheckAvailability(db, sim_details, mobileRes));
-				}
+					if(heap.size() != 0)
+					{
+						var mobileRes = heap.pop();
+						promises.push(CheckAvailability(db, sim_details, mobileRes));
+					}
 				
-				else
-				{
-					insufficient_res = true;
-					console.log("insufficient");
+					else
+					{
+						insufficient_res = true;
+						console.log("insufficient");
+					}
 				}
-			}
 			
-			if(insufficient_res == false)
-			{
-				Promise.all(promises).then(function(mobileResources) {
-					var count = ActualMobile(mobileResources);
-					console.log("end " + type + " " + count);
-					return resolve({res: mobileResources, actualCount: count});
-				});
-			}
+				if(insufficient_res == false)
+				{
+					Promise.all(promises).then(function(mobileResources) {
+						var count = ActualMobile(mobileResources);
+						console.log("end " + type + " " + count);
+						return resolve({res: mobileResources, actualCount: count});
+					});
+				}
 
-			else
-				resolve({res: insufficient_res});
+				else
+					resolve({res: insufficient_res});
+			});
 		});
 	});
 }
@@ -104,7 +111,7 @@ function CreateMobileResource(sim_details, facility, duration)
 	this.Expenditure = Math.random() * (sim_details.Expenditure.max-sim_details.Expenditure.min+1) + sim_details.Expenditure.min;
 	this.Expenditure = this.Expenditure.toFixed(2);
 	this.Velocity = Math.random() * (sim_details.Velocity.max-sim_details.Velocity.min+1) + sim_details.Velocity.min;
-	this.User_id = "";
+	this.User_id = "";	
 	this.Cost = Cost(sim_details, this, duration);
 	//Insert into database
 //	//console.log(this);
@@ -118,7 +125,6 @@ function Cost(sim_details, resource, duration)
 	var distance = Distance({lat:Lsplit[0], lng:Lsplit[1]}, resource.Location);
 	var E_t = Normalisation(distance, 0, sim_details.Radius);
 	var E_m = Normalisation(resource.Expenditure, sim_details.Expenditure.min, sim_details.Expenditure.max);
-//	var dline = Deadline(distance, resource.Velocity, sim_details.Deadline);
 	var dline = Deadline(duration, sim_details.Deadline);
 	var cost = w_t*E_t+w_m*E_m*dline;
 
@@ -146,10 +152,8 @@ function Distance(loc1, loc2)
 	return radius*c;
 }
 
-//function Deadline(distance, velocity, deadline)
 function Deadline(duration, deadline)
 {
-	//var t = distance/velocity;
 	var t = duration/60;
 
 	if (t <= deadline)
