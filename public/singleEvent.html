@@ -144,6 +144,6 @@
 
 <!-- <div id="footer"> -->
   <div id="single-start">
-    <button type="button" class="button single-event-start ripple animate-show animated slideInUp {{singleVm.eventStartHide}}" ng-show = "singleVm.searchShow" ng-disabled="singleVm.markerNotPlace" ng-click="singleVm.startSingleEvent()">Start</button>
+    <button type="button" ng-show="singleVm.eventIsSet" class="button single-event-start ripple animate-show animated slideInUp {{singleVm.eventStartHide}}" ng-show = "singleVm.searchShow" ng-disabled="singleVm.markerNotPlace" ng-click="singleVm.startSingleEvent()">Start</button>
   </div>
 <!-- </div> -->
