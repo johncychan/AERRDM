@@ -4,7 +4,7 @@ var request 	= require('request');
 var dbquery	= require('./dbquery.js');
 
 var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
-var google_direction_api = 'https://maps.googleapis.com/maps/api/direction/json?key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
+var google_direction_api = 'https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
 
 // Place Object
 function Place(p, type, rnum, rcost) {
@@ -16,7 +16,7 @@ function Place(p, type, rnum, rcost) {
 }
 
 function PlaceQuery (location, radius, type, name) {
-	url = google_map_api;
+	var url = google_map_api;
 	url = url.concat("&location=", location);
 	url = url.concat("&radius=", radius);
 	url = url.concat("&type=", type);
@@ -55,6 +55,7 @@ function FilterResults(rtval, type, rnum, rcost, dbr, db)
 		{
 			name = rtval.results[j].name.toLowerCase();
 			icon = rtval.results[j].icon;
+
 			if(name.includes(type) && icon == f_icon && !(name.includes("service") || name.includes("carpark")))
 			{ 
 				facility.push(new Place(rtval.results[j], type, rnum, rcost));
@@ -99,14 +100,45 @@ function FacilitiesSearch(url, type, rnum, rcost, dbr, db)
 	});
 }
 
-function Directions(start_location, end_location)
+function DirectionsURL(start_location, end_location)
 {
-	console.log(start_location);
-	console.log(end_location);
-	
 	var url = google_direction_api.concat("&origin=", start_location.lat,",",start_location.lng);
 	url = url.concat("&destination=", end_location);
 	url = url.concat("&departure_time=", parseInt(new Date().valueOf()/1000));
+	
+	return url;
+}
+
+function Directions(start_location, end_location)
+{
+	var url = DirectionsURL(start_location, end_location);
+	var promise = [];
+
+	promise.push(DirectionsRequest(url));
+
+	Promise.all(promise).then(function(duration) {
+		return duration[0];
+	});
+
+}
+
+function DirectionsRequest(url)
+{
+	return new Promise(function(resolve, reject) {
+		request(url, function(error, response, body) {
+			if(error)
+			{
+				console.log(error);
+				return reject(error);
+			}
+			var rtval = JSON.parse(body);
+			//console.log(rtval.routes[0].legs[0].duration_in_traffic.value);
+
+
+			var t = rtval.routes[0].legs[0].duration_in_traffic.value;
+			return resolve(t);
+		});
+	});
 }
 
 module.exports.PlaceQuery = PlaceQuery;

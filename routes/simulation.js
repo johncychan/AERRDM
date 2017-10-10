@@ -19,11 +19,12 @@ function FindMobileResources(sim_details, type, db)
 
 			for(var i = 0; i < facilities.length; i++)
 			{
-				gplace.Directions(facilities[i].Place.location, sim_details.Location);
+				var duration = gplace.Directions(facilities[i].Place.location, sim_details.Location);
+
 				for(var j = 0; j < facilities[i].Place.resourceNum; j++)
 				{
-					var temp = new CreateMobileResource(sim_details, facilities[i]);
-					console.log("temp cost " + temp.Cost)
+					var temp = new CreateMobileResource(sim_details, facilities[i], duration);
+
 					if(temp.Cost != Infinity)
 					{
 						heap.push(temp);
@@ -33,9 +34,9 @@ function FindMobileResources(sim_details, type, db)
 
 			var promises = [];
 			var insufficient_res = false;
+			console.log("size: " + heap.size());
 			for(var i = 0; i <  sim_details.RequiredResources[type].num && insufficient_res == false; i++)
 			{
-				console.log("size: " + heap.size());
 				if(heap.size() != 0)
 				{
 					var mobileRes = heap.pop();
@@ -94,7 +95,7 @@ function CheckAvailability (db, sim_details, mobileRes)
 	});
 }
  
-function CreateMobileResource(sim_details, facility)
+function CreateMobileResource(sim_details, facility, duration)
 {
 	this.id = new Mongodb.ObjectId();
 	this.Location = facility.Place.location;
@@ -104,12 +105,12 @@ function CreateMobileResource(sim_details, facility)
 	this.Expenditure = this.Expenditure.toFixed(2);
 	this.Velocity = Math.random() * (sim_details.Velocity.max-sim_details.Velocity.min+1) + sim_details.Velocity.min;
 	this.User_id = "";
-	this.Cost = Cost(sim_details, this);
+	this.Cost = Cost(sim_details, this, duration);
 	//Insert into database
 //	//console.log(this);
 }
 
-function Cost(sim_details, resource)
+function Cost(sim_details, resource, duration)
 {
 	var w_t = sim_details.Severity / 5;
 	var w_m = 1 - w_t;
@@ -117,9 +118,10 @@ function Cost(sim_details, resource)
 	var distance = Distance({lat:Lsplit[0], lng:Lsplit[1]}, resource.Location);
 	var E_t = Normalisation(distance, 0, sim_details.Radius);
 	var E_m = Normalisation(resource.Expenditure, sim_details.Expenditure.min, sim_details.Expenditure.max);
-	var dline = Deadline(distance, resource.Velocity, sim_details.Deadline);
+//	var dline = Deadline(distance, resource.Velocity, sim_details.Deadline);
+	var dline = Deadline(duration, sim_details.Deadline);
 	var cost = w_t*E_t+w_m*E_m*dline;
-	console.log("Cost: " + cost);
+
 	return cost; 
 }
 
@@ -144,9 +146,11 @@ function Distance(loc1, loc2)
 	return radius*c;
 }
 
-function Deadline(distance, velocity, deadline)
+//function Deadline(distance, velocity, deadline)
+function Deadline(duration, deadline)
 {
-	var t = distance/velocity;
+	//var t = distance/velocity;
+	var t = duration/60;
 
 	if (t <= deadline)
 		return 1;

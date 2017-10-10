@@ -31,9 +31,10 @@ function UpdateLocation(db, req)
 function FindAvaliableUser(db, sim_details, resource, callback)
 {
 	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}}, 
-		{$set: {active: { sim_id: sim_details._id, Category: sim_details.category,
-				StartPoint: resource.Location, EndPoint: sim_details.location, Deadline: sim_details.Deadline},
-				Responded: false}}, 
+		{$set: {active: { sim_id: sim_details._id, Category: sim_details.Category,
+				StartPoint: resource.Location, EndPoint: sim_details.Location, Deadline: sim_details.Deadline, Responded: false}
+				}
+		}, 
 		function(err, doc) {
 			callback(err, doc._id);
 		}
@@ -42,9 +43,9 @@ function FindAvaliableUser(db, sim_details, resource, callback)
 
 function CheckJobRequest(db, user_id, callback)
 {
-	db.collection("users").find({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {active:1}, function (err, doc) {
-		if(doc.length == 1)
-			callback(err, doc);
+	db.collection("users").find({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {active:1}).toArray(function (err, docs) {
+		if(docs.length == 1)
+			callback(err, docs[0]);
 		else
 			callback(err, false);
 	});
@@ -79,7 +80,6 @@ function InsertFacility(db, dbr, place)
 function FindFacilities(db, id, type, callback)
 {
 		db.collection("Facilities").find({Sim_id: mongodb.ObjectId(id), 'Place.type': type}, {Place: 1}).toArray(function (err, places) { 
-		//console.log("p: " + JSON.stringify(results));
 		callback(err, places);
 	});   
 
@@ -179,6 +179,18 @@ function GetPlan(db, sim_id, callback)
 	});
 }
 
+function ResetUserBySimId(db, sim_id)
+{
+	db.collection("users").updateMany({"active.sim_id": mongodb.ObjectId(sim_id)}, {$unset: {active: ""}});
+}
+
+function ResetUserByInitiator(db, initiator)
+{
+	db.collection("Simulations").find({Initiator: initiator},{_id:1}).forEach(function(doc) {
+		ResetUserBySimId(db, doc._id);
+	});
+}
+
 module.exports.RequiredResources = RequiredResources;
 module.exports.UpdateLocation = UpdateLocation;
 module.exports.InsertSimulation = InsertSimulation;
@@ -192,3 +204,5 @@ module.exports.SetSimResouceCount = SetSimResouceCount;
 module.exports.CheckJobRequest = CheckJobRequest;
 module.exports.SetPlan = SetPlan;
 module.exports.GetPlan = GetPlan;
+module.exports.ResetUserByInitiator = ResetUserByInitiator;
+module.exports.ResetUserBySimId = ResetUserBySimId;
