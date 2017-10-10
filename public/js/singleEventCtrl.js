@@ -346,23 +346,32 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       });
     };
 
+
+    singleVm.eventSet = function(){
+      $mdDialog.hide();
+      singleVm.closeInfoWin();
+      singleVm.eventIsSet = true;
+    }
   // now start the simulation
 
   singleVm.startSingleEvent = function(){
     // close factor menu
     singleVm.eventStarted = true;
+    // hide start button
+    singleVm.eventStartHide = "slideOutDown";
+    singleVm.eventIsSet = false;
     // set marker undraggable when event started
     singleVm.marker.setDraggable(false);
 
     var progressStage = 0;
-    $mdDialog.hide();
+    // $mdDialog.hide();
 
     // close hamburger menu
     singleVm.hamCheck = false;
     // hide search box
     singleVm.searchExtend();
     // close info window
-    singleVm.closeInfoWin();
+    // singleVm.closeInfoWin();
     // clear onclick event in map
     clearMapClickEvent();
     // change back to default google map cursor
@@ -563,11 +572,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
         facilitySelected.setFacility(response.data);
 
+
         window.localStorage['selectedFacility'] = angular.toJson(response.data);
 
-        progressHandle[stage] = $timeout(function(){
-      progressInfoControl(stage);
-    }, delayArray[stage]);
+        // progressHandle[stage] = $timeout(function(){
+      // progressInfoControl(stage);
+    // }, delayArray[stage]);
 
         $timeout(function(){
           setRoutes()}, 20000);
@@ -707,6 +717,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
     stage++;
     currentProgressStage = stage;
+    console.log(currentProgressStage);
     progressHandle[stage] = $timeout(function(){
       progressInfoControl(stage);
     }, delayArray[stage]);
@@ -1070,7 +1081,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
    // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
       if (poly2[i].getPath().getLength() > 20) {
             poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
-            // map.addOverlay(poly2)
           }
 
       if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
