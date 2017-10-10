@@ -64,8 +64,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.searchExtend();
   });
 
-
-
   function clearMapClickEvent(){
     //clear onclick event in map
     google.maps.event.clearListeners(multiVm.map, 'click');

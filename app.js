@@ -8,8 +8,28 @@ var bodyParser 		= require('body-parser');
 var mongo			= require('mongodb');
 var MongoClient 	= require('mongodb').MongoClient;
 var database		= require('./db.js');
+var socket_io		= require('socket.io');
 
+// Express
 var app = express();
+
+// Socket.io
+var io = socket_io();
+app.io = io;
+var clients = [];
+var _socket = null;
+
+// socket.io events
+io.on('connection', function (socket)
+{
+	clients[socket.handshake.address] = socket;
+	console.log("Connected " + socket.handshake.address);
+
+	socket.on('disconnect', function () {
+		delete clients[socket.handshake.address];
+		console.log("Disconnected " + socket.handshake.address);
+	});
+});
 
 //Database
 MongoClient.connect('mongodb://localhost:27017/AERRDM', function(err, database) {
@@ -46,12 +66,12 @@ MongoClient.connect('mongodb://localhost:27017/AERRDM', function(err, database) 
 	var initPassport = require('./passport/init');
 	initPassport(passport, db);
 
-	app.use(function(req, res, next) {
+	/*app.use(function(req, res, next) {
 		req.db = db;
 		next();
-	});
+	});*/
 
-	var routes = require('./routes/index')(passport);
+	var routes = require('./routes/index')(passport, clients, db);
 	app.use('/', routes);
 
 	/// catch 404 and forward to error handler

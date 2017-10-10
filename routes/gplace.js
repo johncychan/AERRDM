@@ -3,7 +3,7 @@ var Promise 	= require('promise');
 var request 	= require('request');
 var dbquery	= require('./dbquery.js');
 
-var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=_LOCATION&radius=_RADIUS&type=_TYPE&key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
+var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=_LOCATION&radius=_RADIUS&type=_TYPE&name=_NAME&key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
 
 // Place Object
 function Place(p, type, rnum, rcost) {
@@ -15,11 +15,12 @@ function Place(p, type, rnum, rcost) {
 }
 
 
-function PlaceQuery (location, radius, type) {
+function PlaceQuery (location, radius, type, name) {
 	url = google_map_api;
 	url = url.replace('_LOCATION', location);
 	url = url.replace('_TYPE', type);
 	url = url.replace('_RADIUS', radius);
+	url = url.replace('_NAME', name)
 
 	return url;
 }
@@ -41,7 +42,7 @@ function FilterResults(rtval, type, rnum, rcost, dbr, db)
 			if(name.includes(type_ws))
 			{ 
 				facility.push(new Place(rtval.results[j], type, rnum, rcost));
-				dbquery.InsertFacility(dbr, facility[counter], db);
+				dbquery.InsertFacility(db, dbr, facility[counter]);
 				counter++;
 			}
 		}
@@ -61,7 +62,7 @@ function FilterResults(rtval, type, rnum, rcost, dbr, db)
 			if(name.includes(type) && icon == f_icon)
 			{ 
 				facility.push(new Place(rtval.results[j], type, rnum, rcost));
-				dbquery.InsertFacility(dbr, facility[counter], db);
+				dbquery.InsertFacility(db, dbr, facility[counter]);
 				counter++;
 			}
 		}
@@ -80,9 +81,7 @@ function FacilitiesSearch(url, type, rnum, rcost, dbr, db)
 				return reject(error);
 			}
 			var rtval = JSON.parse(body);
-			console.log("1");
 			var filterFacilities = FilterResults(rtval, type, rnum, rcost, dbr, db);
-			console.log("2");
 			return resolve(filterFacilities);
 		});
 	});

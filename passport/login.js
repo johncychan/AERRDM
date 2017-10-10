@@ -4,14 +4,13 @@ var bCrypt = require('bcrypt-nodejs');
 var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 
-module.exports = function(passport){
+module.exports = function(passport, db){
 
 	passport.use('login', new LocalStrategy({
             passReqToCallback : true
         },
         function(req, username, password, done) { 
             // check in mongo if a user with username exists or not
-			var db = req.db;
             db.collection("users").findOne({ 'username' :  username }, 
                 function(err, user) {
                     // In case of any error, return using the done method
