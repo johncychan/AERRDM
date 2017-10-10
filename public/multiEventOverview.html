@@ -13,15 +13,17 @@
   		<div id="event-info-container">
   			<table id="event-info-table"> 
           <tr>
-            <th colspan="4">Events Information</th>
+            <th colspan="5">Events Information</th>
           </tr>
           <tr>
+            <th>ID</th>
             <th>Category</th>
             <th>Severity</th>
             <th>Resources needed</th>
             <th>Average Deadline</th>
           </tr>
           <tr ng-repeat="event in multiVm.eventList">
+            <td>{{event.ID}}</td>
             <td>{{event.Category}}</td>
             <td>Level {{event['Severity Level']}}</td>
             <td>tbh</td>
