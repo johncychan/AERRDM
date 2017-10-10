@@ -18,7 +18,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
    if(msg == "Plan is now available"){
       // http service to get the tasks
       console.log("getting tasks");
-      getTasks();
+      // getTasks();
 
    }
    else if(msg == "expend"){
@@ -543,7 +543,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           
         }
         else if(response.data == "Plan is now avaliable"){
-            console.log("Plan is now avaliable");
+            // console.log("Plan is now avaliable");
             getTasks(dataObj);
         }
     // return dataObj;
@@ -664,13 +664,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.eventShow = true;
     }
     else if(stage == 2){
-    singleVm.stage = "Establishing Plan";
+    singleVm.stage = "Searching for Facilities";
     }
     else if(stage == 3){
       singleVm.taskShow = true;
     }
     else if(stage == 4){
-      singleVm.stage = "Searching for Facilities";
+      singleVm.stage = "Establishing Plan";
     }
     else if(stage == 5){
       singleVm.containerExtend = 'progress-first-extend';
@@ -713,6 +713,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
     stage++;
     currentProgressStage = stage;
+    // console.log(currentProgressStage);
     progressHandle[stage] = $timeout(function(){
       progressInfoControl(stage);
     }, delayArray[stage]);
@@ -761,7 +762,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   };
 
 
-  function createMarker(latlng, label, html) {
+  function createMarker(latlng, label) {
     var marker = new google.maps.Marker({
         position: latlng,
         map: singleVm.map,
@@ -951,7 +952,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   }
 
     function setRoutes(){
-      console.log("setRoutes");
+      // console.log("setRoutes");
       singleVm.circle.setMap(null);
       var directionDisplay = new Array();
       var startLocLength;
@@ -1017,7 +1018,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                     startLocation[routeNum].latlng = legs[i].start_location;
                     startLocation[routeNum].address = legs[i].start_address;
                     // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-                    marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
+                    marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address);
                   }
                   endLocation[routeNum].latlng = legs[i].end_location;
                   endLocation[routeNum].address = legs[i].end_address;
@@ -1032,7 +1033,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                         polyline[routeNum].getPath().push(nextSegment[k]);
                         //bounds.extend(nextSegment[k]);
                     }
-
                   }
                 }               
           }
@@ -1076,7 +1076,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
       if (poly2[i].getPath().getLength() > 20) {
             poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
-            // map.addOverlay(poly2)
+            // singleVm.map.addOverlay(poly2)
           }
 
       if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
@@ -1124,8 +1124,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   // pause simulation
   singleVm.pauseTimeout = function(){
+
     if(playStop){
-      // console.log(currentProgressStage);
+      console.log(currentProgressStage);
       playStop = false;
       // if marker started
       if(markerStarted){
