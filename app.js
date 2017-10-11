@@ -7,7 +7,7 @@ var cookieParser 	= require('cookie-parser');
 var bodyParser 		= require('body-parser');
 var mongo			= require('mongodb');
 var MongoClient 	= require('mongodb').MongoClient;
-var database		= require('./db.js');
+var dbquery			= require('./routes/dbquery.js');
 var socket_io		= require('socket.io');
 
 // Express
@@ -19,24 +19,25 @@ app.io = io;
 var clients = [];
 var _socket = null;
 
-// socket.io events
-io.on('connection', function (socket)
-{
-	clients[socket.handshake.address] = socket;
-	console.log("Connected " + socket.handshake.address);
-
-	socket.on('disconnect', function () {
-		delete clients[socket.handshake.address];
-		console.log("Disconnected " + socket.handshake.address);
-	});
-});
-
 //Database
 MongoClient.connect('mongodb://localhost:27017/AERRDM', function(err, database) {
 	if(err)
 		throw err;
 
 	var db = database;
+
+	// socket.io events
+	io.on('connection', function (socket)
+	{
+		clients[socket.handshake.address] = socket;
+		console.log("Connected " + socket.handshake.address);
+
+		socket.on('disconnect', function () {
+			delete clients[socket.handshake.address];
+			console.log("Disconnected " + socket.handshake.address);
+			dbquery.ResetUserByInitiator(db, socket.handshake.address);
+		});
+	});
 
 	// view engine setup
 	app.set('views', path.join(__dirname, 'views'));
