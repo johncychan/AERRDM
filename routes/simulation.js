@@ -87,8 +87,10 @@ function ActualMobile(mobileResources)
 
 function CheckAvailability (db, sim_details, mobileRes)
 {
+	console.log("check");
 	return new Promise(function(resolve, reject) {
 		dbquery.FindAvaliableUser(db, sim_details, mobileRes, function (err, user_id) {
+			console.log("check_finish");
 			if(err)
 				return reject(err);
 

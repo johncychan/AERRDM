@@ -186,36 +186,41 @@ module.exports = function(passport, clients, db){
 	});
 
 	router.post('/mobile/requestResponse', isAuthenticated, function(req, res){
-		res.writeHead(200, {'Content-Type': 'text/plain'});
+	//	res.writeHead(200, {'Content-Type': 'text/plain'});
+		console.log(req.body.response);
 		dbquery.Response(db, req.user._id, req.body.sim_id, req.body.response, function (err, flag) {
 			if(flag == 0) // job accept
 			{
+				console.log("test1");
 				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
 					if(results.ResWaitOn == 0)
 						clients[results.Initiator].emit("sim update", "Plan is now avaliable");	
 
-					var rtval = "Job has been assigned";				
-					res.write(rtval);
-					return res.end();		
+					var rtval = "Job has been assigned";
+//					res.write(rtval);
+	//				return res.end();		
 				});
 			}
 
-			if(flag == 1) // no job requested to user
+			else if(flag == 1) // no job requested to user
 			{
+				console.log("test2");
 				var rtval = "No job has been assigned to you";				
-				res.write(rtval);
-				return res.end();
+//				res.write(rtval);
+//				return res.end();
 			}
 
-			if(flag == 2) // job declined
+			else if(flag == 2) // job declined
 			{
+				console.log("test3");
 				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
+					console.log("test4");
 					if(results.ResWaitOn == 0)
 						clients[results.Initiator].emit("sim update", "Plan is now avaliable");
 
 					var rtval = "Job has been reassigned";				
-					res.write(rtval);
-					return res.end();
+//					res.write(rtval);
+//					return res.end();
 				});	
 			}
 		});

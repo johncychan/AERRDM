@@ -20,7 +20,6 @@ function UpdateLocation(db, req)
 	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user._id)}, 
 		{
 			$set: {			
-			"Sim_id" : req.body.sim_id,
 			"Location" : {lat: req.body.lat, lng: req.body.lng},
 			"Timestamp" : new Date()
 			}
@@ -30,10 +29,17 @@ function UpdateLocation(db, req)
 
 function FindAvaliableUser(db, sim_details, resource, callback)
 {
+	console.log("1");
 	var date = new Date(new Date()-5*60000);
+console.log("2");
+	var start = resource.Location.lat;
+	start = start.concat(",");
+console.log("4");
+	start = start.concat(resource.Location.lng);
+console.log("3");
 	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}, Timestamp: {$gt: date}}, 
-		{$set: {active: { sim_id: sim_details._id, Category: sim_details.Category,
-				StartPoint: resource.Location, EndPoint: sim_details.Location, Deadline: sim_details.Deadline, Responded: false}
+		{$set: {active: { sim_id: sim_details._id, Severity: sim_details.Severity, Category: sim_details.Category,
+				StartPoint: start, EndPoint: sim_details.Location, Deadline: sim_details.Deadline, Responded: false}
 				}
 		}, 
 		function(err, doc) {
@@ -44,11 +50,14 @@ function FindAvaliableUser(db, sim_details, resource, callback)
 
 function CheckJobRequest(db, user_id, callback)
 {
-	db.collection("users").find({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {active:1}).toArray(function (err, docs) {
-		if(docs.length == 1)
-			callback(err, docs[0]);
-		else
-			callback(err, false);
+	db.collection("users").update({_id: mongodb.ObjectId(user_id)}, {$set: {Timestamp: new Date()}}, function() {
+		console.log("update done");
+		db.collection("users").find({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {active:1}).toArray(function (err, docs) {
+			if(docs.length == 1)
+				callback(err, docs[0]);
+			else
+				callback(err, false);
+		});
 	});
 }
 
@@ -95,7 +104,7 @@ function ActiveSims(db, req, callback)
 
 function UpdatedGPS(db, sim_id, callback)
 {
-	db.collection("users").find({sim_id: sim_id}, {_id: 1, Location: 1}).toArray(function(err, docs) {
+	db.collection("users").find({"active.sim_id": sim_id}, {_id: 1, Location: 1}).toArray(function(err, docs) {
 		if(err)
 			throw err;
 	
@@ -112,6 +121,8 @@ function UpdatedGPS(db, sim_id, callback)
 
 function Response(db, user_id, sim_id, response, callback)
 {
+	console.log(response);
+
 	if(response == "Accept")
 	{
 		db.collection("users").find({_id: mongodb.ObjectId(user_id), active:{$exists: true}, 
