@@ -587,7 +587,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // }, delayArray[stage]);
 
         $timeout(function(){
-          setRoutes()}, 20000);
+          setRoutes()}, 35000);
     })
   }
 
@@ -661,7 +661,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 2000, 3000, 1500, 2000, 100, 500, 500, 1000, 1500, 5500, 5500, 5500, 1000, 2000];
+  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 1500, 1000, 1200, 5500, 5500, 5500, 5500 ,5500 ,1000, 2000];
 
 
   function progressInfoControl(stage){
@@ -709,19 +709,24 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.stage = "Analysing Response from Facilities";
     }
     else if(stage == 12){
-      singleVm.stage = "Resources Allocaton";
+      singleVm.stage = "Sending Final Plan to Facilities";
     }
     else if(stage == 13){
+      singleVm.stage = "Facilities Execute Final Plan";
+    }
+    else if(stage == 14){
+      singleVm.stage = "Resources Allocaton";
+    }
+    else if(stage == 15){
       singleVm.dotShow = false;
       singleVm.eventShow = false;
       singleVm.taskShow = false;
       singleVm.facilityShow = false;
     }
-    else if(stage == 14){
+    else if(stage == 16){
       singleVm.resourceShow = true;
       singleVm.autoExtend = "progress-content-auto";
     }
-
 
     stage++;
     currentProgressStage = stage;
@@ -1054,7 +1059,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           $timeout(function(){
             startAnimation(routeNum)
 
-          }, 25000);    
+          }, 11000);    
         }
       } 
     }
