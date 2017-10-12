@@ -9,6 +9,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   $scope.headerMes = "Single Event";
 
   singleVm.eventStarted = false;
+  singleVm.eventIsSet = false;
   singleVm.hamCheck = true;
 
   var socket = io();
@@ -307,6 +308,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   }
 
   singleVm.factorGenerate = function(){
+    // if event is set
+    if(singleVm.eventIsSet){
+      return;
+    }
     singleVm.level = singleVm.levelGenerator();
     singleVm.category = singleVm.categoryGenerator();
     singleVm.expenditure = singleVm.expenditureGenerator();
@@ -316,7 +321,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.minvelocity = singleVm.minVelocityGenerator();
     singleVm.maxvelocity = singleVm.maxVelocityGenerator();
     singleVm.deadline = singleVm.deadlineGenerator();
-
     //Auto increment
 
     singleVm.eId = 001;
@@ -333,53 +337,49 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       'Resource avg. velocity': singleVm.velocity,
       'Deadline': singleVm.deadline,
       'Location': singleVm.marker.position.toUrlValue()
-      }
     }
+  }
+
+  singleVm.progrssMenuOpen = function () {
+    ngDialog.open({ 
+      template: 'eventProgress.html',
+      overlay: false,
+      showClose: false,
+      scope: $scope,
+      className: 'ngdialog-theme-default progress-menu draggable'       
+    });
+  };
 
 
-    singleVm.progrssMenuOpen = function () {
-      ngDialog.open({ 
-        template: 'eventProgress.html',
-        overlay: false,
-        showClose: false,
-        scope: $scope,
-        className: 'ngdialog-theme-default progress-menu draggable'       
-      });
-    };
-
-
-    singleVm.eventSet = function(){
-      $mdDialog.hide();
-      singleVm.closeInfoWin();
-      singleVm.eventIsSet = true;
-    }
+  singleVm.eventSet = function(){
+    $mdDialog.hide();
+    singleVm.closeInfoWin();
+    singleVm.startShow = true;
+    singleVm.eventIsSet = true;
+  }
   // now start the simulation
 
   singleVm.startSingleEvent = function(){
+    singleVm.closeInfoWin();
     // close factor menu
     singleVm.eventStarted = true;
     // hide start button
     singleVm.eventStartHide = "slideOutDown";
-    singleVm.eventIsSet = false;
     // set marker undraggable when event started
     singleVm.marker.setDraggable(false);
 
     var progressStage = 0;
-    // $mdDialog.hide();
-
+    $mdDialog.hide();
     // close hamburger menu
     singleVm.hamCheck = false;
     // hide search box
     singleVm.searchExtend();
-    // close info window
-    // singleVm.closeInfoWin();
     // clear onclick event in map
     clearMapClickEvent();
     // change back to default google map cursor
     defaultCursor();
     // start progress menu animation
     progressInfoControl(0);
-
     // open progress menu
     singleVm.progrssMenuOpen();
     // redirect info window to progress menu
@@ -576,6 +576,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           startLoc.push(response.data[i].Location);
         }
 
+        singleVm.resourceAllocation(response.data);
         facilitySelected.setFacility(response.data);
 
 
@@ -601,11 +602,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.allocatedResources = []
     for(var i = 0; i < resourceObj.length; i++){
       var type = " ";
-      if(resourceObj[i].type == "fire_station")
+      if(resourceObj[i].Type == "fire_station")
         type = "Fire Truck";
-      else if(resourceObj[i].type == "hospital")
+      else if(resourceObj[i].Type == "hospital")
         type = "Ambulance";
-      else if(resourceObj[i].type == "police")
+      else if(resourceObj[i].Type == "police")
         type = "Police Car";
 
       singleVm.allocatedResources[i] = {
@@ -632,6 +633,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   singleVm.setDataField = function(){
     // generate factor
+
     singleVm.factorGenerate();
 
     $mdDialog.show(
@@ -659,7 +661,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 5000, 5000, 5000, 5000, 100, 500, 500, 950, 1500, 5500, 5500, 5500, 1000, 2000];
+  var delayArray = [0, 2000, 3000, 1500, 2000, 100, 500, 500, 1000, 1500, 5500, 5500, 5500, 1000, 2000];
 
 
   function progressInfoControl(stage){
@@ -674,13 +676,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.eventShow = true;
     }
     else if(stage == 2){
-    singleVm.stage = "Searching for Facilities";
+      singleVm.stage = "Establishing Task";
     }
     else if(stage == 3){
       singleVm.taskShow = true;
     }
     else if(stage == 4){
-      singleVm.stage = "Establishing Plan";
+      singleVm.stage = "Searching for Facilities";
     }
     else if(stage == 5){
       singleVm.containerExtend = 'progress-first-extend';
