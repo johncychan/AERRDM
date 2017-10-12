@@ -94,15 +94,17 @@
       <div id="resource-info-container" ng-show = "singleVm.resourceShow" ng-cloak>
         <table id="event-info-table"> 
           <tr>
-            <th colspan="3" id="resource-header">Allocated Resources Information</th>
+            <th colspan="4" id="resource-header">Allocated Resources Information</th>
           </tr>
           <tr>
             <th>Type</th>
+            <th>Facility</th>
             <th>Expenditure</th>
             <th>Velocity</th>
           </tr>
           <tr ng-repeat="resource in singleVm.allocatedResources ">
             <td id="type">{{resource.Type}}</td>
+            <td class="factor-value" id="facility">{{resource.Facility}}</td>
             <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
             <td class="factor-value">{{resource.Velocity}}</td>
           </tr>

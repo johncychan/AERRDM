@@ -612,7 +612,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.allocatedResources[i] = {
         Type: type,
         Expenditure: resourceObj[i].Expenditure,
-        Velocity: resourceObj[i].Velocity
+        Velocity: resourceObj[i].Velocity,
+        Facility: resourceObj[i].Facility
       };
     }
     // console.log(singleVm.allocatedResources);

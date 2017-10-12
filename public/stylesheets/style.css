@@ -1311,7 +1311,7 @@
         position: absolute;
         /*overflow-y: scroll;*/
         top: 35%;
-        left: 19%;
+        left: 7%;
       }
 
       #resource-info-container{
@@ -1322,6 +1322,12 @@
 
       #resource-info-container #event-info-table #resource-header{
         border-bottom: 2px solid #FFF !important;
+      }
+
+      #resource-info-container #facility{
+        border-right: 0px;
+        width: 120px;
+        line-height: 1em;
       }
 
 
