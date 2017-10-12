@@ -187,8 +187,9 @@ module.exports = function(passport, clients, db){
 
 	router.post('/mobile/requestResponse', isAuthenticated, function(req, res){
 	//	res.writeHead(200, {'Content-Type': 'text/plain'});
-		console.log(req.body.response);
+		console.log(req.body.response + " " + req.body.sim_id);
 		dbquery.Response(db, req.user._id, req.body.sim_id, req.body.response, function (err, flag) {
+			console.log(flag);
 			if(flag == 0) // job accept
 			{
 				console.log("test1");

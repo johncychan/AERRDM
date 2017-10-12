@@ -121,11 +121,10 @@ function Response(db, user_id, sim_id, response, callback)
 
 	if(response == "Accept")
 	{
-		db.collection("users").find({_id: mongodb.ObjectId(user_id), active:{$exists: true}, 
-			"active.sim_id": sim_id, "active.Responded": false}, 
-			function (err, results)   
+		db.collection("users").find({_id: mongodb.ObjectId(user_id), "active.sim_id": mongodb.ObjectId(sim_id), "active.Responded": false})
+		.toArray(function (err, results)   
 			{
-				if(docs.length == 1)
+				if(results.length == 1)
 				{
 					db.collection("users").updateOne({_id: mongodb.ObjectId(user_id)}, {$set: {"active.Responded": true}},
 					function (err, update_results)
@@ -143,7 +142,10 @@ function Response(db, user_id, sim_id, response, callback)
 
 	else
 	{
-		callback(err, 2);
+		db.collection("users").updateOne({_id: mongodb.ObjectId(user_id)}, {$unset: {active:""}}, function (err, update_results)
+		{
+			callback(err, 2);
+		});
 	}
 }
 
@@ -214,3 +216,5 @@ module.exports.SetPlan = SetPlan;
 module.exports.GetPlan = GetPlan;
 module.exports.ResetUserByInitiator = ResetUserByInitiator;
 module.exports.ResetUserBySimId = ResetUserBySimId;
+module.exports.Response = Response;
+module.exports.UpdateSimResponses = UpdateSimResponses;
