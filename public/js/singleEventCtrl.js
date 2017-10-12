@@ -224,6 +224,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //show the infomation window
     singleVm.marker.addListener('click', function($scope){
       singleVm.marker.infoWin.open(singleVm.map, singleVm.marker);
+      defaultCursor();
     });
 
     //set info windows
@@ -461,7 +462,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
               putFire(response.data.facilities[i]);
             }
           }
-        }, 10000);
+        }, 11500);
         // sendReqtToFac(response.data);
 
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
@@ -662,7 +663,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 1500, 1000, 1200, 5500, 5500, 5500, 5500 ,5500 ,1000, 2000];
+  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 1500, 2500, 1200, 5500, 5500, 5500, 5500 ,5500 ,1000, 2000];
 
 
   function progressInfoControl(stage){
@@ -671,18 +672,22 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       return;
     }
     if(stage == 0){
+      // singleVm.stageIcon = "<i class=\"fa fa-search\" aria-hidden=\"true\"></i>";
+      singleVm.stageIcon = "fa fa-search fa-lg";
       singleVm.stage = "Analysing Event";
     }
     else if(stage == 1){
       singleVm.eventShow = true;
     }
     else if(stage == 2){
+      singleVm.stageIcon = "fa fa-server fa-lg";
       singleVm.stage = "Establishing Task";
     }
     else if(stage == 3){
       singleVm.taskShow = true;
     }
     else if(stage == 4){
+      singleVm.stageIcon = "fa fa-eye fa-lg";
       singleVm.stage = "Searching for Facilities";
     }
     else if(stage == 5){
@@ -700,19 +705,24 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.radarShow = false;
     }
     else if(stage == 9){
+      singleVm.stageIcon = "fa fa-envelope fa-lg";
       singleVm.stage = "Sending Tasks Info to Facilities";
       singleVm.dotShow = true;
     }
     else if(stage == 10){
+      singleVm.stageIcon = "fa fa-envelope-o fa-lg";
       singleVm.stage = "Receiving Response from Facilities";
     }
     else if(stage == 11){
+      singleVm.stageIcon = "fa fa-envelope fa-lg";
       singleVm.stage = "Analysing Response from Facilities";
     }
     else if(stage == 12){
+      singleVm.stageIcon = "fa fa-envelope fa-lg";
       singleVm.stage = "Sending Final Plan to Facilities";
     }
     else if(stage == 13){
+      singleVm.stageIcon = "fa fa-play-circle-o fa-lg";
       singleVm.stage = "Facilities Execute Final Plan";
     }
     else if(stage == 14){
