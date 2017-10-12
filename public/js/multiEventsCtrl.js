@@ -25,6 +25,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   var endLocation = new Array();
   multiVm.markerIndex = 0;
   multiVm.markersList = [];
+  multiVm.eventList = [];
 
   var speed = 0.000005, wait = 1;
   var infowindow = null;
@@ -32,6 +33,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   var myPano;
   var panoClient;
   var nextPanoId;
+
+  multiVm.place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House", "Moonlight Ciinema Sydney", "Woolahra", "Westfield Bondi Junction"];
 
   var iconBase = "./img/";
   var icons = {
@@ -82,7 +85,18 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   // random location
   multiVm.randomLocation = function(){
-
+    if(multiVm.marker){
+      console.log("in");
+      console.log("Marker List Size: "+multiVm.markersList.length);
+      console.log("Event List Size: "+multiVm.eventList.length)
+      for(var i = 0; i < multiVm.markersList.length; i++)
+        multiVm.markersList[i].setMap(null);
+        multiVm.eventList[i] = [];
+        multiVm.eventList.length = 0;
+        multiVm.markerIndex = 0;
+        multiVm.markersList.length = 0;
+        multiVm.marker.setMap(null);
+    }
     // var place = [
     // "-33.86035933, 151.2050238",
     // "151.2050238, 151.19059978",
@@ -98,31 +112,39 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // "-33.8906694, 151.21657942"
     // ];
 
-    // var max = 5;
-    // var min = 2;
-    // var placeArrLen = place.length;
-    // var eventNum = Math.floor((Math.random()*(max-min+1)) + min);
-    // console.log(eventNum);
-    // var index = Math.floor((Math.random()*(max-min+1))+min);
-    // var eventArr = [];
-    // while(eventArr.length < eventNum){
-    // 	var randomnumber = Math.ceil(Math.random()*placeArrLen);
-    // 	if(eventArr.indexOf(randomnumber) > -1) continue;
-    // 	eventArr[eventArr.length] = randomnumber;
-    // }
-    // for(var i = 0; i < eventArr.length; ++i){
-    // 	// var geocoder = new google.maps.Geocoder();
-    // 	// console.log(eventArr);
-    // 	var myLatLng = new google.maps.LatLng(parseFloat(place[eventArr[i].]))
-    // 	multiVm.placeMarkerByRandomAndSearch(place[eventArr[i]]);
-    	
-    // }
+    // var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House", "Moonlight Ciinema Sydney", "Woolahra", "Westfield Bondi Junction"];
 
+    var max = 5;
+    var min = 2;
+    var placeArrLen = multiVm.place.length;
+    var eventNum = Math.floor((Math.random()*(max-min+1)) + min);
+    multiVm.eventArr = [];
+    var indexList = [];
+
+    var locationMinIndex = 1;
+    var locationMaxIndex = (multiVm.place.length-1);
+    // while(indexList.length < eventNum){
+    for(var i = 0; i < eventNum; i++){
+      var index = Math.floor((Math.random()*(locationMaxIndex-min+1))+min);
+      console.log(index);
+      if(indexList.indexOf(index) === -1){
+        indexList.push(index);
+        multiVm.eventArr.push(multiVm.place[index]);
+      }
+    }
+    console.log(multiVm.eventArr);
+    for(var i = 0; i < multiVm.eventArr.length; ++i){
+        var geocoder = new google.maps.Geocoder();
+        console.log(multiVm.eventArr[i]);
+        geocoder.geocode({'address': multiVm.eventArr[i]}, function(results, status){
+          multiVm.placeMarkerByRandomAndSearch(results[0].geometry.location);
+        });
+    }
 
     // var geocoder = new google.maps.Geocoder();
     // geocoder.geocode({'address': place[index]}, function(results, status){
     //   multiVm.map.setCenter(results[0].geometry.location);
-    //   var latLng = new google.maps.LatLng(parseFloat(place[.geo.lat))
+    //   var latLng = new google.maps.LatLng(parseFloat(place[geo.lat]));
     //   multiVm.placeMarkerByRandomAndSearch(results[0].geometry.location)
     // });
   }
@@ -192,21 +214,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     //generate factor
     multiVm.factorGenerate(multiVm.marker.get("id"));
     //add element to marker
-    multiVm.markerElement(multiVm.markersList);
+    multiVm.markerElement(multiVm.marker.get("id"));
 
-    // var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting</p></div> " + 
-    // "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(multiVm.markerIndex)\">" + "Set event data" + "</button></div></div>"
-    // compiled = $compile(htmlElement)($scope);
-    // multiVm.marker.infoWin = new google.maps.InfoWindow({
-    // 	content: compiled[0]
-    // })
-    // // multiVm.marker.addListener('click', function($scope){
-    // //   multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
-    // // });
-    // multiVm.marker.addListener('click', function() {  
-    //     multiVm.marker.infoWin.open(multiVm.map, this);
-    // });
-    // multiVm.lastOpenedInfoWindow = multiVm.marker.infoWin;
   }
 
   multiVm.placeMarkerCurrent = function(pos){
@@ -228,8 +237,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   //place a marker by random and search
   multiVm.placeMarkerByRandomAndSearch = function(loc){
-    if(multiVm.marker){
-      multiVm.marker.setMap(null);
+    if(multiVm.markersList.length > 0){
+      multiVm.markerIndex++;
     }
     multiVm.marker = new google.maps.Marker({
       position: loc,
@@ -239,37 +248,21 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       animation: google.maps.Animation.DROP
     });
 
-    multiVm.markerElement();
+    multiVm.marker.set("id", multiVm.markerIndex);
 
+    multiVm.markersList.push(multiVm.marker);
+
+    multiVm.factorGenerate(multiVm.markerIndex);
+    multiVm.markerElement(multiVm.markerIndex);
+    multiVm.markerNotPlace = false;
   }
 
   // add element to marker
-  multiVm.markerElement = function(obj){
-    //display the marker info
-    // multiVm.htmlElement = "  <div><div><p id=\"infoWin-header\">Single Event Setting</p></div> " + 
-    // "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField()\">" + "Set event data" + "</button></div></div>"
-    // // var htmlElement = "<showTag></showTag>"
-    // //need to compile 
+  multiVm.markerElement = function(index){    
+    console.log(index);
+     var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting</p></div> " + 
+      "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(index)\">" + "Set event data" + "</button></div></div>"
 
-    // multiVm.compiled = $compile(multiVm.htmlElement)($scope)
-    // multiVm.marker.infoWin = new google.maps.InfoWindow({
-    //   // content: "<showTag></showTag>"
-    //   content: multiVm.compiled[0]
-
-    // });
-    // //show the infomation window
-    // multiVm.marker.addListener('click', function($scope){
-    //   multiVm.marker.infoWin.open(multiVm.map, multiVm.marker);
-    // });
-    
-    for(var i = 0; i < multiVm.markersList.length; i++){
-      if(multiVm.markersList[index].get("id") == i){
-        console.log("Found "+multiVm.markersList[index].get("id"));
-       var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting"+i+"</p></div> " + 
-        "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(index)\">" + "Set event data" + "</button></div></div>"
-        break;
-      }
-    }
 
     // var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting"+index+"</p></div> " + 
     // "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(index)\">" + "Set event data" + "</button></div></div>"
@@ -282,6 +275,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // });
     multiVm.marker.addListener('click', function() {  
         multiVm.marker.infoWin.open(multiVm.map, this);
+        console.log("Marker ID: "+this.get("id"));
     });
 
     //set info windows
@@ -364,7 +358,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     return Math.floor((Math.random()*(max-min+1))+min);
   }
 
-  multiVm.eventList = [];
   multiVm.factorGenerate = function(index){
     multiVm.level = multiVm.levelGenerator();
     multiVm.category = multiVm.categoryGenerator();
@@ -393,7 +386,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       'Location': multiVm.marker.position.toUrlValue()
     }
 
-
+    console.log("Event List Index: "+index);
     multiVm.eventList[index] = new Array();
     multiVm.eventList[index] = multiVm.factor;
   }
@@ -411,11 +404,14 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
 
   multiVm.apply = function(){
+    console.log(multiVm.factor);
     $mdDialog.hide();
   }
 
 
   multiVm.confirmStart = function(){
+    console.log(multiVm.markersList);
+    console.log(multiVm.eventList);
     $mdDialog.hide();
     multiVm.closeInfoWin();
     //pop out overview event windows
@@ -445,10 +441,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.startMultiEvent = function(){
     // close factor menu
     multiVm.eventStarted = true;
-    console.log("Start Multi");
-    console.log(multiVm.eventList);
     // var progressStage = 0;
-
     // close hamburger menu
     multiVm.hamCheck = false;
     // hide search box
@@ -643,7 +636,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   multiVm.setDataField = function(index){
     // generate factor
-    multiVm.factorGenerate(index);
+    // multiVm.factorGenerate(index);  
 
     $mdDialog.show(
       {

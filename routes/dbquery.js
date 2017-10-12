@@ -39,7 +39,10 @@ function FindAvaliableUser(db, sim_details, resource, callback)
 				}
 		}, 
 		function(err, doc) {
-			callback(err, doc._id);
+			if(doc.lastErrorObject.updatedExisting == true)
+				callback(err, doc.value._id);
+			else
+				callback(err, null);
 		}
 	);
 }
@@ -93,14 +96,14 @@ function FindFacilities(db, id, type, callback)
 
 function ActiveSims(db, req, callback)
 {	
-	db.collection("Simulations").find({active: 1}).toArray(function(err, docs) {
+	db.collection("Simulations").find({active: {$exists: true}}).toArray(function(err, docs) {
 		callback(err, docs);
 	});
 }
 
 function UpdatedGPS(db, sim_id, callback)
 {
-	db.collection("users").find({"active.sim_id": sim_id}, {_id: 1, Location: 1}).toArray(function(err, docs) {
+	db.collection("users").find({"active.sim_id": mongodb.ObjectId(sim_id)}, {_id: 1, Location: 1}).toArray(function(err, docs) {
 		if(err)
 			throw err;
 	
@@ -108,7 +111,7 @@ function UpdatedGPS(db, sim_id, callback)
 
 		for(var i = 0; i < docs.length; i++)
 		{
-			resources[docs[i]._id] = docs[i].Location;
+			resources[i] = {"id": docs[i]._id, "location":docs[i].Location};
 		}
 
 		callback(resources);
@@ -142,9 +145,12 @@ function Response(db, user_id, sim_id, response, callback)
 
 	else
 	{
-		db.collection("users").updateOne({_id: mongodb.ObjectId(user_id)}, {$unset: {active:""}}, function (err, update_results)
-		{
-			callback(err, 2);
+		db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id), "Plan.User_id": user_id}, {$set: { "Plan.$.User_id": ""}}, 
+		function(err) {
+			db.collection("users").updateOne({_id: mongodb.ObjectId(user_id)}, {$unset: {active:""}}, function (err, update_results)
+			{
+				callback(err, 2);
+			});
 		});
 	}
 }

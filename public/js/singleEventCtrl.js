@@ -9,6 +9,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   $scope.headerMes = "Single Event";
 
   singleVm.eventStarted = false;
+  singleVm.eventIsSet = false;
   singleVm.hamCheck = true;
 
   var socket = io();
@@ -73,13 +74,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       icon: iconBase + "fire-station.svg"
     },
     policeStation:{
-      icon: iconBase + "polica-station.svg"
+      icon: iconBase + "police-station.svg"
     }
   };
 
   NgMap.getMap("map").then(function(map){
     singleVm.map = map;
-    singleVm.map.setZoom(14);
+    singleVm.map.setZoom(3);
     // show search box as defualt
     singleVm.searchExtend();
   });
@@ -121,7 +122,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.putMarker = function(){
     if(!singleVm.eventStarted){
       // change cursor to marker
-      singleVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
+      singleVm.map.setOptions({draggableCursor:'url(img/placeholder.svg), auto'});
 
       // add click event on map
       google.maps.event.addListener(singleVm.map, 'click', function(event){      
@@ -163,7 +164,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker = new google.maps.Marker({
       position: {lat: pos.lat, lng: pos.lng},
       map: singleVm.map,
-      icon: "./img/marker.svg",
+      icon: "./img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -181,7 +182,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: singleVm.map,
-      icon: "./img/marker.svg",
+      icon: "./img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -197,7 +198,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker = new google.maps.Marker({
       position: loc,
       map: singleVm.map,
-      icon: "./img/marker.svg",
+      icon: "./img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -223,6 +224,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //show the infomation window
     singleVm.marker.addListener('click', function($scope){
       singleVm.marker.infoWin.open(singleVm.map, singleVm.marker);
+      defaultCursor();
     });
 
     //set info windows
@@ -307,6 +309,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   }
 
   singleVm.factorGenerate = function(){
+    // if event is set
+    if(singleVm.eventIsSet){
+      return;
+    }
     singleVm.level = singleVm.levelGenerator();
     singleVm.category = singleVm.categoryGenerator();
     singleVm.expenditure = singleVm.expenditureGenerator();
@@ -316,7 +322,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.minvelocity = singleVm.minVelocityGenerator();
     singleVm.maxvelocity = singleVm.maxVelocityGenerator();
     singleVm.deadline = singleVm.deadlineGenerator();
-
     //Auto increment
 
     singleVm.eId = 001;
@@ -333,53 +338,49 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       'Resource avg. velocity': singleVm.velocity,
       'Deadline': singleVm.deadline,
       'Location': singleVm.marker.position.toUrlValue()
-      }
     }
+  }
+
+  singleVm.progrssMenuOpen = function () {
+    ngDialog.open({ 
+      template: 'eventProgress.html',
+      overlay: false,
+      showClose: false,
+      scope: $scope,
+      className: 'ngdialog-theme-default progress-menu draggable'       
+    });
+  };
 
 
-    singleVm.progrssMenuOpen = function () {
-      ngDialog.open({ 
-        template: 'eventProgress.html',
-        overlay: false,
-        showClose: false,
-        scope: $scope,
-        className: 'ngdialog-theme-default progress-menu draggable'       
-      });
-    };
-
-
-    singleVm.eventSet = function(){
-      $mdDialog.hide();
-      singleVm.closeInfoWin();
-      singleVm.eventIsSet = true;
-    }
+  singleVm.eventSet = function(){
+    $mdDialog.hide();
+    singleVm.closeInfoWin();
+    singleVm.startShow = true;
+    singleVm.eventIsSet = true;
+  }
   // now start the simulation
 
   singleVm.startSingleEvent = function(){
+    singleVm.closeInfoWin();
     // close factor menu
     singleVm.eventStarted = true;
     // hide start button
     singleVm.eventStartHide = "slideOutDown";
-    singleVm.eventIsSet = false;
     // set marker undraggable when event started
     singleVm.marker.setDraggable(false);
 
     var progressStage = 0;
-    // $mdDialog.hide();
-
+    $mdDialog.hide();
     // close hamburger menu
     singleVm.hamCheck = false;
     // hide search box
     singleVm.searchExtend();
-    // close info window
-    // singleVm.closeInfoWin();
     // clear onclick event in map
     clearMapClickEvent();
     // change back to default google map cursor
     defaultCursor();
     // start progress menu animation
     progressInfoControl(0);
-
     // open progress menu
     singleVm.progrssMenuOpen();
     // redirect info window to progress menu
@@ -461,7 +462,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
               putFire(response.data.facilities[i]);
             }
           }
-        }, 10000);
+        }, 11500);
         // sendReqtToFac(response.data);
 
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
@@ -576,6 +577,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           startLoc.push(response.data[i].Location);
         }
 
+        singleVm.resourceAllocation(response.data);
         facilitySelected.setFacility(response.data);
 
 
@@ -586,7 +588,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // }, delayArray[stage]);
 
         $timeout(function(){
-          setRoutes()}, 20000);
+          setRoutes()}, 35000);
     })
   }
 
@@ -601,17 +603,18 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.allocatedResources = []
     for(var i = 0; i < resourceObj.length; i++){
       var type = " ";
-      if(resourceObj[i].type == "fire_station")
+      if(resourceObj[i].Type == "fire_station")
         type = "Fire Truck";
-      else if(resourceObj[i].type == "hospital")
+      else if(resourceObj[i].Type == "hospital")
         type = "Ambulance";
-      else if(resourceObj[i].type == "police")
+      else if(resourceObj[i].Type == "police")
         type = "Police Car";
 
       singleVm.allocatedResources[i] = {
         Type: type,
         Expenditure: resourceObj[i].Expenditure,
-        Velocity: resourceObj[i].Velocity
+        Velocity: resourceObj[i].Velocity,
+        Facility: resourceObj[i].Facility
       };
     }
     // console.log(singleVm.allocatedResources);
@@ -632,6 +635,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   singleVm.setDataField = function(){
     // generate factor
+
     singleVm.factorGenerate();
 
     $mdDialog.show(
@@ -659,7 +663,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 5000, 5000, 5000, 5000, 100, 500, 500, 950, 1500, 5500, 5500, 5500, 1000, 2000];
+  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 1500, 2500, 1200, 5500, 5500, 5500, 5500 ,5500 ,1000, 2000];
 
 
   function progressInfoControl(stage){
@@ -668,19 +672,23 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       return;
     }
     if(stage == 0){
+      // singleVm.stageIcon = "<i class=\"fa fa-search\" aria-hidden=\"true\"></i>";
+      singleVm.stageIcon = "fa fa-search fa-lg";
       singleVm.stage = "Analysing Event";
     }
     else if(stage == 1){
       singleVm.eventShow = true;
     }
     else if(stage == 2){
-    singleVm.stage = "Searching for Facilities";
+      singleVm.stageIcon = "fa fa-server fa-lg";
+      singleVm.stage = "Establishing Task";
     }
     else if(stage == 3){
       singleVm.taskShow = true;
     }
     else if(stage == 4){
-      singleVm.stage = "Establishing Plan";
+      singleVm.stageIcon = "fa fa-eye fa-lg";
+      singleVm.stage = "Searching for Facilities";
     }
     else if(stage == 5){
       singleVm.containerExtend = 'progress-first-extend';
@@ -697,29 +705,39 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.radarShow = false;
     }
     else if(stage == 9){
+      singleVm.stageIcon = "fa fa-envelope fa-lg";
       singleVm.stage = "Sending Tasks Info to Facilities";
       singleVm.dotShow = true;
     }
     else if(stage == 10){
+      singleVm.stageIcon = "fa fa-envelope-o fa-lg";
       singleVm.stage = "Receiving Response from Facilities";
     }
     else if(stage == 11){
+      singleVm.stageIcon = "fa fa-envelope fa-lg";
       singleVm.stage = "Analysing Response from Facilities";
     }
     else if(stage == 12){
-      singleVm.stage = "Resources Allocaton";
+      singleVm.stageIcon = "fa fa-envelope fa-lg";
+      singleVm.stage = "Sending Final Plan to Facilities";
     }
     else if(stage == 13){
+      singleVm.stageIcon = "fa fa-play-circle-o fa-lg";
+      singleVm.stage = "Facilities Execute Final Plan";
+    }
+    else if(stage == 14){
+      singleVm.stage = "Resources Allocaton";
+    }
+    else if(stage == 15){
       singleVm.dotShow = false;
       singleVm.eventShow = false;
       singleVm.taskShow = false;
       singleVm.facilityShow = false;
     }
-    else if(stage == 14){
+    else if(stage == 16){
       singleVm.resourceShow = true;
       singleVm.autoExtend = "progress-content-auto";
     }
-
 
     stage++;
     currentProgressStage = stage;
@@ -929,20 +947,20 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function searchCircle(){
     var _radius = 5000;
-    var rMin = _radius * 4/5;
+    var rMin = 0;
     var rMax = _radius;
     var direction = 1;
 
     var circleOption = {
       center: singleVm.marker.position,
       fillColor: '#3878c7',
-      fillOpacity: 0.6,
+      fillOpacity: 0.4,
       map: singleVm.map,
 
-      radius: 5000,
+      radius: 0,
       strokeColor: '#3878c7',
-          strokeOpacity: 1,
-          strokeWeight: 0.5
+      strokeOpacity: 0.6,
+      strokeWeight: 0.5
     }
     singleVm.circle = new google.maps.Circle(circleOption);
 
@@ -951,13 +969,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       if((radius > rMax) || (radius) < rMin){
         direction *= -1;
       }
-      var _par = (radius/_radius) - 0.7;
+      var _par = (radius/_radius);
 
       circleOption.radius = radius + direction * 10;
-      circleOption.fillOpacity = 0.6 * _par;
+      circleOption.fillOpacity = 0.2 * _par;
 
       singleVm.circle.setOptions(circleOption);
-    }, 20, 500);
+    }, 30, 500);
   }
 
     function setRoutes(){
@@ -1052,7 +1070,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           $timeout(function(){
             startAnimation(routeNum)
 
-          }, 25000);    
+          }, 11000);    
         }
       } 
     }
@@ -1179,6 +1197,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       current_point = d;
       if (d > eol[index]) {
           marker[index].setPosition(endLocation[index].latlng);
+          // console.log("")
           return;
       }
       var p = polyline[index].GetPointAtDistance(d);

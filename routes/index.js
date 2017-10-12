@@ -316,7 +316,7 @@ module.exports = function(passport, clients, db){
 	});
 
 	router.post('/singleEvent/UpdatedGPS', function(req, res, next) {
-		dbquery.UpdatedGPS(db, req.sim_id, function(err, mobileResources) {
+		dbquery.UpdatedGPS(db, req.body.sim_id, function(mobileResources) {
 			res.writeHead(200, {'Content-Type': 'application/json'});
 			res.write(JSON.stringify(mobileResources));
 			return res.end();
