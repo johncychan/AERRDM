@@ -121,7 +121,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.putMarker = function(){
     if(!singleVm.eventStarted){
       // change cursor to marker
-      singleVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
+      singleVm.map.setOptions({draggableCursor:'url(img/placeholder.svg), auto'});
 
       // add click event on map
       google.maps.event.addListener(singleVm.map, 'click', function(event){      
@@ -163,7 +163,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker = new google.maps.Marker({
       position: {lat: pos.lat, lng: pos.lng},
       map: singleVm.map,
-      icon: "./img/marker.svg",
+      icon: "./img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -181,7 +181,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: singleVm.map,
-      icon: "./img/marker.svg",
+      icon: "./img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -197,7 +197,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker = new google.maps.Marker({
       position: loc,
       map: singleVm.map,
-      icon: "./img/marker.svg",
+      icon: "./img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
