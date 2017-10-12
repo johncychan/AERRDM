@@ -99,8 +99,8 @@
   <input id="pac-input" places-auto-complete on-place-changed="singleVm.placeChanged()" class="controls animate-show {{singleVm.searchBoxExtend}}" type="text" placeholder="Search Box" ng-show = "singleVm.searchShow"/>
 
 </div>
-<ng-map  id="map" center='Sydney'
-    geo-fallback-center="[40.74, -74.18]"
+<ng-map  id="map" center='Japan'
+    geo-fallback-center="[40.74, -74.18]"  min-zoom="3"
     map-type-control="false" fullscreen-control="false" ng-keyup = "singleVm.mapKeyUp($event)"
 ></ng-map>
 <!-- on-click="singleVm.placeMarker()" -->

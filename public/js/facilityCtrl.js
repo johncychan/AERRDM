@@ -27,6 +27,5 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
     // 	}).then(function success(response)){
 
     // 	}
-
-    
+   
 });
