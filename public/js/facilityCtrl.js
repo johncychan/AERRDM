@@ -13,20 +13,20 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
     // show search box as defualt
     // facilityVm.searchExtend();
 
-
+    });
 
     //
-    updateGPS = function(){
-    	$http({
-    		method	: 'POST',
-	    	url		: '',
-	    	headers	: { 'Content-Type': 'application/json' },
-	    	data 	: {
-	    				sim_id: facilityVm.selectedFacility.sim_id
-	    	}
-    	}).then(function success(response)){
+    // updateGPS = function(){
+    // 	$http({
+    // 		method	: 'POST',
+	   //  	url		: '',
+	   //  	headers	: { 'Content-Type': 'application/json' },
+	   //  	data 	: {
+	   //  				sim_id: facilityVm.selectedFacility.sim_id
+	   //  	}
+    // 	}).then(function success(response)){
 
-    	}
+    // 	}
 
-    }
+    
 });
