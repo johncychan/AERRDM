@@ -7,13 +7,28 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
 
 	console.log(facilityVm.selectedFacility);
 
-	NgMap.getMap("map").then(function(map){
-    facilityVm.map = map;
-    facilityVm.map.setZoom(14);
-    // show search box as defualt
-    // facilityVm.searchExtend();
+    var loc = facilityVm.selectedFacility.Location;
+    console.log(loc);
 
+	NgMap.getMap("map").then(function(map){
+        facilityVm.map = map;
+        facilityVm.map.setZoom(14);
+        // show search box as defualt
+        // facilityVm.searchExtend();
+        var marker = new google.maps.Marker({
+            position: loc,
+            map: facilityVm.map,
+            icon: "./img/hospital.svg",
+            animation: google.maps.Animation.DROP
+        });
+        console.log(marker);
+        marker.setMap(facilityVm.map);
+        facilityVm.map.setCenter(loc);
     });
+
+    
+
+    
 
     //
     // updateGPS = function(){

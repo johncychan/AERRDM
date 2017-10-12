@@ -8,6 +8,14 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $ht
 			indexVm.isExist = true;
 		}
 	}
+
+	indexVm.directToFacility = function(name){
+		for(var i = 0; i < indexVm.facility.length; i++){
+			if(name == indexVm.facility[i].Facility)
+				window.localStorage['selectedFacility'] = angular.toJson(indexVm.facility[i]);
+		}
+		window.open("/facilityWindow.html",'_blank');
+	}
 });
 
 app.filter('unique', function(){

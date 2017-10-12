@@ -1,6 +1,5 @@
 app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
 
-
   //map initialization
   var singleVm = this;
   var directionDisplay;
@@ -84,8 +83,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // show search box as defualt
     singleVm.searchExtend();
   });
-
-
 
   function clearMapClickEvent(){
     //clear onclick event in map
@@ -389,7 +386,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.map.setCenter(singleVm.marker.position);
 
     //search 
-    searchCircle();
+    // searchCircle();
 
     // sendReqtToFac();
     //two http request chainning together
@@ -687,6 +684,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.taskShow = true;
     }
     else if(stage == 4){
+      searchCircle();
       singleVm.stageIcon = "fa fa-eye fa-lg";
       singleVm.stage = "Searching for Facilities";
     }
@@ -855,7 +853,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     marker.addListener('click', function($scope){
       marker.infoWin.open(singleVm.map, marker);
     });
-
+    console.log(marker);
     // return marker;
   }
 
@@ -883,7 +881,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     marker.addListener('click', function($scope){
       marker.infoWin.open(singleVm.map, marker);
     });
-
     // return marker;
   }
 
