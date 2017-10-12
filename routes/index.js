@@ -97,7 +97,7 @@ module.exports = function(passport, clients, db){
 
 					for(var i = 0; i < resource_names.length; i++)
 					{
-						var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i]);
+						var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i], resources_list[resource_names[i]].gname);
 						promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, db));
 					}
 
@@ -187,36 +187,42 @@ module.exports = function(passport, clients, db){
 	});
 
 	router.post('/mobile/requestResponse', isAuthenticated, function(req, res){
-		res.writeHead(200, {'Content-Type': 'text/plain'});
+	//	res.writeHead(200, {'Content-Type': 'text/plain'});
+		console.log(req.body.response + " " + req.body.sim_id);
 		dbquery.Response(db, req.user._id, req.body.sim_id, req.body.response, function (err, flag) {
+			console.log(flag);
 			if(flag == 0) // job accept
 			{
+				console.log("test1");
 				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
 					if(results.ResWaitOn == 0)
 						clients[results.Initiator].emit("sim update", "Plan is now avaliable");	
 
-					var rtval = "Job has been assigned";				
-					res.write(rtval);
-					return res.end();		
+					var rtval = "Job has been assigned";
+//					res.write(rtval);
+	//				return res.end();		
 				});
 			}
 
-			if(flag == 1) // no job requested to user
+			else if(flag == 1) // no job requested to user
 			{
+				console.log("test2");
 				var rtval = "No job has been assigned to you";				
-				res.write(rtval);
-				return res.end();
+//				res.write(rtval);
+//				return res.end();
 			}
 
-			if(flag == 2) // job declined
+			else if(flag == 2) // job declined
 			{
+				console.log("test3");
 				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
+					console.log("test4");
 					if(results.ResWaitOn == 0)
 						clients[results.Initiator].emit("sim update", "Plan is now avaliable");
 
 					var rtval = "Job has been reassigned";				
-					res.write(rtval);
-					return res.end();
+//					res.write(rtval);
+//					return res.end();
 				});	
 			}
 		});
@@ -274,8 +280,12 @@ module.exports = function(passport, clients, db){
 
 	router.post('/test2', function(req, res, next) {
 		console.log("ip: " + req.connection.remoteAddress);
-		res.writeHead(200, {'Content-Type': 'application/json'});
-		return res.end();
+		dbquery.FindFacilities(db, '59da2bc9fdce4f12d8a3e593', 'hospital',function (err, places) {
+			res.writeHead(200, {'Content-Type': 'application/json'});
+			//res.write(JSON.stringify(places));
+			console.log(JSON.stringify(places));
+			return res.end();
+		});
 	});
 
 	router.post('/mobile/currentLocation', isAuthenticated, function(req, res, next) {

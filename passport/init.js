@@ -13,7 +13,7 @@ module.exports = function(passport, db){
     });
 
     passport.deserializeUser(function(id, done) {
-       db.collection("users").findOne({"_id": mongodb.ObjectID(id)}, function(err, user) {
+       db.collection("users").findOne({"_id": mongodb.ObjectID(id)}, {active: 0}, function(err, user) {
             console.log('deserializing user:',user);
             done(err, user);
         });

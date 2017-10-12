@@ -99,8 +99,8 @@
   <input id="pac-input" places-auto-complete on-place-changed="singleVm.placeChanged()" class="controls animate-show {{singleVm.searchBoxExtend}}" type="text" placeholder="Search Box" ng-show = "singleVm.searchShow"/>
 
 </div>
-<ng-map  id="map" center='Sydney'
-    geo-fallback-center="[40.74, -74.18]"
+<ng-map  id="map" center='Japan'
+    geo-fallback-center="[40.74, -74.18]"  min-zoom="3"
     map-type-control="false" fullscreen-control="false" ng-keyup = "singleVm.mapKeyUp($event)"
 ></ng-map>
 <!-- on-click="singleVm.placeMarker()" -->
@@ -144,6 +144,6 @@
 
 <!-- <div id="footer"> -->
   <div id="single-start">
-    <button type="button" ng-show="singleVm.startShow" class="button single-event-start ripple animate-show animated slideInUp {{singleVm.eventStartHide}}" ng-click="singleVm.startSingleEvent()">Start</button>
+    <button type="button" ng-show="singleVm.eventIsSet" class="button single-event-start ripple animate-show animated slideInUp {{singleVm.eventStartHide}}" ng-show = "singleVm.searchShow" ng-disabled="singleVm.markerNotPlace" ng-click="singleVm.startSingleEvent()">Start</button>
   </div>
 <!-- </div> -->

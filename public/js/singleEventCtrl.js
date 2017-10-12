@@ -74,13 +74,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       icon: iconBase + "fire-station.svg"
     },
     policeStation:{
-      icon: iconBase + "polica-station.svg"
+      icon: iconBase + "police-station.svg"
     }
   };
 
   NgMap.getMap("map").then(function(map){
     singleVm.map = map;
-    singleVm.map.setZoom(14);
+    singleVm.map.setZoom(3);
     // show search box as defualt
     singleVm.searchExtend();
   });
@@ -122,7 +122,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.putMarker = function(){
     if(!singleVm.eventStarted){
       // change cursor to marker
-      singleVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
+      singleVm.map.setOptions({draggableCursor:'url(img/placeholder.svg), auto'});
 
       // add click event on map
       google.maps.event.addListener(singleVm.map, 'click', function(event){      
@@ -164,7 +164,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker = new google.maps.Marker({
       position: {lat: pos.lat, lng: pos.lng},
       map: singleVm.map,
-      icon: "./img/marker.svg",
+      icon: "./img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -182,7 +182,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: singleVm.map,
-      icon: "./img/marker.svg",
+      icon: "./img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -198,7 +198,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     singleVm.marker = new google.maps.Marker({
       position: loc,
       map: singleVm.map,
-      icon: "./img/marker.svg",
+      icon: "./img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -947,20 +947,20 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   function searchCircle(){
     var _radius = 5000;
-    var rMin = _radius * 4/5;
+    var rMin = 0;
     var rMax = _radius;
     var direction = 1;
 
     var circleOption = {
       center: singleVm.marker.position,
       fillColor: '#3878c7',
-      fillOpacity: 0.6,
+      fillOpacity: 0.4,
       map: singleVm.map,
 
-      radius: 5000,
+      radius: 0,
       strokeColor: '#3878c7',
-          strokeOpacity: 1,
-          strokeWeight: 0.5
+      strokeOpacity: 0.6,
+      strokeWeight: 0.5
     }
     singleVm.circle = new google.maps.Circle(circleOption);
 
@@ -969,13 +969,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       if((radius > rMax) || (radius) < rMin){
         direction *= -1;
       }
-      var _par = (radius/_radius) - 0.7;
+      var _par = (radius/_radius);
 
       circleOption.radius = radius + direction * 10;
-      circleOption.fillOpacity = 0.6 * _par;
+      circleOption.fillOpacity = 0.2 * _par;
 
       singleVm.circle.setOptions(circleOption);
-    }, 20, 500);
+    }, 30, 500);
   }
 
     function setRoutes(){
@@ -1197,6 +1197,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       current_point = d;
       if (d > eol[index]) {
           marker[index].setPosition(endLocation[index].latlng);
+          // console.log("")
           return;
       }
       var p = polyline[index].GetPointAtDistance(d);
