@@ -421,6 +421,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }).then(function success(response) {
 
         console.log(response.data);
+        window.localStorage['simulationStatis'] = JSON.stringify(response);
         
         var totalFacilites = 0;
         var totalPoliceStation = 0;
@@ -460,7 +461,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
               putFire(response.data.facilities[i]);
             }
           }
-        }, 11500);
+        }, 15500);
         // sendReqtToFac(response.data);
 
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
@@ -588,7 +589,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     // }, delayArray[stage]);
 
         $timeout(function(){
-          setRoutes()}, 35000);
+          setRoutes()}, 40000);
     })
   }
 
@@ -664,7 +665,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 1500, 2500, 1200, 5500, 5500, 5500, 5500 ,5500 ,1000, 2000];
+  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 2500, 5500, 1200, 5500, 5500, 5500, 5500 ,5500 ,1000, 2000];
 
 
   function progressInfoControl(stage){
@@ -716,7 +717,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.stage = "Receiving Response from Facilities";
     }
     else if(stage == 11){
-      singleVm.stageIcon = "fa fa-envelope fa-lg";
+      singleVm.stageIcon = "fa fa-envelope-o-open fa-lg";
       singleVm.stage = "Analysing Response from Facilities";
     }
     else if(stage == 12){
@@ -976,7 +977,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       circleOption.fillOpacity = 0.2 * _par;
 
       singleVm.circle.setOptions(circleOption);
-    }, 30, 500);
+    }, 10, 500);
   }
 
     function setRoutes(){

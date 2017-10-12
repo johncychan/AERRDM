@@ -6,12 +6,13 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
 	facilityVm.selectedFacility = angular.fromJson(accessData);
     var eventLocation = angular.fromJson(localStorage["eventLocation"]);
     facilityVm.eventStatis = angular.fromJson(localStorage['eventStatis']);
-
+    facilityVm.simStatis = angular.fromJson(localStorage['simulationStatis']);
     facilityVm.resource = angular.fromJson(localStorage['resources']);
-    console.log(facilityVm.resource);
 
-    console.log(eventLocation);
-    console.log(facilityVm.selectedFacility);
+    // console.log(facilityVm.resource);
+    // console.log(eventLocation);
+    // console.log(facilityVm.simStatis);
+    // console.log(facilityVm.selectedFacility);
 
     var loc = facilityVm.selectedFacility.Location;
     console.log(loc);
