@@ -392,6 +392,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //two http request chainning together
     //first $http get all facility location and display
     //second $http request filter the facilities remove the unused facilities location
+    window.localStorage['eventStatis'] = JSON.stringify(singleVm.factor);
     
     singleVm.getFaciLoc().then(checkPlan);
     
@@ -577,8 +578,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         singleVm.resourceAllocation(response.data);
         facilitySelected.setFacility(response.data);
 
-
         window.localStorage['selectedFacility'] = angular.toJson(response.data);
+        var eventLoc = {lat: singleVm.marker.position.lat(), lng: singleVm.marker.position.lng()};
+        window.localStorage['eventLocation'] = JSON.stringify(eventLoc);
+
 
         // progressHandle[stage] = $timeout(function(){
       // progressInfoControl(stage);
@@ -614,6 +617,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
         Facility: resourceObj[i].Facility
       };
     }
+    window.localStorage['allocatedResource'] = JSON.stringify(singleVm.allocatedResources);
     // console.log(singleVm.allocatedResources);
   }
 

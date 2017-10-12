@@ -4,16 +4,25 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $ht
 
 	indexVm.listFacility = function(){
 		indexVm.facility = facilitySelected.getFacility();
+		indexVm.resource = angular.fromJson(localStorage["allocatedResource"]);
+		console.log(indexVm.resource);
 		if(indexVm.facility.length > 0){
 			indexVm.isExist = true;
 		}
 	}
 
 	indexVm.directToFacility = function(name){
+		var resourceList = [];
 		for(var i = 0; i < indexVm.facility.length; i++){
 			if(name == indexVm.facility[i].Facility)
 				window.localStorage['selectedFacility'] = angular.toJson(indexVm.facility[i]);
+			if(name == indexVm.resource[i].Facility){
+				var resource = indexVm.resource[i];
+				resourceList.push(resource);
+			}
 		}
+		console.log(resourceList);
+		window.localStorage['resources'] = JSON.stringify(resourceList);
 		window.open("/facilityWindow.html",'_blank');
 	}
 });
