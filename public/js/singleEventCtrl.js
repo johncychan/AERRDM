@@ -73,7 +73,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       icon: iconBase + "fire-station.svg"
     },
     policeStation:{
-      icon: iconBase + "polica-station.svg"
+      icon: iconBase + "police-station.svg"
     }
   };
 
