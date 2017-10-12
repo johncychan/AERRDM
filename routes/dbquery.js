@@ -31,8 +31,11 @@ function FindAvaliableUser(db, sim_details, resource, callback)
 {
 	console.log("1");
 	var date = new Date(new Date()-5*60000);
+	console.log(resource.Location);
+console.log(resource.Location.lat);
+console.log(resource.Location.lng);
 console.log("2");
-	var start = resource.Location.lat;
+	var start = resource.Location.lat.toString();
 	start = start.concat(",");
 console.log("4");
 	start = start.concat(resource.Location.lng);
