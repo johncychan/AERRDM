@@ -122,8 +122,7 @@
                   </button>
                   <ul class="dropdown-menu animated slideInDown" ng-show="indexVm.isExist" ng-cloak>
                     <li ng-repeat="facility in indexVm.facility | unique:'Facility'" >
-                        <a href="/#/facilityWindow">
-
+                        <a ng-click="indexVm.directToFacility(facility.Facility)">
                           <h5>{{facility.Facility}}</h5>
                           <p>{{facility.Type}}</p>
                         </a>

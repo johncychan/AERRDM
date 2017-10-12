@@ -32,11 +32,11 @@
           <tr>
             <th colspan="2">Event Information</th>
           </tr>
-          <tr>
+          <tr class="table-content">
             <td class="factor-key">Event Severity</td>
             <td class="factor-value">Level {{singleVm.factor['Severity Level']}}</td>
           </tr>
-          <tr>
+          <tr class="table-content">
             <td class="factor-key">Event Category </td>
             <td class="factor-value">{{singleVm.factor['Category']}}</td>
           </tr>
@@ -47,26 +47,26 @@
   		</div>
       <div id="task-info-container" ng-show = "singleVm.taskShow" ng-cloak>
         <table id="event-info-table"> 
-          <tr>
+          <tr >
             <th colspan="2">Task Information</th>
           </tr>
-          <tr>
+          <tr class="table-content">
             <td class="factor-key">Num. of resources</td>
             <td class="factor-value">{{singleVm.totalResources}}</td>
-          </tr>
-          <tr>
+          </tr >
+          <tr class="table-content">
             <td class="factor-key">Average deadline</td>
             <td class="factor-value">{{singleVm.factor['Deadline']}} mins</td>
           </tr>
-          <tr >
+          <tr class="table-content">
             <td class="factor-key">Ambulance</td>
             <td class="factor-value">{{singleVm.ambulance}}</td>
           </tr>
-          <tr >
+          <tr class="table-content">
             <td class="factor-key">Police Car</td>
             <td class="factor-value">{{singleVm.police}}</td>
           </tr>
-          <tr >
+          <tr class="table-content">
             <td class="factor-key">Fire Truck</td>
             <td class="factor-value">{{singleVm.fireTruck}}</td>
           </tr>
@@ -79,7 +79,7 @@
           <tr>
             <th colspan="2">Facility Resouce Information</th>
           </tr>
-          <tr ng-repeat="(key, value) in singleVm.facilitiesSum ">
+          <tr ng-repeat="(key, value) in singleVm.facilitiesSum " class="table-content"> 
             <td class="factor-key">{{key}}</td>
             <td class="factor-value">{{value}}</td>
           </tr>
@@ -102,7 +102,7 @@
             <th>Expenditure</th>
             <th>Velocity</th>
           </tr>
-          <tr ng-repeat="resource in singleVm.allocatedResources ">
+          <tr ng-repeat="resource in singleVm.allocatedResources" class="table-content">
             <td id="type">{{resource.Type}}</td>
             <td class="factor-value" id="facility">{{resource.Facility}}</td>
             <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
