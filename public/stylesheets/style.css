@@ -830,47 +830,8 @@
         font-size: 17px;
         margin: 0 auto;
       }
-
-     /* #multi-start{
-        margin: 50px 0 0 210px;
-      }
-
-      #multi-start button{
-        padding: 7px 20px;
-        box-shadow: 1px 1px 8px #000000;
-        -webkit-transition-duration: 0.4s;
-        transition-duration: 0.4s;
-      }
-
-      .multi-event-start[disabled]{
-        background-color: #e2dede;
-        border-color: #f2f2f2;
-        color: #ffffff;
-        box-shadow: 1px 1px 8px #abaaaa !important;
-      }
-
-      .multi-event-start[disabled]:hover{
-        background-color: #e2dede;
-        border-color: #f2f2f2;
-        color: #ffffff;
-      }
-
-      .multi-event-start:hover{
-        background-color: white;
-        color: #007399;
-      }
-
-      .multi-event-start:active{
-        background-color: white;
-        color: #007a6e;
-        -webkit-transition-duration: 200ms;
-                transition-duration: 200ms;
-        -webkit-transform: scale(0.9, 0.9) translate3d(0, 0, 0);
-                transform: scale(0.9, 0.9) translate3d(0, 0, 0);
-      }*/
-
       #single-start{
-        bottom: 30px;
+        bottom: 50px;
         right: 47%;
         position: absolute;
         z-index: 100;
@@ -1028,6 +989,7 @@
         margin: auto;
         width: 550px;
         position: absolute !important;
+        overflow: hidden !important;
         opacity: 1;
       }
 
@@ -1349,7 +1311,7 @@
         position: absolute;
         /*overflow-y: scroll;*/
         top: 35%;
-        left: 19%;
+        left: 7%;
       }
 
       #resource-info-container{
@@ -1360,6 +1322,12 @@
 
       #resource-info-container #event-info-table #resource-header{
         border-bottom: 2px solid #FFF !important;
+      }
+
+      #resource-info-container #facility{
+        border-right: 0px;
+        width: 120px;
+        line-height: 1em;
       }
 
 
@@ -2016,7 +1984,7 @@
 
     @keyframes slideInUp {
       from {
-        transform: translate3d(0, 100%, 0);
+        transform: translate3d(0, 70%, 0);
         visibility: visible;
       }
 
