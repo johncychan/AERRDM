@@ -29,17 +29,10 @@ function UpdateLocation(db, req)
 
 function FindAvaliableUser(db, sim_details, resource, callback)
 {
-	console.log("1");
 	var date = new Date(new Date()-5*60000);
-	console.log(resource.Location);
-console.log(resource.Location.lat);
-console.log(resource.Location.lng);
-console.log("2");
 	var start = resource.Location.lat.toString();
 	start = start.concat(",");
-console.log("4");
 	start = start.concat(resource.Location.lng);
-console.log("3");
 	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}, Timestamp: {$gt: date}}, 
 		{$set: {active: { sim_id: sim_details._id, Severity: sim_details.Severity, Category: sim_details.Category,
 				StartPoint: start, EndPoint: sim_details.Location, Deadline: sim_details.Deadline, Responded: false}
