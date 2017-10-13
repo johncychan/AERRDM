@@ -267,22 +267,20 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     return Math.floor((Math.random()*size));
   }
   singleVm.expenditureGenerator = function(){
-    var max = 200; 
-    var min = 0;
+    var max = singleVm.maxExpenditure; 
+    var min = singleVm.minExpenditure;
     return Math.floor((Math.random()*(max-min+1))+min);
   }
   singleVm.velocityGenerator = function(){
-    var max = 100;
-    var min = 20;
+    var max = singleVm.maxvelocity;
+    var min = singleVm.minvelocity;
     return Math.floor((Math.random()*(max-min+1))+min);
   }
   singleVm.deadlineGenerator = function(){
-
     var max = 120;
     var min = 40;
     return Math.floor((Math.random()*(max-min+1))+min);
   }
-
   singleVm.minExpenditureGenerator = function(){
     var max = 100; 
     var min = 0;
@@ -312,12 +310,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     }
     singleVm.level = singleVm.levelGenerator();
     singleVm.category = singleVm.categoryGenerator();
-    singleVm.expenditure = singleVm.expenditureGenerator();
     singleVm.minExpenditure = singleVm.minExpenditureGenerator();
     singleVm.maxExpenditure = singleVm.maxExpenditureGenerator();
-    singleVm.velocity = singleVm.velocityGenerator();
+    singleVm.expenditure = singleVm.expenditureGenerator(); 
     singleVm.minvelocity = singleVm.minVelocityGenerator();
     singleVm.maxvelocity = singleVm.maxVelocityGenerator();
+    singleVm.velocity = singleVm.velocityGenerator();
     singleVm.deadline = singleVm.deadlineGenerator();
     //Auto increment
 
@@ -717,7 +715,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.stage = "Receiving Response from Facilities";
     }
     else if(stage == 11){
-      singleVm.stageIcon = "fa fa-envelope-o-open fa-lg";
+      singleVm.stageIcon = "fa fa-envelope-open-o fa-lg";
       singleVm.stage = "Analysing Response from Facilities";
     }
     else if(stage == 12){

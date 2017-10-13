@@ -947,7 +947,7 @@
       .progress-content-auto{
         transition: all linear 0.5s;
         height: auto !important;
-        min-height: 350px;
+        min-height: 450px;
       }
 
       #progress-menu-container .modal-header{
@@ -1326,9 +1326,9 @@
       }
 
       #resource-info-container{
-        height: 180px;
+        height: 280px;
         position:relative;
-        overflow-y: scroll;
+        overflow-y: auto;
       }
 
       #resource-info-container #event-info-table #resource-header{
