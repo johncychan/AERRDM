@@ -4,6 +4,7 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $ht
 
 	indexVm.listFacility = function(){
 		indexVm.facility = facilitySelected.getFacility();
+		console.log(indexVm.facility);
 		indexVm.resource = angular.fromJson(localStorage["allocatedResource"]);
 		console.log(indexVm.resource);
 		if(indexVm.facility.length > 0){

@@ -99,7 +99,7 @@
     <div id="resource-info-container" ng-show = "singleVm.resourceShow" ng-cloak>
       <md-tabs md-dynamic-height md-border-bottom>
         <md-tab label="Resource Info">
-          <div style="overflow-y: scroll">
+          <div>
             <table id="event-info-table"> 
               <tr>
                 <th colspan="4" id="resource-header">Allocated Resources Information</th>
@@ -109,6 +109,17 @@
                 <th>Facility</th>
                 <th>Expenditure</th>
                 <th>Velocity</th>
+              </tr>
+              <tr ng-repeat="resource in singleVm.allocatedResources" class="table-content">
+                <td id="type">{{resource.Type}}</td>
+                <td class="factor-value" id="facility">{{resource.Facility}}</td>
+                <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
+                <td class="factor-value">{{resource.Velocity}}</td>
+              </tr><tr ng-repeat="resource in singleVm.allocatedResources" class="table-content">
+                <td id="type">{{resource.Type}}</td>
+                <td class="factor-value" id="facility">{{resource.Facility}}</td>
+                <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
+                <td class="factor-value">{{resource.Velocity}}</td>
               </tr>
               <tr ng-repeat="resource in singleVm.allocatedResources" class="table-content">
                 <td id="type">{{resource.Type}}</td>
