@@ -973,7 +973,7 @@
         padding-top: 10px !important;
         padding-bottom: 10px !important;
         margin: 200px 0 20px 10px;
-        width: 550px;
+        width: 560px;
         position: absolute !important;
         opacity: 0.9;
         /*-webkit-filter: blur(5px);
@@ -1030,7 +1030,7 @@
         box-shadow: 2px 2px 5px rgba(0,0,0,.2) !important;
         padding: 0 !important;
         background-color: #FFF !important;
-        width: 510px !important;
+        width: 550px !important;
 
         /*height: 350px;*/
 
@@ -1091,9 +1091,15 @@
         font-size: 12px;
       }
 
+      #event-info-table .table-content{
+        letter-spacing: 0.5px;
+        /*line-height: 2;*/
+      }
+
       #event-info-table .factor-key{
         border: 1px solid #999999;
         padding: 2px 7px;
+        width: 140px;
       }
 
       #event-info-table .factor-value{
@@ -1168,6 +1174,11 @@
         padding: 2px 0 0 0;
         width: 50%;
         margin: 0 auto;
+      }
+
+      #facility-info-container .table-content{
+        letter-spacing: 0.5px;
+        /*line-height: 2;*/
       }
 
       #facility-info-container #event-info-table{
@@ -1311,7 +1322,7 @@
         position: absolute;
         /*overflow-y: scroll;*/
         top: 35%;
-        left: 7%;
+        left: 9%;
       }
 
       #resource-info-container{
@@ -1346,11 +1357,20 @@
       }
 
       #resource-info-container td{
-        padding: 3px 10px !important;
+        padding: 7px 10px !important;
       }
 
       #resource-info-container.ng-hide{
         opacity: 0;
+      }
+
+      /*#resource-info-container tr:nth-child(odd){
+        background-color: #f3f3f3;
+      }*/
+
+      #resource-info-container .table-content{
+        letter-spacing: 0.5px;
+        /*line-height: 2;*/
       }
       /* end event progress */
 
@@ -2030,7 +2050,7 @@ dot {
   height: 150px;
   margin: auto;
   /*display: block;*/
-  left: 20%;
+  left: 24%;
   background: no-repeat;
   background-image: radial-gradient(closest-side, #333333 90%, rgba(0, 0, 0, 0)), radial-gradient(closest-side, #333333 90%, rgba(0, 0, 0, 0));
   background-size: 75px 75px;

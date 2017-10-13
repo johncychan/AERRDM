@@ -27,6 +27,7 @@ app.config(function (localStorageServiceProvider){
 
 app.factory('facilitySelected', function(){
 	var selectedFacility = {};
+	var pickedFacility = {};
 	return {
 	  getFacility : function () {
 	    return selectedFacility;
@@ -34,6 +35,14 @@ app.factory('facilitySelected', function(){
 
 	  setFacility : function (obj) {
 	    selectedFacility = obj;
+	  },
+
+	  setPickFacility : function(obj){
+	  	pickedFacility = obj
+	  },
+
+	  getPickFacility : function(obj){
+	  	return pickedFacility;
 	  }
 	}
 });

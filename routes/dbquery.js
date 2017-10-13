@@ -33,12 +33,14 @@ function FindAvaliableUser(db, sim_details, resource, callback)
 	var start = resource.Location.lat.toString();
 	start = start.concat(",");
 	start = start.concat(resource.Location.lng);
+	console.log(date);
 	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}, Timestamp: {$gt: date}}, 
 		{$set: {active: { sim_id: sim_details._id, Severity: sim_details.Severity, Category: sim_details.Category,
 				StartPoint: start, EndPoint: sim_details.Location, Deadline: sim_details.Deadline, Responded: false}
 				}
 		}, 
 		function(err, doc) {
+			console.log(doc.lastErrorObject.updatedExisting);
 			if(doc.lastErrorObject.updatedExisting == true)
 				callback(err, doc.value._id);
 			else
@@ -51,9 +53,19 @@ function CheckJobRequest(db, user_id, callback)
 {
 	db.collection("users").update({_id: mongodb.ObjectId(user_id)}, {$set: {Timestamp: new Date()}}, function() {
 		console.log("update done");
-		db.collection("users").find({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {active:1}).toArray(function (err, docs) {
+		db.collection("users").find({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {Location:1, active:1}).toArray(function (err, docs) {
 			if(docs.length == 1)
+			{
+				if(docs[0].active.Responded == true)
+				{
+					var start = docs[0].Location.lat.toString();
+					start = start.concat(",");
+					start = start.concat(docs[0].Location.lng);
+					docs[0].active.StartPoint = start;
+				}
+					
 				callback(err, docs[0]);
+			}
 			else
 				callback(err, false);
 		});
@@ -157,9 +169,9 @@ function Response(db, user_id, sim_id, response, callback)
 
 function UpdateSimResponses(db, sim_id, update_value, callback)
 {
-	db.findOneAndUpdate({_id: mongodb.ObjectId(sim_id)}, {$inc: {ResWaitOn: update_value}}, 
+	db.collection("Simulations").findOneAndUpdate({_id: mongodb.ObjectId(sim_id)}, {$inc: {ResWaitOn: update_value}}, 
 		{returnOriginal: false}, function (err, results) {
-			callback(err, results);
+			callback(err, results.value);
 		}
 	);
 }
