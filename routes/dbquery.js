@@ -197,13 +197,16 @@ function SetPlan(db, sim_id, plan, callback)
 
 function GetPlan(db, sim_id, callback)
 {
-	db.collection("Simulations").findOne({_id: mongodb.ObjectId(sim_id)}, {"Plan": 1}, 
+	db.collection("Simulations").find({_id: mongodb.ObjectId(sim_id)}, {"Plan": 1}).toArray( 
 	function (err, results)
 	{
 		if(err)
 			throw err;
-
-		callback(err, results.Plan);
+		console.log(results.length);
+		if(results.length == 1)
+			callback(err, results[0].Plan);
+		else
+			callback(err, null);
 	});
 }
 

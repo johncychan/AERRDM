@@ -15,11 +15,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
  
   socket.on('sim update', function(msg){
    console.log(msg);
-   if(msg == "Plan is now available"){
-      // http service to get the tasks
-      console.log("getting tasks");
-      // getTasks();
-
+   console.log(msg.includes("Plan is now available"));
+   if(msg.includes("Plan is now available")){
+      console.log("getting plan");
+      var msgSplit = msg.split(",");
+      getTasks(msgSplit[1]);
    }
    else if(msg == "expend"){
       //expend sear
@@ -551,16 +551,16 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           });
           
         }
-        else if(response.data == "Plan is now avaliable"){
-            // console.log("Plan is now avaliable");
-            getTasks(dataObj);
+        else if(response.data == "Plan is now avaliable,"){
+            console.log("Plan is now avaliable");
+            //getTasks(dataObj);
         }
     // return dataObj;
     })
   }
 
   getTasks = function(dataObj){
-    console.log(dataObj);
+    console.log("Sim_id: " + dataObj);
 
     return $http({
 
@@ -568,7 +568,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       url     : '/singleEvent/GetPlan',
       headers : { 'Content-Type': 'application/json' },
       data    : {
-                  sim_id: dataObj.sim_id
+                  sim_id: dataObj
       }
     }).then(function success(response){
         console.log(response.data);
@@ -578,7 +578,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
         singleVm.resourceAllocation(response.data);
         facilitySelected.setFacility(response.data);
-
+		console.log(response.data);
         window.localStorage['selectedFacility'] = angular.toJson(response.data);
         var eventLoc = {lat: singleVm.marker.position.lat(), lng: singleVm.marker.position.lng()};
         window.localStorage['eventLocation'] = JSON.stringify(eventLoc);
