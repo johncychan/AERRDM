@@ -578,7 +578,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
         singleVm.resourceAllocation(response.data);
         facilitySelected.setFacility(response.data);
-		console.log(response.data);
+
         window.localStorage['selectedFacility'] = angular.toJson(response.data);
         var eventLoc = {lat: singleVm.marker.position.lat(), lng: singleVm.marker.position.lng()};
         window.localStorage['eventLocation'] = JSON.stringify(eventLoc);
