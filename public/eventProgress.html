@@ -40,8 +40,13 @@
             <td class="factor-key">Event Category </td>
             <td class="factor-value">{{singleVm.factor['Category']}}</td>
           </tr>
-          <tr ng-repeat="service in singleVm.services">
-
+          <tr class="table-content">
+            <td class="factor-key">Average expenditure </td>
+            <td class="factor-value">{{singleVm.factor['Resource avg. expenditure']}}</td>
+          </tr>
+          <tr class="table-content">
+            <td class="factor-key">Average velocity </td>
+            <td class="factor-value">{{singleVm.factor['Resource avg. velocity']}}</td>
           </tr>
         </table>
   		</div>
@@ -91,26 +96,51 @@
     </div>
 	</div>
   <div class="resouces-info-row">
-      <div id="resource-info-container" ng-show = "singleVm.resourceShow" ng-cloak>
-        <table id="event-info-table"> 
-          <tr>
-            <th colspan="4" id="resource-header">Allocated Resources Information</th>
-          </tr>
-          <tr>
-            <th>Type</th>
-            <th>Facility</th>
-            <th>Expenditure</th>
-            <th>Velocity</th>
-          </tr>
-          <tr ng-repeat="resource in singleVm.allocatedResources" class="table-content">
-            <td id="type">{{resource.Type}}</td>
-            <td class="factor-value" id="facility">{{resource.Facility}}</td>
-            <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
-            <td class="factor-value">{{resource.Velocity}}</td>
-          </tr>
-        </table>
-      </div>
+    <div id="resource-info-container" ng-show = "singleVm.resourceShow" ng-cloak>
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Resource Info">
+          <div>
+            <table id="event-info-table"> 
+              <tr>
+                <th colspan="4" id="resource-header">Allocated Resources Information</th>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <th>Facility</th>
+                <th>Expenditure</th>
+                <th>Velocity</th>
+              </tr>
+              <tr ng-repeat="resource in singleVm.allocatedResources" class="table-content">
+                <td id="type">{{resource.Type}}</td>
+                <td class="factor-value" id="facility">{{resource.Facility}}</td>
+                <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
+                <td class="factor-value">{{resource.Velocity}}</td>
+              </tr>
+            </table>
+          </div>
+        </md-tab>
+        <md-tab label="Event Info">
+          <table id="event-info-table" style="width: 445px;"> 
+            <tr>
+              <th colspan="4" id="resource-header">Event Information</th>
+            </tr>
+            <tr>
+              <th>Severity Level</th>
+              <th>Category</th>
+              <th>Average Expenditure</th>
+              <th>Average Velocity</th>
+            </tr>
+            <tr class="table-content" style="border: 1px solid #999;">
+              <td >Level {{singleVm.factor['Severity Level']}}</td>
+              <td >{{singleVm.factor['Category']}}</td>
+              <td >{{singleVm.factor['Resource avg. expenditure']}}</td>
+              <td >{{singleVm.factor['Resource avg. velocity']}}</td>
+            </tr>
+          </table>
+        </md-tab>
+      </md-tabs>
     </div>
+  </div>
 </div>
 
 <!-- radar script -->

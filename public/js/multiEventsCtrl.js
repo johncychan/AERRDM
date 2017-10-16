@@ -153,7 +153,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.putMarker = function(){
     if(!multiVm.eventStarted){
       // change cursor to marker
-      multiVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
+      multiVm.map.setOptions({draggableCursor:'url(img/placeholder.svg), auto'});
       // add click event on map
       google.maps.event.addListener(multiVm.map, 'click', function(event){
         multiVm.placeMarker(event);
@@ -197,7 +197,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: multiVm.map,
-      icon: "./img/marker.svg",
+      icon: "img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -226,7 +226,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker = new google.maps.Marker({
       position: {lat: pos.lat, lng: pos.lng},
       map: multiVm.map,
-      icon: "./img/marker.svg",
+      icon: "img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -243,7 +243,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker = new google.maps.Marker({
       position: loc,
       map: multiVm.map,
-      icon: "./img/marker.svg",
+      icon: "img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -259,9 +259,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   // add element to marker
   multiVm.markerElement = function(index){    
-    console.log(index);
      var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting</p></div> " + 
-      "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(index)\">" + "Set event data" + "</button></div></div>"
+      "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(multiVm.selectedEventIndex)\">" + "Set event data" + "</button></div></div>"
 
 
     // var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting"+index+"</p></div> " + 
@@ -276,6 +275,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker.addListener('click', function() {  
         multiVm.marker.infoWin.open(multiVm.map, this);
         console.log("Marker ID: "+this.get("id"));
+        multiVm.selectedEventIndex = this.get("id");
     });
 
     //set info windows
@@ -474,7 +474,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     
     // multiVm.getFaciLoc().then(getTasks);
     
-    // multiVm.panelShow = "true";
+    multiVm.panelShow = "true";
   } 
 
 
@@ -636,22 +636,21 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   multiVm.setDataField = function(index){
     // generate factor
-    // multiVm.factorGenerate(index);  
-
     $mdDialog.show(
       {
         templateUrl: "multiFactorDialog.html",
         clickOutsideToClose: true,
             scope: $scope,
             preserveScope: true,
-            controller: function($scope) {
-      }
+            controller: function($scope){
+
+            }
     });
   };
 
   // reset factor
   multiVm.reset = function () {
-    multiVm.factorGenerate();
+    multiVm.factorGenerate(multiVm.selectedEventIndex);
   }
 
   // close dialog

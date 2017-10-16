@@ -46,4 +46,3 @@ app.factory('facilitySelected', function(){
 	  }
 	}
 });
-
