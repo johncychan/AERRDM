@@ -172,6 +172,14 @@
         -webkit-font-smoothing: auto;
       }
 
+      #facilityDropDown[disabled]{
+        background-color: #f2f2f2;
+        border-color: #f2f2f2;
+        color: #cccccc;
+        box-shadow: 1px 1px 1px #000000;
+        opacity: 0.8;
+      }
+
 
       nav{
         margin:0 auto;
@@ -951,7 +959,7 @@
       }
 
       #progress-menu-container .modal-header{
-        padding: 3px 15px;
+        /*padding: 3px 15px;*/
       }
 
       #progress-title-content{

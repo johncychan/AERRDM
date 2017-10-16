@@ -115,17 +115,6 @@
                 <td class="factor-value" id="facility">{{resource.Facility}}</td>
                 <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
                 <td class="factor-value">{{resource.Velocity}}</td>
-              </tr><tr ng-repeat="resource in singleVm.allocatedResources" class="table-content">
-                <td id="type">{{resource.Type}}</td>
-                <td class="factor-value" id="facility">{{resource.Facility}}</td>
-                <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
-                <td class="factor-value">{{resource.Velocity}}</td>
-              </tr>
-              <tr ng-repeat="resource in singleVm.allocatedResources" class="table-content">
-                <td id="type">{{resource.Type}}</td>
-                <td class="factor-value" id="facility">{{resource.Facility}}</td>
-                <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
-                <td class="factor-value">{{resource.Velocity}}</td>
               </tr>
             </table>
           </div>
@@ -141,7 +130,7 @@
               <th>Average Expenditure</th>
               <th>Average Velocity</th>
             </tr>
-            <tr class="table-content">
+            <tr class="table-content" style="border: 1px solid #999;">
               <td >Level {{singleVm.factor['Severity Level']}}</td>
               <td >{{singleVm.factor['Category']}}</td>
               <td >{{singleVm.factor['Resource avg. expenditure']}}</td>

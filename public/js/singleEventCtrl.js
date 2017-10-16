@@ -1,4 +1,4 @@
-app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
+app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootScope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
 
   //map initialization
   var singleVm = this;
@@ -10,6 +10,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.eventStarted = false;
   singleVm.eventIsSet = false;
   singleVm.hamCheck = true;
+  singleVm.isReset = false;
 
   var socket = io();
  
@@ -306,8 +307,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.factorGenerate = function(){
     // if event is set
     if(singleVm.eventIsSet){
-      return;
+      if(!singleVm.isReset)
+        return;
     }
+    singleVm.isReset = false;
     singleVm.level = singleVm.levelGenerator();
     singleVm.category = singleVm.categoryGenerator();
     singleVm.minExpenditure = singleVm.minExpenditureGenerator();
@@ -574,6 +577,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           startLoc.push(response.data[i].Location);
         }
 
+
+        $rootScope.$emit("CallParentMethod", {});
         singleVm.resourceAllocation(response.data);
         facilitySelected.setFacility(response.data);
 
@@ -651,6 +656,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   // reset factor
   singleVm.reset = function () {
+    singleVm.isReset = true;
     singleVm.factorGenerate();
   }
 
@@ -768,7 +774,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.dialog = ngDialog.open({ 
         template: 'eventProgress.html',
         overlay: false,
-        showClose: false,
+        showClose: true,
         scope: $scope,  
         className: 'ngdialog-theme-default progress-menu draggable'       
       });
