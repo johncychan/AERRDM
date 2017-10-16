@@ -153,7 +153,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.putMarker = function(){
     if(!multiVm.eventStarted){
       // change cursor to marker
-      multiVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
+      multiVm.map.setOptions({draggableCursor:'url(img/placeholder.svg), auto'});
       // add click event on map
       google.maps.event.addListener(multiVm.map, 'click', function(event){
         multiVm.placeMarker(event);
@@ -197,7 +197,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: multiVm.map,
-      icon: "./img/marker.svg",
+      icon: "img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -226,7 +226,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker = new google.maps.Marker({
       position: {lat: pos.lat, lng: pos.lng},
       map: multiVm.map,
-      icon: "./img/marker.svg",
+      icon: "img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -243,7 +243,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker = new google.maps.Marker({
       position: loc,
       map: multiVm.map,
-      icon: "./img/marker.svg",
+      icon: "img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
