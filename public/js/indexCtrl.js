@@ -10,9 +10,7 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $rootScope, $m
 	indexVm.listFacility = function(){
 		indexVm.hideFacility = false;
 		indexVm.facility = facilitySelected.getFacility();
-		console.log(indexVm.facility);
 		indexVm.resource = angular.fromJson(localStorage["allocatedResource"]);
-		console.log(indexVm.resource);
 		if(indexVm.facility.length > 0){
 			indexVm.isExist = true;
 		}
@@ -28,7 +26,6 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $rootScope, $m
 				resourceList.push(resource);
 			}
 		}
-		console.log(resourceList);
 		window.localStorage['resources'] = JSON.stringify(resourceList);
 		window.open("/facilityWindow.html",'_blank');
 	}
