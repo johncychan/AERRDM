@@ -172,6 +172,14 @@
         -webkit-font-smoothing: auto;
       }
 
+      #facilityDropDown[disabled]{
+        background-color: #f2f2f2;
+        border-color: #f2f2f2;
+        color: #cccccc;
+        box-shadow: 1px 1px 1px #000000;
+        opacity: 0.8;
+      }
+
 
       nav{
         margin:0 auto;
@@ -283,7 +291,7 @@
       }
 
       #option-container{
-        min-width: 162px;
+        min-width: 174px;
       }
 
       #option-container li{
@@ -947,11 +955,11 @@
       .progress-content-auto{
         transition: all linear 0.5s;
         height: auto !important;
-        min-height: 350px;
+        min-height: 450px;
       }
 
       #progress-menu-container .modal-header{
-        padding: 3px 15px;
+        /*padding: 3px 15px;*/
       }
 
       #progress-title-content{
@@ -1321,14 +1329,14 @@
       .resouces-info-row{
         position: absolute;
         /*overflow-y: scroll;*/
-        top: 35%;
+        top: 25%;
         left: 9%;
       }
 
       #resource-info-container{
-        height: 180px;
+        height: 280px;
         position:relative;
-        overflow-y: scroll;
+        overflow-y: auto;
       }
 
       #resource-info-container #event-info-table #resource-header{
