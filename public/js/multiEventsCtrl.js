@@ -482,19 +482,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     console.log("getFaciLoc");
     return $http({
 
-      method  : 'POST',
-      url     : '/singleEvent',
-      //     // set the headers so angular passing info as form data (not request payload)
-      headers : { 'Content-Type': 'application/json' },
-      data    : {
-                 Severity: multiVm.factor["Severity Level"],
-                 Category: multiVm.factor["Category"],
-                 Expenditure: {min: multiVm.factor['Min expenditure'], max: multiVm.factor['Max expenditure']},
-                 Velocity: {min: multiVm.factor['Min velocity'], max: multiVm.factor['Max velocity']},
-                 Deadline: multiVm.factor["Deadline"],
-                 Location: multiVm.marker.position.toUrlValue(),
-                 ResourceNum: {min: 2, max: 10}
-                }
+      
 
       }).then(function success(response) {
 
