@@ -259,9 +259,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   // add element to marker
   multiVm.markerElement = function(index){    
-    console.log(index);
      var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting</p></div> " + 
-      "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(index)\">" + "Set event data" + "</button></div></div>"
+      "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(multiVm.selectedEventIndex)\">" + "Set event data" + "</button></div></div>"
 
 
     // var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting"+index+"</p></div> " + 
@@ -276,6 +275,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker.addListener('click', function() {  
         multiVm.marker.infoWin.open(multiVm.map, this);
         console.log("Marker ID: "+this.get("id"));
+        multiVm.selectedEventIndex = this.get("id");
     });
 
     //set info windows
@@ -474,7 +474,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     
     // multiVm.getFaciLoc().then(getTasks);
     
-    // multiVm.panelShow = "true";
+    multiVm.panelShow = "true";
   } 
 
 
@@ -636,22 +636,21 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   multiVm.setDataField = function(index){
     // generate factor
-    // multiVm.factorGenerate(index);  
-
     $mdDialog.show(
       {
         templateUrl: "multiFactorDialog.html",
         clickOutsideToClose: true,
             scope: $scope,
             preserveScope: true,
-            controller: function($scope) {
-      }
+            controller: function($scope){
+
+            }
     });
   };
 
   // reset factor
   multiVm.reset = function () {
-    multiVm.factorGenerate();
+    multiVm.factorGenerate(multiVm.selectedEventIndex);
   }
 
   // close dialog
