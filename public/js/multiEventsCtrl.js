@@ -484,6 +484,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     console.log("getFaciLoc");
     return $http({
 
+
       method  : 'POST',
       url     : '/multiEvent',
       //     // set the headers so angular passing info as form data (not request payload)
@@ -492,6 +493,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
                   expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
                   events: multiVm.eventList
                 }
+
 
       }).then(function success(response) {
 

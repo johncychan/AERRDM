@@ -26,10 +26,13 @@ function FindMobileResources(sim_details, type, db)
 
 			Promise.all(durations).then(function(duration) {
 				for(var i = 0; i < facilities.length; i++)
-				{
+				{	
+					var expenditure = Math.random() * (sim_details.Expenditure.max-sim_details.Expenditure.min+1) + sim_details.Expenditure.min;
+					expenditure = expenditure.toFixed(2);
+
 					for(var j = 0; j < facilities[i].Place.resourceNum; j++)
 					{
-						var temp = new CreateMobileResource(sim_details, facilities[i], duration[i]);
+						var temp = new CreateMobileResource(sim_details, facilities[i], duration[i], expenditure);
 
 						if(temp.Cost != Infinity)
 						{
@@ -78,7 +81,7 @@ function ActualMobile(mobileResources)
 
 	for(var i = 0; i < mobileResources.length; i++)
 	{
-		if(mobileResources.User_id)
+		if(mobileResources[0].User_id)
 			count++;
 	}
 
@@ -90,11 +93,10 @@ function CheckAvailability (db, sim_details, mobileRes)
 	console.log("check");
 	return new Promise(function(resolve, reject) {
 		dbquery.FindAvaliableUser(db, sim_details, mobileRes, function (err, user_id) {
-			console.log("check_finish");
 			if(err)
 				return reject(err);
 
-			if(user_id)
+			if(user_id != null)
 			{
 				console.log("User: "+ user_id);
 				mobileRes.User_id = user_id;
@@ -104,14 +106,13 @@ function CheckAvailability (db, sim_details, mobileRes)
 	});
 }
  
-function CreateMobileResource(sim_details, facility, duration)
+function CreateMobileResource(sim_details, facility, duration, expenditure)
 {
 	this.id = new Mongodb.ObjectId();
 	this.Location = facility.Place.location;
 	this.Facility = facility.Place.name;
 	this.Type = facility.Place.type;
-	this.Expenditure = Math.random() * (sim_details.Expenditure.max-sim_details.Expenditure.min+1) + sim_details.Expenditure.min;
-	this.Expenditure = this.Expenditure.toFixed(2);
+	this.Expenditure = expenditure;
 	this.Velocity = Math.random() * (sim_details.Velocity.max-sim_details.Velocity.min+1) + sim_details.Velocity.min;
 	this.User_id = "";	
 	this.Cost = Cost(sim_details, this, duration);

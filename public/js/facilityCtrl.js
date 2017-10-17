@@ -40,10 +40,6 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         facilityVm.map.setCenter(loc);
     });
 
-    
-
-    
-
     //
     // updateGPS = function(){
     // 	$http({

@@ -10,6 +10,7 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $rootScope, $m
 	indexVm.listFacility = function(){
 		indexVm.hideFacility = false;
 		indexVm.facility = facilitySelected.getFacility();
+
 		indexVm.resource = angular.fromJson(localStorage["allocatedResource"]);
 		if(indexVm.facility.length > 0){
 			indexVm.isExist = true;

@@ -156,11 +156,12 @@ module.exports = function(passport, clients, db){
 					dbquery.SetPlan(db, req.body.sim_id, rtval, function (err, results) {
 						if(count == 0)
 						{
-							var response = "Plan is now avaliable";
+							var response = "Plan is now available,";
+							response = response.concat(req.body.sim_id);
 							res.write(JSON.stringify(response));
-							res.end();
-							clients[req.connection.remoteAddress].emit("sim update", "Plan is now avaliable");
+							clients[req.connection.remoteAddress].emit("sim update", response);
 							console.log("socket");
+							return res.end();
 						}
 						else
 						{
@@ -187,8 +188,10 @@ module.exports = function(passport, clients, db){
 	});
 
 	router.post('/mobile/requestResponse', isAuthenticated, function(req, res){
-	//	res.writeHead(200, {'Content-Type': 'text/plain'});
 		console.log(req.body.response + " " + req.body.sim_id);
+		var response = "Plan is now available,";
+		response = response.concat(req.body.sim_id);						
+
 		dbquery.Response(db, req.user._id, req.body.sim_id, req.body.response, function (err, flag) {
 			console.log(flag);
 			if(flag == 0) // job accept
@@ -196,11 +199,9 @@ module.exports = function(passport, clients, db){
 				console.log("test1");
 				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
 					if(results.ResWaitOn == 0)
-						clients[results.Initiator].emit("sim update", "Plan is now avaliable");	
+						clients[results.Initiator].emit("sim update", response);	
 
 					var rtval = "Job has been assigned";
-//					res.write(rtval);
-	//				return res.end();		
 				});
 			}
 
@@ -208,8 +209,6 @@ module.exports = function(passport, clients, db){
 			{
 				console.log("test2");
 				var rtval = "No job has been assigned to you";				
-//				res.write(rtval);
-//				return res.end();
 			}
 
 			else if(flag == 2) // job declined
@@ -218,11 +217,9 @@ module.exports = function(passport, clients, db){
 				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
 					console.log("test4");
 					if(results.ResWaitOn == 0)
-						clients[results.Initiator].emit("sim update", "Plan is now avaliable");
+						clients[results.Initiator].emit("sim update", response);
 
 					var rtval = "Job has been reassigned";				
-//					res.write(rtval);
-//					return res.end();
 				});	
 			}
 		});
@@ -278,18 +275,11 @@ module.exports = function(passport, clients, db){
 		return res.end();
 	});
 
-	router.post('/test2', function(req, res, next) {
-		console.log("ip: " + req.connection.remoteAddress);
-		dbquery.FindFacilities(db, '59da2bc9fdce4f12d8a3e593', 'hospital',function (err, places) {
-			res.writeHead(200, {'Content-Type': 'application/json'});
-			//res.write(JSON.stringify(places));
-			console.log(JSON.stringify(places));
-			return res.end();
-		});
-	});
-
 	router.post('/mobile/currentLocation', isAuthenticated, function(req, res, next) {
 		dbquery.UpdateLocation(db, req);
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.write("OK");
+		return res.end();
 	});
 
 	// Change to search based on mobile location
@@ -317,7 +307,7 @@ module.exports = function(passport, clients, db){
 	});
 
 	router.post('/singleEvent/UpdatedGPS', function(req, res, next) {
-		dbquery.UpdatedGPS(db, req.sim_id, function(err, mobileResources) {
+		dbquery.UpdatedGPS(db, req.body.sim_id, function(mobileResources) {
 			res.writeHead(200, {'Content-Type': 'application/json'});
 			res.write(JSON.stringify(mobileResources));
 			return res.end();
@@ -325,9 +315,16 @@ module.exports = function(passport, clients, db){
 	});
 
 	router.post('/singleEvent/GetPlan', function(req, res, next) {
+		console.log(req.body.sim_id);
 		dbquery.GetPlan(db, req.body.sim_id, function(err, plan) {
 			res.writeHead(200, {'Content-Type': 'application/json'});
-			res.write(JSON.stringify(plan));
+			if(plan != null)
+			{
+				res.write(JSON.stringify(plan));
+				console.log("Sending Plan");
+			}
+			else
+				console.log("NULL plan");
 			res.end();
 		});
 	});
