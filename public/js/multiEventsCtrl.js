@@ -464,6 +464,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     // multiVm.map.setCenter(multiVm.marker.position);
 
+
     // //search 
     // searchCircle();
 
@@ -472,7 +473,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // //first $http get all facility location and display
     // //second $http request filter the facilities remove the unused facilities location
     
-    // multiVm.getFaciLoc().then(getTasks);
+    multiVm.getFaciLoc().then(getTasks);
     
     multiVm.panelShow = "true";
   } 
@@ -483,17 +484,12 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     return $http({
 
       method  : 'POST',
-      url     : '/singleEvent',
+      url     : '/multiEvent',
       //     // set the headers so angular passing info as form data (not request payload)
       headers : { 'Content-Type': 'application/json' },
       data    : {
-                 Severity: multiVm.factor["Severity Level"],
-                 Category: multiVm.factor["Category"],
-                 Expenditure: {min: multiVm.factor['Min expenditure'], max: multiVm.factor['Max expenditure']},
-                 Velocity: {min: multiVm.factor['Min velocity'], max: multiVm.factor['Max velocity']},
-                 Deadline: multiVm.factor["Deadline"],
-                 Location: multiVm.marker.position.toUrlValue(),
-                 ResourceNum: {min: 2, max: 10}
+                  expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
+                  events: multiVm.eventList
                 }
 
       }).then(function success(response) {
