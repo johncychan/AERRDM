@@ -86,9 +86,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   // random location
   multiVm.randomLocation = function(){
     if(multiVm.marker){
-      console.log("in");
-      console.log("Marker List Size: "+multiVm.markersList.length);
-      console.log("Event List Size: "+multiVm.eventList.length)
+      // console.log("in");
       for(var i = 0; i < multiVm.markersList.length; i++)
         multiVm.markersList[i].setMap(null);
         multiVm.eventList[i] = [];
@@ -126,16 +124,13 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // while(indexList.length < eventNum){
     for(var i = 0; i < eventNum; i++){
       var index = Math.floor((Math.random()*(locationMaxIndex-min+1))+min);
-      console.log(index);
       if(indexList.indexOf(index) === -1){
         indexList.push(index);
         multiVm.eventArr.push(multiVm.place[index]);
       }
     }
-    console.log(multiVm.eventArr);
     for(var i = 0; i < multiVm.eventArr.length; ++i){
         var geocoder = new google.maps.Geocoder();
-        console.log(multiVm.eventArr[i]);
         geocoder.geocode({'address': multiVm.eventArr[i]}, function(results, status){
           multiVm.placeMarkerByRandomAndSearch(results[0].geometry.location);
         });
@@ -362,12 +357,17 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.level = multiVm.levelGenerator();
     multiVm.category = multiVm.categoryGenerator();
     multiVm.expenditure = multiVm.expenditureGenerator();
-    multiVm.minExpenditure = multiVm.minExpenditureGenerator();
-    multiVm.maxExpenditure = multiVm.maxExpenditureGenerator();
+    // multiVm.minExpenditure = multiVm.minExpenditureGenerator();
+    // multiVm.maxExpenditure = multiVm.maxExpenditureGenerator();
     multiVm.velocity = multiVm.velocityGenerator();
     multiVm.minvelocity = multiVm.minVelocityGenerator();
     multiVm.maxvelocity = multiVm.maxVelocityGenerator();
     multiVm.deadline = multiVm.deadlineGenerator();
+
+    if(index == 0){
+      multiVm.minExpenditure = multiVm.minExpenditureGenerator();
+      multiVm.maxExpenditure = multiVm.maxExpenditureGenerator();
+    }
 
     //Auto increment
     var eventId = index+1;
@@ -423,6 +423,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       template: 'multiEventOverview.html',
       overlay: true,
       showClose: false,
+      closeByEscape: true,
       scope: $scope,
       className: 'ngdialog-theme-default overview-menu draggable'       
     }).then(function(value){
