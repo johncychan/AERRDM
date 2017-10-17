@@ -561,7 +561,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   }
 
   getTasks = function(dataObj){
-    console.log("Sim_id: " + dataObj);
+    // console.log("Sim_id: " + dataObj);
 
     return $http({
 
@@ -574,7 +574,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     }).then(function success(response){
         console.log(response.data);
         for(var i = 0; i < response.data.length; ++i){
-          startLoc.push(response.data[i].Location);
+          // startLoc.push(response.data[i].Location);
+          if(startLoc.indexOf(response.data[i]) ==  -1){
+            startLoc.push(response.data[i]);
+          }
+
         }
 
 
@@ -796,16 +800,24 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   };
 
 
-  function createMarker(latlng, label) {
+  function createMarker(latlng, type) {
+    console.log(type);
+    var markerIcon;
+    if(type == 'hospital')
+      markerIcon = "./img/ambulance.svg";
+    else if(type == 'police')
+      markerIcon = "./img/police-car.svg";
+    else if(type == "fire")
+      markerIcon = "./img/fire-truck.svg";
     var marker = new google.maps.Marker({
         position: latlng,
         map: singleVm.map,
-        title: label,
+        
         // zIndex: Math.round(latlng.lat()*-100000)<<5,
-        icon: "./img/police-car.svg",
+        icon: markerIcon,
         animation: google.maps.Animation.DROP
         });
-        marker.myname = label;
+        // marker.myname = label;
 
     return marker;
   }  
@@ -862,7 +874,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     marker.addListener('click', function($scope){
       marker.infoWin.open(singleVm.map, marker);
     });
-    console.log(marker);
+    // console.log(marker);
     // return marker;
   }
 
@@ -1002,7 +1014,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       var requests = new Array();
       for(var i = 0; i < startLoc.length; ++i){
         requests[i] = {
-          origin: startLoc[i],
+          origin: startLoc[i].Location,
           destination: singleVm.marker.position,
           travelMode: travelMode
         };
@@ -1051,7 +1063,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
                     startLocation[routeNum].latlng = legs[i].start_location;
                     startLocation[routeNum].address = legs[i].start_address;
                     // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-                    marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address);
+                    marker[routeNum] = createMarker(legs[i].start_location,startLoc[i].Type);
                   }
                   endLocation[routeNum].latlng = legs[i].end_location;
                   endLocation[routeNum].address = legs[i].end_address;
@@ -1203,7 +1215,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       current_point = d;
       if (d > eol[index]) {
           marker[index].setPosition(endLocation[index].latlng);
-          // console.log("")
+          console.log("End of animation");
           return;
       }
       var p = polyline[index].GetPointAtDistance(d);
