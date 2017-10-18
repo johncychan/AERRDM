@@ -405,8 +405,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       return $timeout(100)
     })
     .then($timeout(sendReqtToFac, 20000))
-    .then($timeout(receiveResponseFromFac, 28000));
-    // .then($timeout(checkPlan, 35000));
+    .then($timeout(receiveResponseFromFac, 28000))
+    .then($timeout(checkPlan, 10000));
 
 
     singleVm.panelShow = "true";
@@ -536,11 +536,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
             // animation: google.maps.Animation.BOUNCE
         });
       }
-    defer.resolve("resolved");
+    
     // console.log("sendReqtToFac resolved");
     // console.log(singleVm.requestMarkers);
     // console.log(polyline);
     moveReceiveMarker(endLoc, polyline);
+    defer.resolve("resolved");
     return defer.promise;
   }
 
@@ -679,7 +680,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           }
 
         }
-
 
         $rootScope.$emit("CallParentMethod", {});
         singleVm.resourceAllocation(response.data);
@@ -908,7 +908,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       markerIcon = "./img/police-car.svg";
     else if(type == "fire_station")
       markerIcon = "./img/fire-truck.svg";
-    var marker = new google.maps.Marker({
+    var tempMarker = new google.maps.Marker({
         position: latlng,
         map: singleVm.map,
         
@@ -918,7 +918,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         });
         // marker.myname = label;
 
-    return marker;
+    return tempMarker;
   }  
 
   function putPolice(facilityObj, label, type){
@@ -1098,6 +1098,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     function setRoutes(){
       // console.log("setRoutes");
       singleVm.circle.setMap(null);
+      for(var i = 0; i < singleVm.requestMarkers.length; ++i){
+        singleVm.requestMarkers[i].setMap(null);
+        polyline[i].setMap(null);
+      }
+
+      // polyline.setMap(null);
       var directionDisplay = new Array();
       var startLocLength;
 
@@ -1318,6 +1324,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           return;
       }
       var p = polyline[index].GetPointAtDistance(d);
+      // console.log(marker[index]);
       marker[index].setPosition(p);
       updatePoly(index,d);
       timerHandle[index] =  $timeout(function() {
