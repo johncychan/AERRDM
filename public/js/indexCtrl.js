@@ -1,4 +1,4 @@
-app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $rootScope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
+app.controller('indexCtrl', function(NgMap, $q, $compile, $route, $scope, $rootScope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
 	var indexVm = this;
 	indexVm.isExist = false;
 	indexVm.hideFacility = true;
@@ -29,6 +29,12 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $rootScope, $m
 		}
 		window.localStorage['resources'] = JSON.stringify(resourceList);
 		window.open("/facilityWindow.html",'_blank');
+	}
+
+	indexVm.routeRedirect = function(url){
+		$route.reload();
+		$window.location.reload();
+		window.location = "/#/"+url;	
 	}
 });
 
