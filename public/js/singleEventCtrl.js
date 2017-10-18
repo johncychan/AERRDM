@@ -1,4 +1,4 @@
-app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootScope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
+app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootScope, $route, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
 
   //map initialization
   var singleVm = this;
@@ -30,6 +30,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       console.log("loop");
    }
   });
+
 
   var position;
   var marker = [];
@@ -322,6 +323,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     singleVm.maxvelocity = singleVm.maxVelocityGenerator();
     singleVm.velocity = singleVm.velocityGenerator();
     singleVm.deadline = singleVm.deadlineGenerator();
+    singleVm.minResource = 2;
+    singleVm.maxResoruce = 10;
     //Auto increment
 
     singleVm.eId = 001;
@@ -335,6 +338,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       'Max expenditure': singleVm.maxExpenditure,
       'Min velocity': singleVm.minvelocity,
       'Max velocity': singleVm.maxvelocity,
+      'Min resource': singleVm.minResource,
+      'Max resource': singleVm.maxResoruce,
       'Resource avg. velocity': singleVm.velocity,
       'Deadline': singleVm.deadline,
       'Location': singleVm.marker.position.toUrlValue()
@@ -688,7 +693,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     // }, delayArray[stage]);
 
         $timeout(function(){
-          setRoutes()}, 40000);
+          setRoutes()}, 45000);
     })
   }
 
@@ -765,7 +770,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 5500, 2500, 1000, 7500, 5500, 5500, 5500 ,5500 ,1000, 2000];
+  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 5500, 2500, 1000, 8000, 8000, 1500, 5500, 9700 ,5500 ,1000, 2000];
 
 
   function progressInfoControl(stage){
@@ -817,27 +822,35 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       singleVm.stage = "Receiving Response from Facilities";
     }
     else if(stage == 11){
-      singleVm.stageIcon = "fa fa-envelope-open-o fa-lg";
-      singleVm.stage = "Analysing Response from Facilities";
+      singleVm.dotShow = false;
     }
     else if(stage == 12){
-      singleVm.stageIcon = "fa fa-envelope fa-lg";
-      singleVm.stage = "Sending Final Plan to Facilities";
+      singleVm.stageIcon = "fa fa-envelope-open-o fa-lg";
+      singleVm.spinDowShow = true;
+      singleVm.stage = "Analysing Response from Facilities";
     }
     else if(stage == 13){
-      singleVm.stageIcon = "fa fa-play-circle-o fa-lg";
-      singleVm.stage = "Facilities Execute Final Plan";
+      singleVm.spinDowShow = false;
+      singleVm.stageIcon = "fa fa-envelope fa-lg";
+      singleVm.sendTaskShow = true;
+      singleVm.stage = "Sending Final Plan to Facilities";
     }
     else if(stage == 14){
-      singleVm.stage = "Resources Allocaton";
+      singleVm.stageIcon = "fa fa-play-circle-o fa-lg";
+      singleVm.sendTaskShow = false;
+      singleVm.dotShow = true;
+      singleVm.stage = "Facilities Execute Final Plan";
     }
     else if(stage == 15){
+      singleVm.stage = "Resources Allocaton";
+    }
+    else if(stage == 16){
       singleVm.dotShow = false;
       singleVm.eventShow = false;
       singleVm.taskShow = false;
       singleVm.facilityShow = false;
     }
-    else if(stage == 16){
+    else if(stage == 17){
       singleVm.resourceShow = true;
       singleVm.autoExtend = "progress-content-auto";
     }
@@ -1186,7 +1199,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           $timeout(function(){
             startAnimation(routeNum)
 
-          }, 11000);  
+          }, 6000);  
         }
       } 
     }
@@ -1323,10 +1336,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
                    Severity: singleVm.factor["Severity Level"],
                    Category: singleVm.factor["Category"],
                    Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
-                   Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
                    Deadline: singleVm.factor["Deadline"],
                    Location: singleVm.marker.position.toUrlValue(),
-                   ResourceNum: {min: 2, max: 10}
+                   ResourceNum: {min: singleVm.factor['Min resource'], max: singleVm.factor['Max resource']}
                   }
 
         }).then(function success(response) {
@@ -1346,6 +1358,25 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           console.log(singleVm.resourcesNum);
           if(count == singleVm.resourcesNum){
 
+
+            // close progress menu
+            singleVm.dialog.close();
+
+            // open statistic menu
+            ngDialog.openConfirm({ 
+              template: 'eventStatistic.html',
+              overlay: true,
+              showClose: false,
+              closeByEscape: false,
+              scope: $scope,
+              className: 'ngdialog-theme-default statistic-menu'       
+            }).then(function(value){
+                /* confirm end simulation
+                      clear marker, polyline, event
+                */
+                $route.reload();
+                $window.location.reload();
+            });
           }
           return;
       }

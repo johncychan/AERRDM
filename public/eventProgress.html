@@ -24,6 +24,22 @@
       <canvas id="radar" width="230" height="230" ng-show = "singleVm.radarShow" ng-cloak ></canvas>
     </div>
     <dot id="dot-search" ng-show = "singleVm.dotShow" ng-cloak></dot>
+    <div class="spinner" ng-show = "singleVm.spinDowShow" ng-cloak>
+      <div class="dot1"></div>
+      <div class="dot2"></div>
+    </div>
+    <div class="container" ng-show = "singleVm.sendTaskShow" ng-cloak>
+      <div class="box">
+          <div class="border one"></div>
+          <div class="border two"></div>
+          <div class="border three"></div>
+          <div class="border four"></div>
+
+          <div class="line one"></div>
+          <div class="line two"></div>
+          <div class="line three"></div>
+      </div>
+    </div>
   </div>
 	<div id="progress-content" class="{{singleVm.contentExtend}}">
     <div class="info-row clearfix">
@@ -137,9 +153,6 @@
               <td >{{singleVm.factor['Resource avg. velocity']}}</td>
             </tr>
           </table>
-        </md-tab>
-        <md-tab label="Statistic">
-          
         </md-tab>
       </md-tabs>
     </div>
