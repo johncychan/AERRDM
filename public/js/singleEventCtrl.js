@@ -31,7 +31,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
    }
   });
 
-
   var position;
   var marker = [];
   var facilityMarker = [];
@@ -409,7 +408,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     .then($timeout(receiveResponseFromFac, 28000))
     .then($timeout(checkPlan, 10000));
 
-
     singleVm.panelShow = "true";
   } 
 
@@ -537,10 +535,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
             // animation: google.maps.Animation.BOUNCE
         });
       }
-    
-    // console.log("sendReqtToFac resolved");
-    // console.log(singleVm.requestMarkers);
-    // console.log(polyline);
     moveReceiveMarker(endLoc, polyline);
     defer.resolve("resolved");
     return defer.promise;
@@ -590,9 +584,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         });
       }
     defer.resolve("resolved");
-    // console.log("sendReqtToFac resolved");
-    // console.log(singleVm.requestMarkers);
-    // console.log(polyline);
     moveReqMarker(endLoc, polyline);
     return defer.promise;
   }
@@ -1387,9 +1378,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           // console.log("End of animation");
           return;
       }
-      // console.log(index);
       var p = polyline[index].GetPointAtDistance(d);
-      // console.log(singleVm.requestMarkers[index]);
       singleVm.requestMarkers[index].setPosition(p);
       updateRequestPoly(index,d);
       timerHandle[index] =  $timeout(function() {
@@ -1432,9 +1421,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           // console.log("End of animation");
           return;
       }
-      // console.log(index);
       var p = polyline[index].GetPointAtDistance(d);
-      // console.log(singleVm.requestMarkers[index]);
       singleVm.requestMarkers[index].setPosition(p);
       updateReceivePoly(index,d);
       timerHandle[index] =  $timeout(function() {

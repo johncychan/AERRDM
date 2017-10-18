@@ -87,13 +87,14 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.randomLocation = function(){
     if(multiVm.marker){
       // console.log("in");
-      for(var i = 0; i < multiVm.markersList.length; i++)
+      for(var i = 0; i < multiVm.markersList.length; i++){
         multiVm.markersList[i].setMap(null);
         multiVm.eventList[i] = [];
-        multiVm.eventList.length = 0;
-        multiVm.markerIndex = 0;
-        multiVm.markersList.length = 0;
-        multiVm.marker.setMap(null);
+      }
+      multiVm.eventList.length = 0;
+      multiVm.markerIndex = 0;
+      multiVm.markersList.length = 0;
+      multiVm.marker.setMap(null);
     }
     // var place = [
     // "-33.86035933, 151.2050238",
@@ -118,6 +119,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     var eventNum = Math.floor((Math.random()*(max-min+1)) + min);
     multiVm.eventArr = [];
     var indexList = [];
+    var results = [];
+
 
     var locationMinIndex = 1;
     var locationMaxIndex = (multiVm.place.length-1);
@@ -132,6 +135,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     for(var i = 0; i < multiVm.eventArr.length; ++i){
         var geocoder = new google.maps.Geocoder();
         geocoder.geocode({'address': multiVm.eventArr[i]}, function(results, status){
+          multiVm.map.setCenter(results[0].geometry.location);
           multiVm.placeMarkerByRandomAndSearch(results[0].geometry.location);
         });
     }
@@ -176,9 +180,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.placeChanged = function(){
     if(!multiVm.eventStarted){
       multiVm.markerNotPlace = false;
-      multiVm.place = this.getPlace();
-      multiVm.map.setCenter(multiVm.place.geometry.location);
-      multiVm.placeMarkerByRandomAndSearch(multiVm.place.geometry.location);
+      var place = this.getPlace();
+      multiVm.map.setCenter(place.geometry.location);
+      // multiVm.placeMarkerByRandomAndSearch(multiVm.place.geometry.location);
     }
   }
 
@@ -369,11 +373,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       multiVm.maxExpenditure = multiVm.maxExpenditureGenerator();
     }
 
-    //Auto increment
-    var eventId = index+1;
 
     multiVm.factor = {
-      'ID': eventId,
+      'ID': index,
       'Severity Level': multiVm.level,
       'Category': multiVm.category_list[multiVm.category],
       'Resource avg. expenditure': multiVm.expenditure,
@@ -484,7 +486,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     console.log("getFaciLoc");
     return $http({
 
-
       method  : 'POST',
       url     : '/multiEvent',
       //     // set the headers so angular passing info as form data (not request payload)
@@ -493,7 +494,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
                   expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
                   events: multiVm.eventList
                 }
-
 
       }).then(function success(response) {
 
