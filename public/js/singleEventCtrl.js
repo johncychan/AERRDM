@@ -583,10 +583,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           });
           
         }
-        else if(response.data == "Plan is now avaliable,"){
-            console.log("Plan is now avaliable");
-            //getTasks(dataObj);
-        }
+        // else if(response.data == "Plan is now avaliable,"){
+        //     console.log("Plan is now avaliable");
+        //     //getTasks(dataObj);
+        // }
     // return dataObj;
     })
   }

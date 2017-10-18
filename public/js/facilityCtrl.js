@@ -40,17 +40,18 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         facilityVm.map.setCenter(loc);
     });
 
-    //
-    // updateGPS = function(){
-    // 	$http({
-    // 		method	: 'POST',
-	   //  	url		: '',
-	   //  	headers	: { 'Content-Type': 'application/json' },
-	   //  	data 	: {
-	   //  				sim_id: facilityVm.selectedFacility.sim_id
-	   //  	}
-    // 	}).then(function success(response)){
-
-    // 	}
+    
+    updateGPS = function(){
+    	$http({
+    		method	: 'POST',
+	    	url		: '/singleEvent/UpdatedGPS',
+	    	headers	: { 'Content-Type': 'application/json' },
+	    	data 	: {
+	    				sim_id: facilityVm.selectedFacility.sim_id
+	    	          }
+    	}).then(function success(response){
+            console.log(response.data);
+    	})
+    }
    
 });
