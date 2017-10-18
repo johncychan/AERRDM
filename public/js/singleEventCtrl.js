@@ -47,6 +47,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var requestMarkers = [];
   singleVm.requestMarkers = [];
 
+  var count = 0;
   var startLocation = new Array();
   var endLocation = new Array();
 
@@ -662,7 +663,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
   getTasks = function(dataObj){
     // console.log("Sim_id: " + dataObj);
-
+    console.log("getTasks");
     return $http({
 
       method  : 'POST',
@@ -673,6 +674,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       }
     }).then(function success(response){
         console.log(response.data);
+        singleVm.resourcesNum = response.data.length;
         for(var i = 0; i < response.data.length; ++i){
           // startLoc.push(response.data[i].Location);
           if(startLoc.indexOf(response.data[i]) ==  -1){
@@ -1193,7 +1195,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           $timeout(function(){
             startAnimation(routeNum)
 
-          }, 11000);    
+          }, 11000);  
         }
       } 
     }
@@ -1315,16 +1317,50 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   }
 
 
+    function updateGPS(){
+
+    }
+
+    function getStat(){
+        $http({
+
+        method  : 'POST',
+        url     : '/singleEvent',
+        //     // set the headers so angular passing info as form data (not request payload)
+        headers : { 'Content-Type': 'application/json' },
+        data    : {
+                   Severity: singleVm.factor["Severity Level"],
+                   Category: singleVm.factor["Category"],
+                   Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
+                   Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
+                   Deadline: singleVm.factor["Deadline"],
+                   Location: singleVm.marker.position.toUrlValue(),
+                   ResourceNum: {min: 2, max: 10}
+                  }
+
+        }).then(function success(response) {
+            
+        }   
+    }
+
     function animate(index,d) {
+      // console.log(singleVm.resourcesNum);
       markerStarted = true;
       current_point = d;
       if (d > eol[index]) {
           marker[index].setPosition(endLocation[index].latlng);
           console.log("End of animation");
+          count++;
+          console.log(count);
+          console.log(singleVm.resourcesNum);
+          if(count == singleVm.resourcesNum){
+
+          }
           return;
       }
       var p = polyline[index].GetPointAtDistance(d);
       // console.log(marker[index]);
+
       marker[index].setPosition(p);
       updatePoly(index,d);
       timerHandle[index] =  $timeout(function() {
@@ -1340,6 +1376,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
               strokeColor:"#FFFF00", strokeWeight:3});
 
       animate(index, 50);
+      
     }
 
     function requestAnimate(index,d) {
