@@ -1340,7 +1340,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
         }).then(function success(response) {
             
-        }   
+        });   
     }
 
     function animate(index,d) {
