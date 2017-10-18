@@ -38,20 +38,27 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         // console.log(marker);
         marker.setMap(facilityVm.map);
         facilityVm.map.setCenter(loc);
+
+        console.log(facilityVm.selectedFacility);
+
+        $interval(function updateGPS(){
+            
+        console.log(facilityVm.selectedFacility.id);
+        $http({
+            method  : 'POST',
+            url     : '/singleEvent/UpdatedGPS',
+            headers : { 'Content-Type': 'application/json' },
+            data    : {
+                        sim_id: facilityVm.selectedFacility.id
+                      }
+        }).then(function success(response){
+            console.log(response);
+        })
+    }, 1000);
     });
 
     
-    updateGPS = function(){
-    	$http({
-    		method	: 'POST',
-	    	url		: '/singleEvent/UpdatedGPS',
-	    	headers	: { 'Content-Type': 'application/json' },
-	    	data 	: {
-	    				sim_id: facilityVm.selectedFacility.sim_id
-	    	          }
-    	}).then(function success(response){
-            console.log(response.data);
-    	})
-    }
+
+    
    
 });
