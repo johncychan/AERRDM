@@ -45,6 +45,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var mailMarker = [];
   var polylines = [];
   var requestMarkers = [];
+  singleVm.requestMarkers = [];
 
   var startLocation = new Array();
   var endLocation = new Array();
@@ -396,8 +397,17 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     //second $http request filter the facilities remove the unused facilities location
     window.localStorage['eventStatis'] = JSON.stringify(singleVm.factor);
     
-    singleVm.getFaciLoc().then(putFacMarker).then(sendReqtToFac).then(checkPlan);
-    
+    // singleVm.getFaciLoc().then(putFacMarker).then(sendReqtToFac).then(checkPlan);
+    // singleVm.getFaciLoc().then(putFacMarker).then(sendReqtToFac);
+    singleVm.getFaciLoc()
+    .then(putFacMarker)
+    .then(function(){
+      return $timeout(100)
+    })
+    .then($timeout(sendReqtToFac, 20000))
+    .then($timeout(receiveResponseFromFac, 28000));
+
+
     singleVm.panelShow = "true";
   } 
 
@@ -495,51 +505,108 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
               putFire(dataObj.facilities[i]);
             }
           }
-          defer.resolve("resolved");
-        }, 15500)
+        }, 13000)
+      defer.resolve("resolved");
       return defer.promise;
     
   }
-  sendReqtToFac = function(){
+
+  receiveResponseFromFac = function(){
+    console.log("put message marker");
     var defer = $q.defer();
     console.log(facilityObj);
-    for(var i = 0; i < facilityObj.facilities.length; ++i){
-      console.log(typeof(facilityObj.facilities[i].location));
-      endLoc[i] = facilityObj.facilities[i].location;
-      polyline[i] = new google.maps.Polyline({
-        path: [singleVm.marker.position, facilityObj.facilities[i].location],
+      for(var i = 0; i < facilityObj.facilities.length; ++i){
+        console.log(facilityObj.facilities[i].location);
 
-        geodestic: true,
-        strokeColor: '#178cd',
-        strokeOpacity: 0.6,
-        strokeWeight: 2
-      });
-        requestMarkers[i] = new google.maps.Marker({
-        position: singleVm.marker.position,
-        map: singleVm.map,
-        icon: "img/mess.svg",
-        animation: google.maps.Animation.BOUNCE
+        endLoc = singleVm.marker.position;
+        polyline[i] = new google.maps.Polyline({
+          path: [facilityObj.facilities[i].location, singleVm.marker.position],
 
-      });
-    }
+          geodestic: true,
+          strokeColor: '#00ace6',
+          strokeOpacity: 0.6,
+          strokeWeight: 2
+        });
+
+          singleVm.requestMarkers[i] = new google.maps.Marker({
+            position: facilityObj.facilities[i].location,
+            map: singleVm.map,
+            icon: "img/mess.svg"
+            // animation: google.maps.Animation.BOUNCE
+        });
+      }
     defer.resolve("resolved");
     console.log("sendReqtToFac resolved");
-    // moveReqMarker(endLoc, polyline, requestMarkers);
+    console.log(singleVm.requestMarkers);
+    console.log(polyline);
+    moveReceiveMarker(endLoc, polyline);
     return defer.promise;
   }
 
-  moveReqMarker = function(endLoc, polyline, marker){
+  moveReceiveMarker = function(endLoc, polyline){
     var eol = [];
     var poly2 = [];
     var timerHandle = [];
     for (var i = 0; i < polyline.length; i++) {
-        var dfd = $.Deferred();
+        console.log(i);
         poly2[i] = new google.maps.Polyline({
             path: []
         });
-        marker[i].setMap(singleVm.map);
         polyline[i].setMap(singleVm.map);
-        startAnimation(i);
+        singleVm.requestMarkers[i].setMap(singleVm.map);
+        console.log(singleVm.requestMarkers[i]);
+        startReceiveAnimation(i);
+    }
+  }
+
+  sendReqtToFac = function(){
+    console.log("put message marker");
+    // singleVm.stageIcon = "fa fa-envelope fa-lg";
+    // singleVm.stage = "Sending Tasks Info to Facilities";
+    // singleVm.dotShow = true;
+    var defer = $q.defer();
+    console.log(facilityObj);
+      for(var i = 0; i < facilityObj.facilities.length; ++i){
+        console.log(facilityObj.facilities[i].location);
+
+        endLoc[i] = facilityObj.facilities[i].location;
+        polyline[i] = new google.maps.Polyline({
+          path: [singleVm.marker.position, facilityObj.facilities[i].location],
+
+          geodestic: true,
+          strokeColor: '#00ace6',
+          strokeOpacity: 0.6,
+          strokeWeight: 2
+        });
+
+          singleVm.requestMarkers[i] = new google.maps.Marker({
+            position: singleVm.marker.position,
+            map: singleVm.map,
+            icon: "img/mess.svg"
+            // animation: google.maps.Animation.BOUNCE
+        });
+      }
+    defer.resolve("resolved");
+    console.log("sendReqtToFac resolved");
+    console.log(singleVm.requestMarkers);
+    console.log(polyline);
+    moveReqMarker(endLoc, polyline);
+    return defer.promise;
+  }
+
+  moveReqMarker = function(endLoc, polyline){
+    var eol = [];
+    var poly2 = [];
+    var timerHandle = [];
+    for (var i = 0; i < polyline.length; i++) {
+        console.log(i);
+        poly2[i] = new google.maps.Polyline({
+            path: []
+        });
+        polyline[i].setMap(singleVm.map);
+        singleVm.requestMarkers[i].setMap(singleVm.map);
+        console.log(singleVm.requestMarkers[i]);
+        startRequestAnimation(i);
     }
   }
 
@@ -704,7 +771,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 2500, 5500, 1200, 5500, 5500, 5500, 5500 ,5500 ,1000, 2000];
+  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 5500, 2500, 1000, 7500, 5500, 5500, 5500 ,5500 ,1000, 2000];
 
 
   function progressInfoControl(stage){
@@ -1266,6 +1333,96 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
       animate(index, 50);
     }
+
+    function requestAnimate(index,d) {
+      markerStarted = true;
+      current_point = d;
+      if (d > eol[index]) {
+          singleVm.requestMarkers[index].setPosition(endLoc[index].latlng);
+          console.log("End of animation");
+          return;
+      }
+      console.log(index);
+      var p = polyline[index].GetPointAtDistance(d);
+      console.log(singleVm.requestMarkers[index]);
+      singleVm.requestMarkers[index].setPosition(p);
+      updateRequestPoly(index,d);
+      timerHandle[index] =  $timeout(function() {
+        requestAnimate(index, (d + 100));
+      }, tick);
+  }
+
+    function startRequestAnimation(index){
+
+      eol[index] = polyline[index].Distance();
+
+      poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
+              strokeColor:"#FFFF00", strokeWeight:3});
+
+      requestAnimate(index, 50);
+    }
+
+     function updateRequestPoly(i,d) {
+    // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
+      if (poly2[i].getPath().getLength() > 20) {
+            poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
+
+          }
+
+      if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
+          if (poly2[i].getPath().getLength() > 1) {
+              poly2[i].getPath().removeAt(poly2[i].getPath().getLength() - 1)
+          }
+              poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
+      } else {
+          poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),endLoc[i].latlng);
+      }
+   }
+
+   function receiveAnimate(index,d) {
+      markerStarted = true;
+      current_point = d;
+      if (d > eol[index]) {
+          singleVm.requestMarkers[index].setPosition(singleVm.marker.position);
+          console.log("End of animation");
+          return;
+      }
+      console.log(index);
+      var p = polyline[index].GetPointAtDistance(d);
+      console.log(singleVm.requestMarkers[index]);
+      singleVm.requestMarkers[index].setPosition(p);
+      updateReceivePoly(index,d);
+      timerHandle[index] =  $timeout(function() {
+        receiveAnimate(index, (d + 100));
+      }, tick);
+  }
+
+    function startReceiveAnimation(index){
+
+      eol[index] = polyline[index].Distance();
+
+      poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
+              strokeColor:"#FFFF00", strokeWeight:3});
+
+      receiveAnimate(index, 50);
+    }
+
+     function updateReceivePoly(i,d) {
+    // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
+      if (poly2[i].getPath().getLength() > 20) {
+            poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
+
+          }
+
+      if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
+          if (poly2[i].getPath().getLength() > 1) {
+              poly2[i].getPath().removeAt(poly2[i].getPath().getLength() - 1)
+          }
+              poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
+      } else {
+          poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),singleVm.marker.position.latlng);
+      }
+   }
 
 
 });
