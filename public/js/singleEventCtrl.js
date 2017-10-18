@@ -1,4 +1,4 @@
-app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
+app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootScope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
 
   //map initialization
   var singleVm = this;
@@ -10,6 +10,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.eventStarted = false;
   singleVm.eventIsSet = false;
   singleVm.hamCheck = true;
+  singleVm.isReset = false;
 
   var socket = io();
  
@@ -30,7 +31,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
    }
   });
 
-
   var position;
   var marker = [];
   var facilityMarker = [];
@@ -44,12 +44,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var mailMarker = [];
   var polylines = [];
   var requestMarkers = [];
+  singleVm.requestMarkers = [];
 
+  var count = 0;
   var startLocation = new Array();
   var endLocation = new Array();
 
   var speed = 0.000005, wait = 1;
   var infowindow = null;
+  var facilityObj;
   
   var myPano;
   var panoClient;
@@ -267,22 +270,20 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     return Math.floor((Math.random()*size));
   }
   singleVm.expenditureGenerator = function(){
-    var max = 200; 
-    var min = 0;
+    var max = singleVm.maxExpenditure; 
+    var min = singleVm.minExpenditure;
     return Math.floor((Math.random()*(max-min+1))+min);
   }
   singleVm.velocityGenerator = function(){
-    var max = 100;
-    var min = 20;
+    var max = singleVm.maxvelocity;
+    var min = singleVm.minvelocity;
     return Math.floor((Math.random()*(max-min+1))+min);
   }
   singleVm.deadlineGenerator = function(){
-
     var max = 120;
     var min = 40;
     return Math.floor((Math.random()*(max-min+1))+min);
   }
-
   singleVm.minExpenditureGenerator = function(){
     var max = 100; 
     var min = 0;
@@ -308,16 +309,18 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   singleVm.factorGenerate = function(){
     // if event is set
     if(singleVm.eventIsSet){
-      return;
+      if(!singleVm.isReset)
+        return;
     }
+    singleVm.isReset = false;
     singleVm.level = singleVm.levelGenerator();
     singleVm.category = singleVm.categoryGenerator();
-    singleVm.expenditure = singleVm.expenditureGenerator();
     singleVm.minExpenditure = singleVm.minExpenditureGenerator();
     singleVm.maxExpenditure = singleVm.maxExpenditureGenerator();
-    singleVm.velocity = singleVm.velocityGenerator();
+    singleVm.expenditure = singleVm.expenditureGenerator(); 
     singleVm.minvelocity = singleVm.minVelocityGenerator();
     singleVm.maxvelocity = singleVm.maxVelocityGenerator();
+    singleVm.velocity = singleVm.velocityGenerator();
     singleVm.deadline = singleVm.deadlineGenerator();
     //Auto increment
 
@@ -394,8 +397,17 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     //second $http request filter the facilities remove the unused facilities location
     window.localStorage['eventStatis'] = JSON.stringify(singleVm.factor);
     
-    singleVm.getFaciLoc().then(checkPlan);
-    
+    // singleVm.getFaciLoc().then(putFacMarker).then(sendReqtToFac).then(checkPlan);
+    // singleVm.getFaciLoc().then(putFacMarker).then(sendReqtToFac);
+    singleVm.getFaciLoc()
+    .then(putFacMarker)
+    .then(function(){
+      return $timeout(100)
+    })
+    .then($timeout(sendReqtToFac, 20000))
+    .then($timeout(receiveResponseFromFac, 28000))
+    .then($timeout(checkPlan, 10000));
+
     singleVm.panelShow = "true";
   } 
 
@@ -414,13 +426,14 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                  Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
                  Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
                  Deadline: singleVm.factor["Deadline"],
-                 Location: singleVm.marker.position.toUrlValue(),
+                 Location: {lat: singleVm.marker.position.lat(), lng: singleVm.marker.position.lng()},
                  ResourceNum: {min: 2, max: 10}
                 }
 
       }).then(function success(response) {
 
         console.log(response.data);
+        facilityObj = response.data;
         window.localStorage['simulationStatis'] = JSON.stringify(response);
         
         var totalFacilites = 0;
@@ -448,21 +461,23 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           }
         }
 
-        $timeout(function(){
-          var index = 0;
-          for(var i = 0; i < response.data.facilities.length; ++i){
-            if(response.data.facilities[i].type == "hospital"){
-              putHospital(response.data.facilities[i]);
-            }
-            else if(response.data.facilities[i].type == "police"){
-              putPolice(response.data.facilities[i]);
-            }
-            else if(response.data.facilities[i].type == "fire_station"){
-              putFire(response.data.facilities[i]);
-            }
-          }
-        }, 15500);
-        // sendReqtToFac(response.data);
+        // $timeout(function(){
+        //   // sendReqtToFac(response.data);
+        //   var index = 0;
+        //   for(var i = 0; i < response.data.facilities.length; ++i){
+        //     if(response.data.facilities[i].type == "hospital"){
+        //       putHospital(response.data.facilities[i]);
+        //     }
+        //     else if(response.data.facilities[i].type == "police"){
+        //       putPolice(response.data.facilities[i]);
+        //     }
+        //     else if(response.data.facilities[i].type == "fire_station"){
+        //       putFire(response.data.facilities[i]);
+        //     }
+        //   }
+        // }, 15500);
+        // putFacMarker();
+        
 
         receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
         singleVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
@@ -472,55 +487,132 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       });
   }
 
-  sendReqtToFac = function(dataObj){
+  putFacMarker = function(dataObj){
+    console.log("put facility marker");
     console.log(dataObj);
-    for(var i = 0; i < dataObj.facilities.length; ++i){
-      console.log(typeof(dataObj.facilities[i].location));
-      endLoc[i] = dataObj.facilities[i].location;
-      polyline[i] = new google.maps.Polyline({
-        path: [singleVm.marker.position, dataObj.facilities[i].location],
-
-        geodestic: true,
-        strokeColor: '#178cd',
-        strokeOpacity: 0.6,
-        strokeWeight: 2
-      });
-        requestMarkers[i] = new google.maps.Marker({
-        position: singleVm.marker.position,
-        map: singleVm.map,
-        icon: "img/mess.svg",
-        animation: google.maps.Animation.BOUNCE
-
-      });
-    }
-    moveReqMarker(endLoc, polylines, requestMarkers);
-
+      var defer = $q.defer();
+      $timeout(function(){
+          // sendReqtToFac(response.data);
+            var index = 0;
+          for(var i = 0; i < dataObj.facilities.length; ++i){
+            if(dataObj.facilities[i].type == "hospital"){
+              putHospital(dataObj.facilities[i]);
+            }
+            else if(dataObj.facilities[i].type == "police"){
+              putPolice(dataObj.facilities[i]);
+            }
+            else if(dataObj.facilities[i].type == "fire_station"){
+              putFire(dataObj.facilities[i]);
+            }
+          }
+        }, 13000)
+      defer.resolve("resolved");
+      return defer.promise;
+    
   }
 
-  moveReqMarker = function(endLoc, polyline, marker){
+  receiveResponseFromFac = function(){
+    console.log("put message marker");
+    var defer = $q.defer();
+    console.log(facilityObj);
+      for(var i = 0; i < facilityObj.facilities.length; ++i){
+        // console.log(facilityObj.facilities[i].location);
+
+        endLoc = singleVm.marker.position;
+        polyline[i] = new google.maps.Polyline({
+          path: [facilityObj.facilities[i].location, singleVm.marker.position],
+
+          geodestic: true,
+          strokeColor: '#00ace6',
+          strokeOpacity: 0.6,
+          strokeWeight: 2
+        });
+
+          singleVm.requestMarkers[i] = new google.maps.Marker({
+            position: facilityObj.facilities[i].location,
+            map: singleVm.map,
+            icon: "img/mess.svg"
+            // animation: google.maps.Animation.BOUNCE
+        });
+      }
+    moveReceiveMarker(endLoc, polyline);
+    defer.resolve("resolved");
+    return defer.promise;
+  }
+
+  moveReceiveMarker = function(endLoc, polyline){
     var eol = [];
     var poly2 = [];
     var timerHandle = [];
     for (var i = 0; i < polyline.length; i++) {
-        var dfd = $.Deferred();
+        // console.log(i);
         poly2[i] = new google.maps.Polyline({
             path: []
         });
-        marker[i].setMap(singleVm.map);
         polyline[i].setMap(singleVm.map);
-        startAnimation(i);
+        singleVm.requestMarkers[i].setMap(singleVm.map);
+        // console.log(singleVm.requestMarkers[i]);
+        startReceiveAnimation(i);
+    }
+  }
+
+  sendReqtToFac = function(){
+    console.log("put message marker");
+    // singleVm.stageIcon = "fa fa-envelope fa-lg";
+    // singleVm.stage = "Sending Tasks Info to Facilities";
+    // singleVm.dotShow = true;
+    var defer = $q.defer();
+    console.log(facilityObj);
+      for(var i = 0; i < facilityObj.facilities.length; ++i){
+        // console.log(facilityObj.facilities[i].location);
+
+        endLoc[i] = facilityObj.facilities[i].location;
+        polyline[i] = new google.maps.Polyline({
+          path: [singleVm.marker.position, facilityObj.facilities[i].location],
+
+          geodestic: true,
+          strokeColor: '#00ace6',
+          strokeOpacity: 0.6,
+          strokeWeight: 2
+        });
+
+          singleVm.requestMarkers[i] = new google.maps.Marker({
+            position: singleVm.marker.position,
+            map: singleVm.map,
+            icon: "img/mess.svg"
+            // animation: google.maps.Animation.BOUNCE
+        });
+      }
+    defer.resolve("resolved");
+    moveReqMarker(endLoc, polyline);
+    return defer.promise;
+  }
+
+  moveReqMarker = function(endLoc, polyline){
+    var eol = [];
+    var poly2 = [];
+    var timerHandle = [];
+    for (var i = 0; i < polyline.length; i++) {
+        // console.log(i);
+        poly2[i] = new google.maps.Polyline({
+            path: []
+        });
+        polyline[i].setMap(singleVm.map);
+        singleVm.requestMarkers[i].setMap(singleVm.map);
+        // console.log(singleVm.requestMarkers[i]);
+        startRequestAnimation(i);
     }
   }
 
 
-  checkPlan = function(dataObj){
+  checkPlan = function(){
     $http({
 
       method  : 'POST',
-      url     : '/assignResource',
+      url     : '/singleEvent/assignResource',
       headers : { 'Content-Type': 'application/json' },
       data    : {
-                  sim_id: dataObj.sim_id
+                  sim_id: facilityObj.sim_id
       }
     }).then(function success(response){
         // console.log(response.data);
@@ -551,17 +643,17 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           });
           
         }
-        else if(response.data == "Plan is now avaliable,"){
-            console.log("Plan is now avaliable");
-            //getTasks(dataObj);
-        }
+        // else if(response.data == "Plan is now avaliable,"){
+        //     console.log("Plan is now avaliable");
+        //     //getTasks(dataObj);
+        // }
     // return dataObj;
     })
   }
 
   getTasks = function(dataObj){
-    console.log("Sim_id: " + dataObj);
-
+    // console.log("Sim_id: " + dataObj);
+    console.log("getTasks");
     return $http({
 
       method  : 'POST',
@@ -572,13 +664,19 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       }
     }).then(function success(response){
         console.log(response.data);
+        singleVm.resourcesNum = response.data.length;
         for(var i = 0; i < response.data.length; ++i){
-          startLoc.push(response.data[i].Location);
+          // startLoc.push(response.data[i].Location);
+          if(startLoc.indexOf(response.data[i]) ==  -1){
+            startLoc.push(response.data[i]);
+          }
+
         }
 
+        $rootScope.$emit("CallParentMethod", {});
         singleVm.resourceAllocation(response.data);
         facilitySelected.setFacility(response.data);
-		console.log(response.data);
+
         window.localStorage['selectedFacility'] = angular.toJson(response.data);
         var eventLoc = {lat: singleVm.marker.position.lat(), lng: singleVm.marker.position.lng()};
         window.localStorage['eventLocation'] = JSON.stringify(eventLoc);
@@ -653,6 +751,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
 
   // reset factor
   singleVm.reset = function () {
+    singleVm.isReset = true;
     singleVm.factorGenerate();
   }
 
@@ -665,7 +764,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 2500, 5500, 1200, 5500, 5500, 5500, 5500 ,5500 ,1000, 2000];
+  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 5500, 2500, 1000, 7500, 5500, 5500, 5500 ,5500 ,1000, 2000];
 
 
   function progressInfoControl(stage){
@@ -717,7 +816,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.stage = "Receiving Response from Facilities";
     }
     else if(stage == 11){
-      singleVm.stageIcon = "fa fa-envelope-o-open fa-lg";
+      singleVm.stageIcon = "fa fa-envelope-open-o fa-lg";
       singleVm.stage = "Analysing Response from Facilities";
     }
     else if(stage == 12){
@@ -770,7 +869,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       singleVm.dialog = ngDialog.open({ 
         template: 'eventProgress.html',
         overlay: false,
-        showClose: false,
+        showClose: true,
         scope: $scope,  
         className: 'ngdialog-theme-default progress-menu draggable'       
       });
@@ -792,18 +891,26 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   };
 
 
-  function createMarker(latlng, label) {
-    var marker = new google.maps.Marker({
+  function createMarker(latlng, type) {
+    console.log(type);
+    var markerIcon;
+    if(type == 'hospital')
+      markerIcon = "./img/ambulance.svg";
+    else if(type == 'police')
+      markerIcon = "./img/police-car.svg";
+    else if(type == "fire_station")
+      markerIcon = "./img/fire-truck.svg";
+    var tempMarker = new google.maps.Marker({
         position: latlng,
         map: singleVm.map,
-        title: label,
+        
         // zIndex: Math.round(latlng.lat()*-100000)<<5,
-        icon: "./img/police-car.svg",
+        icon: markerIcon,
         animation: google.maps.Animation.DROP
         });
-        marker.myname = label;
+        // marker.myname = label;
 
-    return marker;
+    return tempMarker;
   }  
 
   function putPolice(facilityObj, label, type){
@@ -858,7 +965,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     marker.addListener('click', function($scope){
       marker.infoWin.open(singleVm.map, marker);
     });
-    console.log(marker);
+    // console.log(marker);
     // return marker;
   }
 
@@ -983,6 +1090,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
     function setRoutes(){
       // console.log("setRoutes");
       singleVm.circle.setMap(null);
+      for(var i = 0; i < singleVm.requestMarkers.length; ++i){
+        singleVm.requestMarkers[i].setMap(null);
+        polyline[i].setMap(null);
+      }
+
+      // polyline.setMap(null);
       var directionDisplay = new Array();
       var startLocLength;
 
@@ -998,7 +1111,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
       var requests = new Array();
       for(var i = 0; i < startLoc.length; ++i){
         requests[i] = {
-          origin: startLoc[i],
+          origin: startLoc[i].Location,
           destination: singleVm.marker.position,
           travelMode: travelMode
         };
@@ -1047,7 +1160,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
                     startLocation[routeNum].latlng = legs[i].start_location;
                     startLocation[routeNum].address = legs[i].start_address;
                     // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-                    marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address);
+                    marker[routeNum] = createMarker(legs[i].start_location,startLoc[i].Type);
                   }
                   endLocation[routeNum].latlng = legs[i].end_location;
                   endLocation[routeNum].address = legs[i].end_address;
@@ -1072,7 +1185,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
           $timeout(function(){
             startAnimation(routeNum)
 
-          }, 11000);    
+          }, 11000);  
         }
       } 
     }
@@ -1194,15 +1307,50 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
   }
 
 
+    function updateGPS(){
+
+    }
+
+    function getStat(){
+        $http({
+
+        method  : 'POST',
+        url     : '/singleEvent',
+        //     // set the headers so angular passing info as form data (not request payload)
+        headers : { 'Content-Type': 'application/json' },
+        data    : {
+                   Severity: singleVm.factor["Severity Level"],
+                   Category: singleVm.factor["Category"],
+                   Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
+                   Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
+                   Deadline: singleVm.factor["Deadline"],
+                   Location: singleVm.marker.position.toUrlValue(),
+                   ResourceNum: {min: 2, max: 10}
+                  }
+
+        }).then(function success(response) {
+            
+        });   
+    }
+
     function animate(index,d) {
+      // console.log(singleVm.resourcesNum);
       markerStarted = true;
       current_point = d;
       if (d > eol[index]) {
           marker[index].setPosition(endLocation[index].latlng);
-          // console.log("")
+          console.log("End of animation");
+          count++;
+          console.log(count);
+          console.log(singleVm.resourcesNum);
+          if(count == singleVm.resourcesNum){
+
+          }
           return;
       }
       var p = polyline[index].GetPointAtDistance(d);
+      // console.log(marker[index]);
+
       marker[index].setPosition(p);
       updatePoly(index,d);
       timerHandle[index] =  $timeout(function() {
@@ -1218,7 +1366,94 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialo
               strokeColor:"#FFFF00", strokeWeight:3});
 
       animate(index, 50);
+      
     }
+
+    function requestAnimate(index,d) {
+      markerStarted = true;
+      current_point = d;
+      if (d > eol[index]) {
+          singleVm.requestMarkers[index].setPosition(endLoc[index].latlng);
+          // console.log("End of animation");
+          return;
+      }
+      var p = polyline[index].GetPointAtDistance(d);
+      singleVm.requestMarkers[index].setPosition(p);
+      updateRequestPoly(index,d);
+      timerHandle[index] =  $timeout(function() {
+        requestAnimate(index, (d + 100));
+      }, tick);
+  }
+
+    function startRequestAnimation(index){
+
+      eol[index] = polyline[index].Distance();
+
+      poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
+              strokeColor:"#FFFF00", strokeWeight:3});
+
+      requestAnimate(index, 50);
+    }
+
+     function updateRequestPoly(i,d) {
+    // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
+      if (poly2[i].getPath().getLength() > 20) {
+            poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
+
+          }
+
+      if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
+          if (poly2[i].getPath().getLength() > 1) {
+              poly2[i].getPath().removeAt(poly2[i].getPath().getLength() - 1)
+          }
+              poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
+      } else {
+          poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),endLoc[i].latlng);
+      }
+   }
+
+   function receiveAnimate(index,d) {
+      markerStarted = true;
+      current_point = d;
+      if (d > eol[index]) {
+          singleVm.requestMarkers[index].setPosition(singleVm.marker.position);
+          // console.log("End of animation");
+          return;
+      }
+      var p = polyline[index].GetPointAtDistance(d);
+      singleVm.requestMarkers[index].setPosition(p);
+      updateReceivePoly(index,d);
+      timerHandle[index] =  $timeout(function() {
+        receiveAnimate(index, (d + 100));
+      }, tick);
+  }
+
+    function startReceiveAnimation(index){
+
+      eol[index] = polyline[index].Distance();
+
+      poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
+              strokeColor:"#FFFF00", strokeWeight:3});
+
+      receiveAnimate(index, 50);
+    }
+
+     function updateReceivePoly(i,d) {
+    // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
+      if (poly2[i].getPath().getLength() > 20) {
+            poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
+
+          }
+
+      if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
+          if (poly2[i].getPath().getLength() > 1) {
+              poly2[i].getPath().removeAt(poly2[i].getPath().getLength() - 1)
+          }
+              poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
+      } else {
+          poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),singleVm.marker.position.latlng);
+      }
+   }
 
 
 });

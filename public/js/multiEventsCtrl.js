@@ -86,16 +86,15 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   // random location
   multiVm.randomLocation = function(){
     if(multiVm.marker){
-      console.log("in");
-      console.log("Marker List Size: "+multiVm.markersList.length);
-      console.log("Event List Size: "+multiVm.eventList.length)
-      for(var i = 0; i < multiVm.markersList.length; i++)
+      // console.log("in");
+      for(var i = 0; i < multiVm.markersList.length; i++){
         multiVm.markersList[i].setMap(null);
         multiVm.eventList[i] = [];
-        multiVm.eventList.length = 0;
-        multiVm.markerIndex = 0;
-        multiVm.markersList.length = 0;
-        multiVm.marker.setMap(null);
+      }
+      multiVm.eventList.length = 0;
+      multiVm.markerIndex = 0;
+      multiVm.markersList.length = 0;
+      multiVm.marker.setMap(null);
     }
     // var place = [
     // "-33.86035933, 151.2050238",
@@ -120,23 +119,23 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     var eventNum = Math.floor((Math.random()*(max-min+1)) + min);
     multiVm.eventArr = [];
     var indexList = [];
+    var results = [];
+
 
     var locationMinIndex = 1;
     var locationMaxIndex = (multiVm.place.length-1);
     // while(indexList.length < eventNum){
     for(var i = 0; i < eventNum; i++){
       var index = Math.floor((Math.random()*(locationMaxIndex-min+1))+min);
-      console.log(index);
       if(indexList.indexOf(index) === -1){
         indexList.push(index);
         multiVm.eventArr.push(multiVm.place[index]);
       }
     }
-    console.log(multiVm.eventArr);
     for(var i = 0; i < multiVm.eventArr.length; ++i){
         var geocoder = new google.maps.Geocoder();
-        console.log(multiVm.eventArr[i]);
         geocoder.geocode({'address': multiVm.eventArr[i]}, function(results, status){
+          multiVm.map.setCenter(results[0].geometry.location);
           multiVm.placeMarkerByRandomAndSearch(results[0].geometry.location);
         });
     }
@@ -153,7 +152,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.putMarker = function(){
     if(!multiVm.eventStarted){
       // change cursor to marker
-      multiVm.map.setOptions({draggableCursor:'url(img/marker.svg), auto'});
+      multiVm.map.setOptions({draggableCursor:'url(img/placeholder.svg), auto'});
       // add click event on map
       google.maps.event.addListener(multiVm.map, 'click', function(event){
         multiVm.placeMarker(event);
@@ -181,9 +180,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.placeChanged = function(){
     if(!multiVm.eventStarted){
       multiVm.markerNotPlace = false;
-      multiVm.place = this.getPlace();
-      multiVm.map.setCenter(multiVm.place.geometry.location);
-      multiVm.placeMarkerByRandomAndSearch(multiVm.place.geometry.location);
+      var place = this.getPlace();
+      multiVm.map.setCenter(place.geometry.location);
+      // multiVm.placeMarkerByRandomAndSearch(multiVm.place.geometry.location);
     }
   }
 
@@ -197,7 +196,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker = new google.maps.Marker({
       position: e.latLng,
       map: multiVm.map,
-      icon: "./img/marker.svg",
+      icon: "img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -226,7 +225,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker = new google.maps.Marker({
       position: {lat: pos.lat, lng: pos.lng},
       map: multiVm.map,
-      icon: "./img/marker.svg",
+      icon: "img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -243,7 +242,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker = new google.maps.Marker({
       position: loc,
       map: multiVm.map,
-      icon: "./img/marker.svg",
+      icon: "img/placeholder.svg",
       draggable: true,
       animation: google.maps.Animation.DROP
     });
@@ -259,9 +258,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   // add element to marker
   multiVm.markerElement = function(index){    
-    console.log(index);
      var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting</p></div> " + 
-      "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(index)\">" + "Set event data" + "</button></div></div>"
+      "<div><button class=\"button continue-btn ripple\" ng-click=\"multiVm.setDataField(multiVm.selectedEventIndex)\">" + "Set event data" + "</button></div></div>"
 
 
     // var htmlElement = "  <div><div><p id=\"infoWin-header\">Event Setting"+index+"</p></div> " + 
@@ -276,6 +274,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.marker.addListener('click', function() {  
         multiVm.marker.infoWin.open(multiVm.map, this);
         console.log("Marker ID: "+this.get("id"));
+        multiVm.selectedEventIndex = this.get("id");
     });
 
     //set info windows
@@ -362,18 +361,21 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.level = multiVm.levelGenerator();
     multiVm.category = multiVm.categoryGenerator();
     multiVm.expenditure = multiVm.expenditureGenerator();
-    multiVm.minExpenditure = multiVm.minExpenditureGenerator();
-    multiVm.maxExpenditure = multiVm.maxExpenditureGenerator();
+    // multiVm.minExpenditure = multiVm.minExpenditureGenerator();
+    // multiVm.maxExpenditure = multiVm.maxExpenditureGenerator();
     multiVm.velocity = multiVm.velocityGenerator();
     multiVm.minvelocity = multiVm.minVelocityGenerator();
     multiVm.maxvelocity = multiVm.maxVelocityGenerator();
     multiVm.deadline = multiVm.deadlineGenerator();
 
-    //Auto increment
-    var eventId = index+1;
+    if(index == 0){
+      multiVm.minExpenditure = multiVm.minExpenditureGenerator();
+      multiVm.maxExpenditure = multiVm.maxExpenditureGenerator();
+    }
+
 
     multiVm.factor = {
-      'ID': eventId,
+      'ID': index,
       'Severity Level': multiVm.level,
       'Category': multiVm.category_list[multiVm.category],
       'Resource avg. expenditure': multiVm.expenditure,
@@ -423,6 +425,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       template: 'multiEventOverview.html',
       overlay: true,
       showClose: false,
+      closeByEscape: true,
       scope: $scope,
       className: 'ngdialog-theme-default overview-menu draggable'       
     }).then(function(value){
@@ -464,6 +467,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     // multiVm.map.setCenter(multiVm.marker.position);
 
+
     // //search 
     // searchCircle();
 
@@ -472,9 +476,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // //first $http get all facility location and display
     // //second $http request filter the facilities remove the unused facilities location
     
-    // multiVm.getFaciLoc().then(getTasks);
+    multiVm.getFaciLoc().then(getTasks);
     
-    // multiVm.panelShow = "true";
+    multiVm.panelShow = "true";
   } 
 
 
@@ -483,17 +487,12 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     return $http({
 
       method  : 'POST',
-      url     : '/singleEvent',
+      url     : '/multiEvent',
       //     // set the headers so angular passing info as form data (not request payload)
       headers : { 'Content-Type': 'application/json' },
       data    : {
-                 Severity: multiVm.factor["Severity Level"],
-                 Category: multiVm.factor["Category"],
-                 Expenditure: {min: multiVm.factor['Min expenditure'], max: multiVm.factor['Max expenditure']},
-                 Velocity: {min: multiVm.factor['Min velocity'], max: multiVm.factor['Max velocity']},
-                 Deadline: multiVm.factor["Deadline"],
-                 Location: multiVm.marker.position.toUrlValue(),
-                 ResourceNum: {min: 2, max: 10}
+                  expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
+                  events: multiVm.eventList
                 }
 
       }).then(function success(response) {
@@ -636,22 +635,21 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   multiVm.setDataField = function(index){
     // generate factor
-    // multiVm.factorGenerate(index);  
-
     $mdDialog.show(
       {
         templateUrl: "multiFactorDialog.html",
         clickOutsideToClose: true,
             scope: $scope,
             preserveScope: true,
-            controller: function($scope) {
-      }
+            controller: function($scope){
+
+            }
     });
   };
 
   // reset factor
   multiVm.reset = function () {
-    multiVm.factorGenerate();
+    multiVm.factorGenerate(multiVm.selectedEventIndex);
   }
 
   // close dialog

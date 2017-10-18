@@ -21,7 +21,6 @@ var isAuthenticated = function (req, res, next) {
 	if (req.isAuthenticated())
 		return next();
 	// if the user is not authenticated then redirect him to the login page
-	console.log(req.url);
 	res.redirect('/mobile/login/fail');
 }
 
@@ -97,7 +96,7 @@ module.exports = function(passport, clients, db){
 					for(var i = 0; i < resource_names.length; i++)
 					{
 						var url = gplace.PlaceQuery(req.body.Location, 5000, resource_names[i], resources_list[resource_names[i]].gname);
-						promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, r, db));
+						promises.push(gplace.FacilitiesSearch(url, resource_names[i], req.body.ResourceNum, req.body.Expenditure, req.body.Location, r, db, "Single"));
 					}
 
 					Promise.all(promises).then(function(allData) {
@@ -123,8 +122,9 @@ module.exports = function(passport, clients, db){
 		});
 	});
 
-	router.post('/assignResource', function(req, res, next) {
+	router.post('/singleEvent/assignResource', function(req, res, next) {
 		res.writeHead(200, {'Content-Type': 'application/json'});
+		console.log(req.body.sim_id);
 		dbquery.SimulationDetails(db, req.body.sim_id, function(err, sim_details) {
 			var resource_names = Object.keys(sim_details.RequiredResources);
 			var promises = [];
@@ -136,13 +136,17 @@ module.exports = function(passport, clients, db){
 
 			Promise.all(promises).then(function(allData) {
 				var rtval = [];
+				var stats = []; 
 				var count = 0;
 				var planGenerated = true; 
 				for(var i = 0; i < allData.length; i++)
 				{
 					count = count + allData[i].actualCount;
 					if(allData[i].res != true)
+					{
 						rtval = rtval.concat(allData[i].res);
+						stats.push(allData[i].statistics);
+					}
 					else
 					{
 						planGenerated = false;
@@ -152,7 +156,7 @@ module.exports = function(passport, clients, db){
 				if(planGenerated == true)
 				{
 					console.log("setPlan");
-					dbquery.SetPlan(db, req.body.sim_id, rtval, function (err, results) {
+					dbquery.SetPlan(db, req.body.sim_id, rtval, stats, function (err, results) {
 						if(count == 0)
 						{
 							var response = "Plan is now available,";
@@ -195,7 +199,6 @@ module.exports = function(passport, clients, db){
 			console.log(flag);
 			if(flag == 0) // job accept
 			{
-				console.log("test1");
 				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
 					if(results.ResWaitOn == 0)
 						clients[results.Initiator].emit("sim update", response);	
@@ -206,15 +209,12 @@ module.exports = function(passport, clients, db){
 
 			else if(flag == 1) // no job requested to user
 			{
-				console.log("test2");
 				var rtval = "No job has been assigned to you";				
 			}
 
 			else if(flag == 2) // job declined
 			{
-				console.log("test3");
 				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
-					console.log("test4");
 					if(results.ResWaitOn == 0)
 						clients[results.Initiator].emit("sim update", response);
 
@@ -253,15 +253,16 @@ module.exports = function(passport, clients, db){
 
 	router.get('/mobile/login/success', isAuthenticated, function(req, res){
 		var rtval = "success";
-		res.writeHead(200, {'Content-Type': 'text/plain'});
-		res.write(rtval);
+		var user = {firstName: req.user.firstName, lastName: req.user.lastName, email: req.user.email}; 
+		res.writeHead(200, {'Content-Type': 'application/json'});
+		res.write(JSON.stringify({request: rtval, 'user': user}));
 		return res.end();
 	});
 
 	router.get('/mobile/login/fail', function(req, res, next) {
 		var rtval = "fail";
-		res.writeHead(200, {'Content-Type': 'text/plain'});
-		res.write(rtval);
+		res.writeHead(200, {'Content-Type': 'application/json'});
+		res.write(JSON.stringify({request: rtval}));
 		return res.end();
 	});
 
@@ -326,6 +327,99 @@ module.exports = function(passport, clients, db){
 				console.log("NULL plan");
 			res.end();
 		});
+	});
+
+	router.post('/singleEvent/GetStats', function(req, res, next) {
+		dbquery.GetStats(db, req.body.sim_id, function(err, stats) {
+			res.writeHead(200, {'Content-Type': 'application/json'});
+			if(stats != null)
+			{
+				res.write(JSON.stringify(stats));
+				console.log("Sending Plan");
+			}
+			else
+				console.log("NULL stats");
+			res.end();
+		});
+	});
+
+	// Multi Event Initiate
+	router.post('/multiEvent', function(req, res, next) {
+		console.log(req.body);
+		var radius = 5000;
+		eventsRequired = [];
+		events = req.body.Events;
+		eventInfoPromise = [];
+
+		for(var i = 0; i < events.length; i++)
+		{
+			eventInfoPromise.push(dbquery.PromiseRequiredResources(db, events[i].Category, events[i].Severity, null));
+		}
+
+		Promise.all(eventInfoPromise).then(function(eventsRequiredResources) {
+			var EventFaciltiesSearch = [];
+
+			for(var i = 0; i < events.length; i++)
+			{
+				events[i]["RequireResources"] = eventsRequiredResources[i];
+				var resource_names = Object.keys(eventsRequiredResources[i]);
+
+				for(var j = 0; j < resource_names.length; j++)
+				{
+					var url = gplace.PlaceQuery(events[i].Location, 5000, resource_names[j], eventsRequiredResources[i][resource_names[j]].gname);
+					EventFaciltiesSearch.push(gplace.FacilitiesSearch(url, resource_names[j], req.body.ResourceNum, req.body.Expenditure, events[i].Location, null, db, "Multi"));
+				}
+			}
+
+			Promise.all(EventFaciltiesSearch).then(function(eventFacilities) {		
+				var count = 0;
+				var facilities = [];
+				for(var i = 0; i < events.length; i++)
+				{
+					event_type_count = Object.keys(eventsRequiredResources[i]).length;
+					var pos = count + event_type_count;
+					for(var j = count; j < pos; j++)
+					{
+						for(var k = 0; k < eventFacilities[j].length; k++)
+						{
+							var fname = eventFacilities[j][k].name;
+							if(facilities[fname] == undefined)
+							{
+								rnummax = req.body.ResourceNum.max;
+								rnummin = req.body.ResourceNum.min;
+								rcostmax = req.body.Expenditure.max;
+								rcostmin = req.body.Expenditure.min;
+								
+								eventFacilities[j][k]["resourceNum"] = Math.floor(Math.random() * (rnummax-rnummin+1) + rnummin);
+								eventFacilities[j][k]["resouceCost"] = Math.floor(Math.random() * (rcostmax-rcostmin+1) + rcostmin);
+								eventFacilities[j][k]["events"] = [i]; 
+								facilities[fname] = eventFacilities[j][k]; 
+							}
+
+							else
+							{
+								facilities[fname].events.push(i);
+							}
+						}
+					}
+				}
+
+				var key = Object.keys(facilities);
+				FinalFacilities = [];
+
+				for(var i = 0; i < key.length; i++)
+				{
+					FinalFacilities[i] = facilities[key[i]];
+				}
+
+				dbquery.InsertMultiSimulation(db, req, radius, events, FinalFacilities, function(r) {
+					console.log(r.insertedId);
+					res.writeHead(200, {'Content-Type': 'application/json'});
+					res.write(JSON.stringify({sim_id: r.insertedId, facilities: FinalFacilities}));
+					return res.end();
+				});			
+			});			
+		});		
 	});
 
 	return router;

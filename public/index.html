@@ -76,56 +76,31 @@
         <nav>
           <ul class="clearfix">
             <li class="dropdownList">
-              <div class="dropdown">
-                  <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Simulation Setting
-                  <span class="caret"></span></button>
-                  <ul class="dropdown-menu animated slideInDown" id="option-container">
-                    <li>
-                        <a href="/#/" class="event-option">Single Event</a>
-                    </li>
-                    <li>
-                        <a href="/#/multiEvent" class="event-option">Multiple Events</a>
-                    </li>
-                    <li>
-                        <a href="#" class="event-option">Dynamic Events</a>
-                    </li>
-                  </ul>
+              <div class="dropdown" ng-click="indexVm.listFacility()">
+                <button id="facilityDropDown" class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown" ng-disabled="indexVm.hideFacility">Facilities &nbsp;
+                  <i class="fa fa-building-o" aria-hidden="true"></i>
+                </button>
+                <ul class="dropdown-menu animated slideInDown" ng-show="indexVm.isExist" ng-cloak>
+                  <li ng-repeat="facility in indexVm.facility | unique:'Facility'" >
+                      <a ng-click="indexVm.directToFacility(facility.Facility)">
+                        <h5>{{facility.Facility}}</h5>
+                        <p>{{facility.Type}}</p>
+                      </a>
+                  </li>
+                </ul>
               </div>
             </li>
-            <!-- <li class="dropdownList">
-              <div class="dropdown">
-                  <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Events
-                  <span class="caret"></span></button>
-                  <ul class="dropdown-menu animated slideInDown">
-                    <li>
-                        <a href="#"><h2>Event 1</h2>
-                        <p>Details</p>
-                        <p>Details</p></a>
-                    </li>
-                    <li>
-                        <a href="#"><h2>Event 2</h2>
-                        <p>Details</p>
-                        <p>Details</p></a>
-                    </li>
-                    <li>
-                        <a href="#"><h2>Event 3</h2>
-                        <p>Details</p>
-                        <p>Details</p></a>
-                    </li>
-                  </ul>
-              </div>
-            </li>  -->
             <li class="dropdownList">
-              <div class="dropdown" ng-click="indexVm.listFacility()">
-                  <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown" >Facilities
-                    <!-- <a href="/facilityWindow.html" target="_blank" id="facility-btn"> Facilities</a> -->
+              <div class="dropdown">
+                  <button class="btn btn-primary dropdown-toggle btn-event-adjust" type="button" data-toggle="dropdown">Simulation Setting &nbsp;
+                    <i class="fa fa-cog" aria-hidden="true"></i>
                   </button>
-                  <ul class="dropdown-menu animated slideInDown" ng-show="indexVm.isExist" ng-cloak>
-                    <li ng-repeat="facility in indexVm.facility | unique:'Facility'" >
-                        <a ng-click="indexVm.directToFacility(facility.Facility)">
-                          <h5>{{facility.Facility}}</h5>
-                          <p>{{facility.Type}}</p>
-                        </a>
+                  <ul class="dropdown-menu animated slideInDown" id="option-container">
+                    <li>
+                        <a ng-click="indexVm.routeRedirect('')" class="event-option">Single Event</a>
+                    </li>
+                    <li>
+                        <a ng-click="indexVm.routeRedirect('multiEvent')" class="event-option">Multiple Events</a>
                     </li>
                   </ul>
               </div>

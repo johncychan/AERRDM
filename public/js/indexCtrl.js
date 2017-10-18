@@ -1,12 +1,17 @@
-app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
+app.controller('indexCtrl', function(NgMap, $q, $compile, $route, $scope, $rootScope, $mdDialog, $http, $timeout, $interval, ngDialog, localStorageService, $window, facilitySelected){
 	var indexVm = this;
 	indexVm.isExist = false;
+	indexVm.hideFacility = true;
+
+	$rootScope.$on("CallParentMethod", function(){
+       indexVm.listFacility();
+    });
 
 	indexVm.listFacility = function(){
+		indexVm.hideFacility = false;
 		indexVm.facility = facilitySelected.getFacility();
-		console.log(indexVm.facility);
+
 		indexVm.resource = angular.fromJson(localStorage["allocatedResource"]);
-		console.log(indexVm.resource);
 		if(indexVm.facility.length > 0){
 			indexVm.isExist = true;
 		}
@@ -22,9 +27,14 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $scope, $mdDialog, $ht
 				resourceList.push(resource);
 			}
 		}
-		console.log(resourceList);
 		window.localStorage['resources'] = JSON.stringify(resourceList);
 		window.open("/facilityWindow.html",'_blank');
+	}
+
+	indexVm.routeRedirect = function(url){
+		$route.reload();
+		$window.location.reload();
+		window.location = "/#/"+url;	
 	}
 });
 
