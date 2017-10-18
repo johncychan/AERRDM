@@ -406,6 +406,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     })
     .then($timeout(sendReqtToFac, 20000))
     .then($timeout(receiveResponseFromFac, 28000));
+    // .then($timeout(checkPlan, 35000));
 
 
     singleVm.panelShow = "true";
@@ -516,7 +517,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     var defer = $q.defer();
     console.log(facilityObj);
       for(var i = 0; i < facilityObj.facilities.length; ++i){
-        console.log(facilityObj.facilities[i].location);
+        // console.log(facilityObj.facilities[i].location);
 
         endLoc = singleVm.marker.position;
         polyline[i] = new google.maps.Polyline({
@@ -536,9 +537,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         });
       }
     defer.resolve("resolved");
-    console.log("sendReqtToFac resolved");
-    console.log(singleVm.requestMarkers);
-    console.log(polyline);
+    // console.log("sendReqtToFac resolved");
+    // console.log(singleVm.requestMarkers);
+    // console.log(polyline);
     moveReceiveMarker(endLoc, polyline);
     return defer.promise;
   }
@@ -548,13 +549,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     var poly2 = [];
     var timerHandle = [];
     for (var i = 0; i < polyline.length; i++) {
-        console.log(i);
+        // console.log(i);
         poly2[i] = new google.maps.Polyline({
             path: []
         });
         polyline[i].setMap(singleVm.map);
         singleVm.requestMarkers[i].setMap(singleVm.map);
-        console.log(singleVm.requestMarkers[i]);
+        // console.log(singleVm.requestMarkers[i]);
         startReceiveAnimation(i);
     }
   }
@@ -567,7 +568,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     var defer = $q.defer();
     console.log(facilityObj);
       for(var i = 0; i < facilityObj.facilities.length; ++i){
-        console.log(facilityObj.facilities[i].location);
+        // console.log(facilityObj.facilities[i].location);
 
         endLoc[i] = facilityObj.facilities[i].location;
         polyline[i] = new google.maps.Polyline({
@@ -587,9 +588,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         });
       }
     defer.resolve("resolved");
-    console.log("sendReqtToFac resolved");
-    console.log(singleVm.requestMarkers);
-    console.log(polyline);
+    // console.log("sendReqtToFac resolved");
+    // console.log(singleVm.requestMarkers);
+    // console.log(polyline);
     moveReqMarker(endLoc, polyline);
     return defer.promise;
   }
@@ -599,13 +600,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     var poly2 = [];
     var timerHandle = [];
     for (var i = 0; i < polyline.length; i++) {
-        console.log(i);
+        // console.log(i);
         poly2[i] = new google.maps.Polyline({
             path: []
         });
         polyline[i].setMap(singleVm.map);
         singleVm.requestMarkers[i].setMap(singleVm.map);
-        console.log(singleVm.requestMarkers[i]);
+        // console.log(singleVm.requestMarkers[i]);
         startRequestAnimation(i);
     }
   }
@@ -1339,12 +1340,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       current_point = d;
       if (d > eol[index]) {
           singleVm.requestMarkers[index].setPosition(endLoc[index].latlng);
-          console.log("End of animation");
+          // console.log("End of animation");
           return;
       }
-      console.log(index);
+      // console.log(index);
       var p = polyline[index].GetPointAtDistance(d);
-      console.log(singleVm.requestMarkers[index]);
+      // console.log(singleVm.requestMarkers[index]);
       singleVm.requestMarkers[index].setPosition(p);
       updateRequestPoly(index,d);
       timerHandle[index] =  $timeout(function() {
@@ -1384,12 +1385,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       current_point = d;
       if (d > eol[index]) {
           singleVm.requestMarkers[index].setPosition(singleVm.marker.position);
-          console.log("End of animation");
+          // console.log("End of animation");
           return;
       }
-      console.log(index);
+      // console.log(index);
       var p = polyline[index].GetPointAtDistance(d);
-      console.log(singleVm.requestMarkers[index]);
+      // console.log(singleVm.requestMarkers[index]);
       singleVm.requestMarkers[index].setPosition(p);
       updateReceivePoly(index,d);
       timerHandle[index] =  $timeout(function() {
