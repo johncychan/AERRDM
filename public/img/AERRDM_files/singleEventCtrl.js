@@ -575,7 +575,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           // animation: google.maps.Animation.BOUNCE
       });
     }
-    for(var i = 0; i < singleVm.agentNum; ++i){
+    for(var i = 0; i < singleVm.agentNum - 1; ++i){
       singleVm.agentMarker[i].setMap(null);
     }
 
