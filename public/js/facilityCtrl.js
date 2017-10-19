@@ -9,19 +9,12 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
     facilityVm.simStatis = angular.fromJson(localStorage['simulationStatis']);
     facilityVm.resource = angular.fromJson(localStorage['resources']);
 
-    // console.log(facilityVm.resource);
-    // console.log(eventLocation);
-    // console.log(facilityVm.simStatis);
-    // console.log(facilityVm.selectedFacility);
-
     var loc = facilityVm.selectedFacility.Location;
     console.log(loc);
 
 	NgMap.getMap("map").then(function(map){
         facilityVm.map = map;
         facilityVm.map.setZoom(14);
-        // show search box as defualt
-        // facilityVm.searchExtend();
         var marker = new google.maps.Marker({
             position: loc,
             map: facilityVm.map,
@@ -57,8 +50,4 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
     }, 1000);
     });
 
-    
-
-    
-   
 });
