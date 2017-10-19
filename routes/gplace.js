@@ -3,8 +3,8 @@ var Promise 	= require('promise');
 var request 	= require('request');
 var dbquery	= require('./dbquery.js');
 
-var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyBo2UEeWSKAO5WXkhY38z1ZXmFKwVV6H2c&libraries=places';
-var google_direction_api = 'https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyBo2UEeWSKAO5WXkhY38z1ZXmFKwVV6H2c&libraries=places';
+var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyAujhH1hwdmgb2obrZ_45nyDzPuNfY2qKk&libraries=places';
+var google_direction_api = 'https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAujhH1hwdmgb2obrZ_45nyDzPuNfY2qKk&libraries=places';
 
 // Place Object
 function Place(p, type, rnum, rcost, destination, mode) {

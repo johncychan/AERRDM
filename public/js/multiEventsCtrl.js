@@ -461,19 +461,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     // open progress menu
     multiVm.progrssMenuOpen();
-    // // redirect info window to progress menu
-    // multiVm.infoWinRedirect("progrssMenuOpen");
-
-    // multiVm.map.setCenter(multiVm.marker.position);
-
-
-    // //search 
-    // searchCircle();
-
-    // // sendReqtToFac();
-    // //two http request chainning together
-    // //first $http get all facility location and display
-    // //second $http request filter the facilities remove the unused facilities location
     
     multiVm.getFaciLoc().then(getTasks);
     
@@ -491,7 +478,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       headers : { 'Content-Type': 'application/json' },
       data    : {
                   expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
-                  ResourcesNum: {min: multi.factor['Min resource'], max: multi.factor['Max resource']},
+                  ResourcesNum: {min: multiVm.factor['Min resource'], max: multiVm.factor['Max resource']},
                   events: multiVm.eventList
                 }
 

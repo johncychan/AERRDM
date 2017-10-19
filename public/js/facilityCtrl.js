@@ -2,12 +2,16 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
 	var facilityVm = this;
 
 	var accessData = window.localStorage['selectedFacility'];
-
+    var resourceNum;
+    var markers;
 	facilityVm.selectedFacility = angular.fromJson(accessData);
     var eventLocation = angular.fromJson(localStorage["eventLocation"]);
     facilityVm.eventStatis = angular.fromJson(localStorage['eventStatis']);
     facilityVm.simStatis = angular.fromJson(localStorage['simulationStatis']);
     facilityVm.resource = angular.fromJson(localStorage['resources']);
+    console.log(facilityVm.resource);
+    resourceNum = facilityVm.resource.length;
+
 
     var loc = facilityVm.selectedFacility.Location;
     console.log(loc);
@@ -31,21 +35,23 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         // console.log(marker);
         marker.setMap(facilityVm.map);
         facilityVm.map.setCenter(loc);
+
         
+        
+        console.log(facilityVm.simStatis);
 
-        console.log(facilityVm.selectedFacility);
-
-        $interval(function updateGPS(){
-            
+        $interval(function updateGPS(){            
         // console.log(facilityVm.selectedFacility.id);
         $http({
             method  : 'POST',
             url     : '/singleEvent/UpdatedGPS',
             headers : { 'Content-Type': 'application/json' },
             data    : {
-                        sim_id: facilityVm.selectedFacility.id
+                        sim_id: facilityVm.simStatis.data.sim_id
                       }
         }).then(function success(response){
+            
+
             console.log(response.data);
         })
     }, 2000);
