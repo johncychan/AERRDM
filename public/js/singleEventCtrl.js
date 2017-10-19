@@ -706,6 +706,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     singleVm.allocatedResources = [];
     singleVm.avgVelocity = 0;
     singleVm.avgExpenditure = 0;
+    singleVm.resourceSent = 0;
+
+
+
     for(var i = 0; i < resourceObj.length; i++){
       var type = " ";
       if(resourceObj[i].Type == "fire_station")
@@ -715,16 +719,21 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       else if(resourceObj[i].Type == "police")
         type = "Police Car";
 
+
       singleVm.allocatedResources[i] = {
         Type: type,
         Expenditure: resourceObj[i].Expenditure,
-        Velocity: resourceObj[i].Velocity,
-        Facility: resourceObj[i].Facility
+        Duration: resourceObj[i].Duration.toFixed(2),
+        Distance: resourceObj[i].Distance.toFixed(2),
+        Facility: resourceObj[i].Facility,
       };
 
       singleVm.avgExpenditure += resourceObj[i].Expenditure;
       singleVm.avgVelocity += resourceObj[i].Velocity;
     }
+
+
+
     console.log(singleVm.avgExpenditure);
 
     singleVm.avgExpenditure /= resourceObj.length;
@@ -1057,7 +1066,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
     var element =   "<div>"+
               "<div class=\"infoWin-header-container\">"+
-                "<p id=\"infoWin-header\" class=\"facility-header\">Location</p>"+"<span class=\"facility-name\">"+facility_name+"</span>"+
+                "<div><p id=\"infoWin-header\" class=\"facility-header\">Location</p>"+"<span class=\"facility-name\">"+facility_name+"</span></div>"+
+                "<div><p id=\"infoWin-header\" class=\"facility-header\">Distance</p>"+"<span class=\"facility-name\">"+facilityObj.distance+"</span></div>"+
               "</div> " + 
               "<div>" +
                 "<div id=\"facility-info-container\">"+
@@ -1346,12 +1356,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
                    Category: singleVm.factor["Category"],
                    Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
                    Deadline: singleVm.factor["Deadline"],
-                   Location: singleVm.marker.position.toUrlValue(),
+                   Location: {lat: singleVm.marker.position.lat(), lng: singleVm.marker.position.lng()},
                    ResourceNum: {min: singleVm.factor['Min resource'], max: singleVm.factor['Max resource']}
                   }
 
         }).then(function success(response) {
-            
+            console.log(response);
         });   
     }
 
@@ -1496,18 +1506,16 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
    }
 
 
-          }
 
-      if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
-          if (poly2[i].getPath().getLength() > 1) {
-              poly2[i].getPath().removeAt(poly2[i].getPath().getLength() - 1)
-          }
-              poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
-      } else {
-          poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),singleVm.marker.position.latlng);
+   singleVm.getCount = function(i) {
+    var iCount = iCount || 0;
+    for (var j = 0; j < singleVm.allocatedResources.length; j++) {
+      if (singleVm.allocatedResources[j].Facility == i) {
+        iCount++;
       }
-   }
-
+    }
+    return iCount;
+  }
 
 });
 

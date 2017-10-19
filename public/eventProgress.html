@@ -58,11 +58,11 @@
           </tr>
           <tr class="table-content">
             <td class="factor-key">Average expenditure </td>
-            <td class="factor-value">{{singleVm.factor['Resource avg. expenditure']}}</td>
+            <td class="factor-value"></td>
           </tr>
           <tr class="table-content">
             <td class="factor-key">Average velocity </td>
-            <td class="factor-value">{{singleVm.factor['Resource avg. velocity']}}</td>
+            <td class="factor-value"></td>
           </tr>
         </table>
   		</div>
@@ -118,19 +118,21 @@
           <div>
             <table id="event-info-table"> 
               <tr>
-                <th colspan="4" id="resource-header">Allocated Resources Information</th>
+                <th colspan="6" id="resource-header">Allocated Resources Information</th>
               </tr>
               <tr>
                 <th>Type</th>
                 <th>Facility</th>
-                <th>Expenditure</th>
-                <th>Velocity</th>
+                <th id="expenditure-header">Expenditure</th>
+                <th>Distance (km)</th>
+                <th>Duration (min)</th>
               </tr>
               <tr ng-repeat="resource in singleVm.allocatedResources" class="table-content">
                 <td id="type">{{resource.Type}}</td>
                 <td class="factor-value" id="facility">{{resource.Facility}}</td>
                 <td class="factor-value" id="expenditure">{{resource.Expenditure}}</td>
-                <td class="factor-value">{{resource.Velocity}}</td>
+                <td class="factor-value" id="distance">{{resource.Distance}}</td>
+                <td class="factor-value">{{resource.Duration}}</td>
               </tr>
             </table>
           </div>
@@ -143,8 +145,8 @@
             <tr>
               <th>Severity Level</th>
               <th>Category</th>
-              <th>Average Expenditure</th>
-              <th>Average Velcoity</th>
+              <th>Avg. Expenditure</th>
+              <th>Avg. Velcoity</th>
             </tr>
             <tr class="table-content" style="border: 1px solid #999;">
               <td >Level {{singleVm.factor['Severity Level']}}</td>

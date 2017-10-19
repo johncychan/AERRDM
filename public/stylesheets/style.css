@@ -693,6 +693,10 @@
         margin: 0 0 5px 0;
       }
 
+      .infoWin-header-container > div{
+        padding-top: 5px;
+      }
+
       #infoWin-header{
         color: #004d66;
         font-weight: 500;
@@ -1361,10 +1365,17 @@
         line-height: 1em;
       }
 
+      #resource-info-container #expenditure-header{
+        text-align: left;
+      }
 
       #resource-info-container #expenditure{
         width: 100px;
         padding: 0 10px 0 15px !important;
+        border-right: 0;
+      }
+
+      #resource-info-container #distance{
         border-right: 0;
       }
 

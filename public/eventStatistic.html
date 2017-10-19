@@ -38,22 +38,10 @@
           <tr ng-repeat = "facility in singleVm.allocatedResources | unique:'Facility'">
             <td>{{facility.Type}}</td>
             <td>{{facility.Facility}}</td>
+            <td>{{singleVm.getCount(facility.Facility)}}</td>
           </tr>
         </table>
         <div class="spacing"></div>
-        <table id="event-info-table"> 
-          <tr>
-            <th colspan="2">Vechicle Statistic</th>
-          </tr>
-          <tr >
-            <th>Type</th>
-            <th>Sent By</th>
-          </tr>
-          <tr ng-repeat="resource in singleVm.allocatedResources">
-            <td >{{resource.Type}}</td>
-            <td >{{resource.Facility}}</td>
-          </tr>
-        </table>
         <div class="modal-footer">
           <input type="submit" value="Confirm" class="button event-start" ng-click="confirm(1)" />
         </div>
