@@ -15,8 +15,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var socket = io();
  
   socket.on('sim update', function(msg){
-   console.log(msg);
-   console.log(msg.includes("Plan is now available"));
+   // console.log(msg);
+   // console.log(msg.includes("Plan is now available"));
    if(msg.includes("Plan is now available")){
       console.log("getting plan");
       var msgSplit = msg.split(",");
@@ -429,7 +429,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
       }).then(function success(response) {
 
-        // console.log(response.data);
+        console.log(response.data);
         facilityObj = response.data;
         window.localStorage['simulationStatis'] = JSON.stringify(response);
         
@@ -579,6 +579,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
 
   checkPlan = function(){
+    console.log("checkPlan");
     $http({
 
       method  : 'POST',
@@ -641,7 +642,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           }
 
         }
-        console.log(startLoc);
+        // console.log(startLoc);
 
         $rootScope.$emit("CallParentMethod", {});
         singleVm.resourceAllocation(response.data);
@@ -700,12 +701,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
 
 
-    console.log(singleVm.avgExpenditure);
+    // console.log(singleVm.avgExpenditure);
 
     singleVm.avgExpenditure /= resourceObj.length;
     singleVm.avgVelocity /= resourceObj.length;
-    console.log(singleVm.avgExpenditure);
-    console.log(singleVm.avgVelocity);
+    // console.log(singleVm.avgExpenditure);
+    // console.log(singleVm.avgVelocity);
 
     window.localStorage['allocatedResource'] = JSON.stringify(singleVm.allocatedResources);
     // console.log(singleVm.allocatedResources);
@@ -891,7 +892,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
 
   function createMarker(latlng, type) {
-    console.log(type);
+    // console.log(type);
     var markerIcon;
     if(type == 'hospital')
       markerIcon = "./img/ambulance.svg";
@@ -937,7 +938,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     marker.addListener('click', function($scope){
       marker.infoWin.open(singleVm.map, marker);
     });
-
+    // marker.infoWin.open(singleVm.map, marker);
     // return marker;
   }
 
@@ -964,6 +965,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     marker.addListener('click', function($scope){
       marker.infoWin.open(singleVm.map, marker);
     });
+    // marker.infoWin.open(singleVm.map, marker);
     // console.log(marker);
     // return marker;
   }
@@ -992,6 +994,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     marker.addListener('click', function($scope){
       marker.infoWin.open(singleVm.map, marker);
     });
+    // marker.infoWin.open(singleVm.map, marker);
     // return marker;
   }
 
@@ -1093,7 +1096,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       singleVm.circle.setMap(null);
       for(var i = 0; i < singleVm.requestMarkers.length; ++i){
         singleVm.requestMarkers[i].setMap(null);
-        polyline[i].setMap(null);
+        // console.log(polyline[i]);
+        // polyline[i].setMap(null);
       }
 
       // polyline.setMap(null);
@@ -1339,10 +1343,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       current_point = d;
       if (d > eol[index]) {
           marker[index].setPosition(endLocation[index].latlng);
-          console.log("End of animation");
+          // console.log("End of animation");
           count++;
-          console.log(count);
-          console.log(singleVm.resourcesNum);
+          // console.log(count);
+          // console.log(singleVm.resourcesNum);
           if(count == singleVm.resourcesNum){
             // close progress menu
             singleVm.dialog.close();
@@ -1371,7 +1375,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       marker[index].setPosition(p);
       updatePoly(index,d);
       timerHandle[index] =  $timeout(function() {
-        animate(index, (d + singleVm.step*5 + index));
+        animate(index, (d + singleVm.step*5 + index*0.2));
       }, tick);
   }
 
@@ -1381,7 +1385,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
       poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
               strokeColor:"#FFFF00", strokeWeight:3});
-
       
       animate(index, 50);
       
