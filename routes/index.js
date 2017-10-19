@@ -282,11 +282,24 @@ module.exports = function(passport, clients, db){
 		return res.end();
 	});
 
+	router.post('/mobile/finished', isAuthenticated, function(req, res, next) {
+		var complete = req.body.Complete;
+		
+		if(complete == true)
+		{
+			dbquery.FinishedJob(db, req.user._id, function () {
+				res.writeHead(200, {'Content-Type': 'text/plain'});
+				res.write("OK");
+				return res.end();
+			});
+		}
+	});
+
 	// Change to search based on mobile location
 	router.post('/activeSims', function(req, res, next) {
 		var rtval = [];
 
-		dbquery.ActiveSims(db, req, function(err, sims) {
+		dbquery.UpdatedGPS(db, req, function(err, sims) {
 			if(err)
 				throw err
 			
@@ -420,6 +433,24 @@ module.exports = function(passport, clients, db){
 				});			
 			});			
 		});		
+	});
+
+/*
+	db.collection("Simulations").insertOne({Expenditure: content.Expenditure, ResourceNum: content.ResourceNum, 
+		Radius: radius, start: new Date(), Initiator: req.connection.remoteAddress, Events: events} ,
+
+	generate facility resources
+	assign users
+	
+*/
+
+	router.post('/multiEvent/assignResources', function(req, res, next) {
+		res.writeHead(200, {'Content-Type': 'application/json'});
+		console.log(req.body.sim_id);
+/*		dbquery.SimulationDetails(db, req.body.sim_id, function(err, sim_details) {
+			var Events = req.body.Events;
+			
+		});		*/
 	});
 
 	return router;

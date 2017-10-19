@@ -132,7 +132,7 @@ function DirectionsURL(start_location, end_location)
 	var url = google_direction_api.concat("&origin=", start_location.lat,",",start_location.lng);
 	url = url.concat("&destination=", end_location.lat,",",end_location.lng);
 	url = url.concat("&departure_time=", parseInt(new Date().valueOf()/1000));
-	
+	console.log(url);
 	return url;
 }
 
