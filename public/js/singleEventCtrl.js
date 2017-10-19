@@ -1109,13 +1109,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
             polyline[routeNum] = new google.maps.Polyline({
             path: [],
-                strokeColor: '#FFFF00',
-                strokeWeight: 3 
+                strokeColor: '#1784cd',
+                strokeWeight: 4
                 });
             poly2[routeNum] = new google.maps.Polyline({
                 path: [],
-                strokeColor: '#FFFF00',
-                strokeWeight: 3
+                strokeColor: '#1784cd',
+                strokeWeight: 4
                 });    
 
 
@@ -1294,16 +1294,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         //     // set the headers so angular passing info as form data (not request payload)
         headers : { 'Content-Type': 'application/json' },
         data    : {
-                   Severity: singleVm.factor["Severity Level"],
-                   Category: singleVm.factor["Category"],
-                   Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
-                   Deadline: singleVm.factor["Deadline"],
-                   Location: singleVm.marker.position.toUrlValue(),
-                   ResourceNum: {min: singleVm.factor['Min resource'], max: singleVm.factor['Max resource']}
+                   
                   }
 
         }).then(function success(response) {
-            
+            console.log(response.data);
         });   
     }
 
