@@ -37,7 +37,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
 
         $interval(function updateGPS(){
             
-        console.log(facilityVm.selectedFacility.id);
+        // console.log(facilityVm.selectedFacility.id);
         $http({
             method  : 'POST',
             url     : '/singleEvent/UpdatedGPS',
@@ -46,9 +46,9 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                         sim_id: facilityVm.selectedFacility.id
                       }
         }).then(function success(response){
-            console.log(response);
+            console.log(response.data);
         })
-    }, 1000);
+    }, 2000);
     });
 
 });

@@ -429,7 +429,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
       }).then(function success(response) {
 
-        console.log(response.data);
+        // console.log(response.data);
         facilityObj = response.data;
         window.localStorage['simulationStatis'] = JSON.stringify(response);
         
@@ -466,8 +466,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   }
 
   putFacMarker = function(dataObj){
-    console.log("put facility marker");
-    console.log(dataObj);
+    // console.log("put facility marker");
+    // console.log(dataObj);
       var defer = $q.defer();
       $timeout(function(){
           // sendReqtToFac(response.data);
@@ -637,9 +637,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           // startLoc.push(response.data[i].Location);
           if(startLoc.indexOf(response.data[i]) ==  -1){
             startLoc.push(response.data[i]);
+            // console.log(response.data[i]);
           }
 
         }
+        console.log(startLoc);
 
         $rootScope.$emit("CallParentMethod", {});
         singleVm.resourceAllocation(response.data);
@@ -1065,6 +1067,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
     function setRoutes(){
       // console.log("setRoutes");
+      console.log(startLoc);
       singleVm.circle.setMap(null);
       for(var i = 0; i < singleVm.requestMarkers.length; ++i){
         singleVm.requestMarkers[i].setMap(null);
@@ -1136,7 +1139,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
                     startLocation[routeNum].latlng = legs[i].start_location;
                     startLocation[routeNum].address = legs[i].start_address;
                     // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-                    marker[routeNum] = createMarker(legs[i].start_location,startLoc[i].Type);
+                    // console.log(startLoc[i].Type);
+                    // marker[routeNum] = createMarker(legs[i].start_location,startLoc[i].Type);
                   }
                   endLocation[routeNum].latlng = legs[i].end_location;
                   endLocation[routeNum].address = legs[i].end_address;
@@ -1154,7 +1158,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
                   }
                 }               
           }
-          polyline[routeNum].setMap(singleVm.map);             
+          polyline[routeNum].setMap(singleVm.map);  
+          for(var i = 0; i < startLoc.length; ++i){
+            marker[i] = createMarker(startLoc.Location, startLoc[i].Type);
+          }           
 
           //map.fitBounds(bounds);
 
@@ -1320,8 +1327,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
             getStat();
             // close progress menu
             singleVm.dialog.close();
-
-            // open statistic menu
             
           }
           return;
@@ -1343,6 +1348,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
               strokeColor:"#FFFF00", strokeWeight:3});
 
+      
       animate(index, 50);
       
     }
