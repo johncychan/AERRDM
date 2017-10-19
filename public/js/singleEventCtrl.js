@@ -31,7 +31,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
    }
   });
 
-
   var position;
   var marker = [];
   var facilityMarker = [];
@@ -431,7 +430,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
                  Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
                  Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
                  Deadline: singleVm.factor["Deadline"],
-                 Location: singleVm.marker.position.toUrlValue(),
+                 Location: {lat: singleVm.marker.position.lat(), lng: singleVm.marker.position.lng()},
                  ResourceNum: {min: singleVm.factor['Min resource'], max: singleVm.factor['Max resource']}
                 }
 
@@ -611,11 +610,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
 
   checkPlan = function(){
-    console.log("check plan");
     $http({
 
       method  : 'POST',
-      url     : '/assignResource',
+      url     : '/singleEvent/assignResource',
       headers : { 'Content-Type': 'application/json' },
       data    : {
                   sim_id: facilityObj.sim_id
@@ -1210,7 +1208,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
           $timeout(function(){
             startAnimation(routeNum)
-
           }, 6000);  
         }
       } 
@@ -1370,7 +1367,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           console.log(singleVm.resourcesNum);
           if(count == singleVm.resourcesNum){
 
-
             // close progress menu
             singleVm.dialog.close();
 
@@ -1481,11 +1477,24 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
       receiveAnimate(index, 50);
     }
-
+  
      function updateReceivePoly(i,d) {
     // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
       if (poly2[i].getPath().getLength() > 20) {
             poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
+
+          }
+
+      if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
+          if (poly2[i].getPath().getLength() > 1) {
+              poly2[i].getPath().removeAt(poly2[i].getPath().getLength() - 1)
+          }
+              poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
+      } else {
+          poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),singleVm.marker.position.latlng);
+      }
+   }
+
 
           }
 

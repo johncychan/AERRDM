@@ -38,7 +38,6 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         // console.log(marker);
         marker.setMap(facilityVm.map);
         facilityVm.map.setCenter(loc);
-        
 
         console.log(facilityVm.selectedFacility);
 
