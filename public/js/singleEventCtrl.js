@@ -651,10 +651,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           }
 
         }
-<<<<<<< HEAD
-        // console.log(startLoc);
-=======
->>>>>>> 000b9e0e4c7e8659919ee6a5a4571b9a288d7a68
 
         $rootScope.$emit("CallParentMethod", {});
         singleVm.resourceAllocation(response.data);
@@ -710,21 +706,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       singleVm.avgExpenditure += resourceObj[i].Expenditure;
       singleVm.avgVelocity += resourceObj[i].Velocity;
     }
-
-<<<<<<< HEAD
-
-
     // console.log(singleVm.avgExpenditure);
 
     singleVm.avgExpenditure /= resourceObj.length;
     singleVm.avgVelocity /= resourceObj.length;
     // console.log(singleVm.avgExpenditure);
     // console.log(singleVm.avgVelocity);
-=======
-    singleVm.avgExpenditure /= resourceObj.length;
-    singleVm.avgVelocity /= resourceObj.length;
-
->>>>>>> 000b9e0e4c7e8659919ee6a5a4571b9a288d7a68
 
     window.localStorage['allocatedResource'] = JSON.stringify(singleVm.allocatedResources);
     // console.log(singleVm.allocatedResources);
