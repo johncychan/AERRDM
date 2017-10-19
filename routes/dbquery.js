@@ -56,7 +56,7 @@ function FindAvaliableUser(db, sim_details, resource, callback)
 	console.log(date);
 	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}, Timestamp: {$gt: date}}, 
 		{$set: {active: { sim_id: sim_details._id, Severity: sim_details.Severity, Category: sim_details.Category,
-				StartPoint: start, EndPoint: end, Deadline: sim_details.Deadline, Responded: false}
+				StartPoint: start, EndPoint: end, Deadline: sim_details.Deadline, Responded: false, Complete: false}
 				}
 		}, 
 		function(err, doc) {
@@ -73,7 +73,7 @@ function CheckJobRequest(db, user_id, callback)
 {
 	db.collection("users").update({_id: mongodb.ObjectId(user_id)}, {$set: {Timestamp: new Date()}}, function() {
 		console.log("update done");
-		db.collection("users").find({_id: mongodb.ObjectId(user_id), active: {$exists: true}}, {Location:1, active:1}).toArray(function (err, docs) {
+		db.collection("users").find({_id: mongodb.ObjectId(user_id), "active.Complete": false}, {Location:1, active:1}).toArray(function (err, docs) {
 			if(docs.length == 1)
 			{
 				if(docs[0].active.Responded == true)
@@ -262,7 +262,7 @@ function InsertMultiSimulation(db, req, radius, events, facilities, callback)
 {
 	var content = req.body;
 	db.collection("Simulations").insertOne({Expenditure: content.Expenditure, ResourceNum: content.ResourceNum, 
-		Radius: radius, start: new Date(), Initiator: req.connection.remoteAddress, Events: events} ,
+		Radius: radius, start: new Date(), Initiator: req.connection.remoteAddress, Events: events, Facilities: facilities} ,
 		function(err, r) {
 			console.log(r.insertedId);
 			if(err)
@@ -272,6 +272,23 @@ function InsertMultiSimulation(db, req, radius, events, facilities, callback)
 	}); 
 }
 
+function FinishedJob(db, user_id, callback)
+{
+	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user._id)}, 
+		{
+			$set: {			
+			"active.Complete" : true,
+			"Timestamp" : new Date()
+			}
+		},
+		function(err, doc) {
+			if (err)
+				throw err;
+
+			callback();
+		}
+	);
+}
 
 module.exports.RequiredResources = RequiredResources;
 module.exports.PromiseRequiredResources = PromiseRequiredResources;
@@ -293,3 +310,4 @@ module.exports.ResetUserBySimId = ResetUserBySimId;
 module.exports.Response = Response;
 module.exports.UpdateSimResponses = UpdateSimResponses;
 module.exports.InsertMultiSimulation = InsertMultiSimulation;
+module.exports.FinishedJob = FinishedJob;

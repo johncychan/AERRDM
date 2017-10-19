@@ -9,19 +9,12 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
     facilityVm.simStatis = angular.fromJson(localStorage['simulationStatis']);
     facilityVm.resource = angular.fromJson(localStorage['resources']);
 
-    // console.log(facilityVm.resource);
-    // console.log(eventLocation);
-    // console.log(facilityVm.simStatis);
-    // console.log(facilityVm.selectedFacility);
-
     var loc = facilityVm.selectedFacility.Location;
     console.log(loc);
 
 	NgMap.getMap("map").then(function(map){
         facilityVm.map = map;
         facilityVm.map.setZoom(14);
-        // show search box as defualt
-        // facilityVm.searchExtend();
         var marker = new google.maps.Marker({
             position: loc,
             map: facilityVm.map,
@@ -38,12 +31,13 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         // console.log(marker);
         marker.setMap(facilityVm.map);
         facilityVm.map.setCenter(loc);
+        
 
         console.log(facilityVm.selectedFacility);
 
         $interval(function updateGPS(){
             
-        console.log(facilityVm.selectedFacility.id);
+        // console.log(facilityVm.selectedFacility.id);
         $http({
             method  : 'POST',
             url     : '/singleEvent/UpdatedGPS',
@@ -52,13 +46,9 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                         sim_id: facilityVm.selectedFacility.id
                       }
         }).then(function success(response){
-            console.log(response);
+            console.log(response.data);
         })
-    }, 1000);
+    }, 2000);
     });
 
-    
-
-    
-   
 });
