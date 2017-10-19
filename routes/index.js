@@ -89,7 +89,7 @@ module.exports = function(passport, clients, db){
 			if(resources_list)
 			{
 				dbquery.InsertSimulation(db, req, resources_list, radius, function(err, r) {
-		
+					console.log(r.insertedId);
 					var resource_names = Object.keys(resources_list);
 					console.log(resource_names);	
 					var promises = [];
@@ -157,7 +157,7 @@ module.exports = function(passport, clients, db){
 				if(planGenerated == true)
 				{
 					console.log("setPlan");
-					dbquery.SetPlan(db, req.body.sim_id, rtval, stats, function (err, results) {
+					dbquery.SetPlan(db, req.body.sim_id, rtval, stats, count, function (err, results) {
 						if(count == 0)
 						{
 							var response = "Plan is now available,";
@@ -200,7 +200,8 @@ module.exports = function(passport, clients, db){
 			console.log(flag);
 			if(flag == 0) // job accept
 			{
-				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
+				dbquery.UpdateSimResponses(db, req.body.sim_id, -1, function (err, results) {
+					console.log("\n\n\n " + results.ResWaitOn);
 					if(results.ResWaitOn == 0)
 						clients[results.Initiator].emit("sim update", response);	
 
