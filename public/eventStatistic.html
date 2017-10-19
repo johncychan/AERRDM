@@ -4,7 +4,7 @@
 			<div class="icon-container">
 				<span class="glyphicon glyphicon-info-sign" id="progress-title-icon"></span>
 			</div>
-			<span class="progress-title">Event Overview</span>
+			<span class="progress-title">Event Statistic</span>
 		</div>	
 	</div>
 
@@ -13,25 +13,19 @@
   		<div id="event-info-container">
   			<table id="event-info-table"> 
           <tr>
-            <th colspan="5">Events Information</th>
+            <th colspan="4">Statistic Information</th>
           </tr>
           <tr>
-            <th>ID</th>
             <th>Category</th>
-            <th>Severity</th>
-            <th>Resources needed</th>
-            <th>Average Deadline</th>
+            <th>Total Resources</th>
+            <th>Total Facilities</th>
+            <th>Total Expenditure</th>
           </tr>
-          <tr ng-repeat="event in multiVm.eventList">
-            <td>{{event.ID}}</td>
-            <td>{{event.Category}}</td>
-            <td>Level {{event['Severity Level']}}</td>
-            <td>TBC</td>
-            <td>{{event.Deadline}}</td>
+          <tr >
+            
           </tr>
         </table>
         <div class="modal-footer">
-          <button type="button" class="button event-setting-reset ripple" ng-click="closeThisDialog(0)">Cancel</button>
           <input type="submit" value="Confirm" class="button event-start" ng-click="confirm(1)" />
         </div>
   		</div>
