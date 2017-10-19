@@ -46,8 +46,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var polylines = [];
   var requestMarkers = [];
   singleVm.requestMarkers = [];
+  singleVm.finalPlanMarker = [];
   singleVm.sendMessageLine = [];
   singleVm.messageLine = [];
+  singleVm.sendFinalLine = [];
+  singleVm.finalLine = [];
+  singleVm.distinctFac = [];
+  singleVm.totalInvolved = 0;
+
+  singleVm.facMarker = [];
 
   var count = 0;
   var startLocation = new Array();
@@ -404,6 +411,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     })
     .then($timeout(sendReqtToFac, 20000))
     .then($timeout(receiveResponseFromFac, 28000))
+    .then($timeout(sendFinalToFac, 45000))
     .then($timeout(getStat, 29000))
     .then($timeout(checkPlan, 10000));
 
@@ -541,6 +549,81 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     }
   }
 
+  sendFinalToFac = function(){
+
+    for(var i = 0; i < singleVm.sendMessageLine.length; i++){
+      singleVm.sendMessageLine[i].setMap(null);
+    }
+
+    var defer = $q.defer();
+    console.log(singleVm.distinctFac);
+      for(var i = 0; i < singleVm.distinctFac.length; ++i){
+        // console.log(facilityObj.facilities[i].location);
+
+        endLoc[i] = singleVm.distinctFac[i].Location;
+        singleVm.sendFinalLine[i] = new google.maps.Polyline({
+          path: [singleVm.marker.position, singleVm.distinctFac[i].Location],
+
+          geodestic: true,
+          strokeColor: '#00ace6',
+          strokeOpacity: 0.6,
+          strokeWeight: 2
+        });
+
+          singleVm.finalPlanMarker[i] = new google.maps.Marker({
+            position: singleVm.marker.position,
+            map: singleVm.map,
+            icon: "img/mess.svg"
+            // animation: google.maps.Animation.BOUNCE
+        });
+      }
+    defer.resolve("resolved");
+    moveFinalMarker(endLoc, polyline);
+    return defer.promise;
+  }
+
+  moveFinalMarker = function(endLoc, polyline){
+    var eol = [];
+    // var poly2 = [];
+    var timerHandle = [];
+    for (var i = 0; i < singleVm.sendFinalLine.length; i++) {
+        // console.log(i);
+        singleVm.messageLine[i] = new google.maps.Polyline({
+            path: []
+        });
+        singleVm.sendFinalLine[i].setMap(singleVm.map);
+        singleVm.finalPlanMarker[i].setMap(singleVm.map);
+        // console.log(singleVm.requestMarkers[i]);
+        startSendFinalAnimation(i);
+    }
+  }
+
+  function finalPlanAnimate(index,d) {
+      markerStarted = true;
+      current_point = d;
+      if (d > eol[index]) {
+          singleVm.finalPlanMarker[index].setPosition(endLoc[index].latlng);
+          // console.log("End of animation");
+          return;
+      }
+      var p = singleVm.sendFinalLine[index].GetPointAtDistance(d);
+      singleVm.finalPlanMarker[index].setPosition(p);
+      updateRequestPoly(index,d);
+      timerHandle[index] =  $timeout(function() {
+        finalPlanAnimate(index, (d + 100));
+      }, tick);
+  }
+
+  function startSendFinalAnimation(index){
+
+      eol[index] = singleVm.sendFinalLine[index].Distance();
+
+      singleVm.finalLine[index] = new google.maps.Polyline({path: [singleVm.sendFinalLine[index].getPath().getAt(0)],
+              strokeColor:"#FFFF00", strokeWeight:3});
+
+      finalPlanAnimate(index, 50);
+    }
+
   sendReqtToFac = function(){
     console.log("put message marker");
     var defer = $q.defer();
@@ -642,6 +725,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       }
     }).then(function success(response){
         console.log(response.data);
+
+        var keys = [];
+
         singleVm.resourcesNum = response.data.length;
         for(var i = 0; i < response.data.length; ++i){
           // startLoc.push(response.data[i].Location);
@@ -651,6 +737,18 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           }
 
         }
+        // get distinct facility
+        angular.forEach(startLoc, function(item){
+          var key = item['Facility'];
+          if(keys.indexOf(key) === -1){
+            keys.push(key);
+            singleVm.distinctFac.push(item);
+          }
+        });
+
+        singleVm.totalInvolved = singleVm.distinctFac.length;
+        
+
 
         $rootScope.$emit("CallParentMethod", {});
         singleVm.resourceAllocation(response.data);
@@ -1105,6 +1203,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         // singleVm.messageLine[i].setMap(null);
       }
 
+      for(var i = 0; i < singleVm.sendFinalLine.length; i++){
+        singleVm.sendFinalLine[i].setMap(null);
+      }
+
 
 
       // polyline.setMap(null);
@@ -1343,13 +1445,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
             statObj = response.data;
 
             singleVm.totalResourceNum = 0;
-            singleVm.totalExpenditure = 0;
-            for(var i = 0; i < response.data.length; i++){
-              singleVm.totalResourceNum+=response.data[i].num_resources;
-              singleVm.totalExpenditure+=response.data[i].total_expenditure;
+            var sumExpenditure = 0;
+            var sumTime = 0;
+            for(var i = 0; i < statObj.length; i++){
+              singleVm.totalResourceNum+=statObj[i].num_resources;
+              sumExpenditure+=statObj[i].total_expenditure;
+              sumTime+=statObj[i].completion_time;
             }
-
-            console.log(singleVm.totalExpenditure);
+            singleVm.totalCompleteTime = sumTime.toFixed(2);
+            singleVm.totalExpenditure = sumExpenditure.toFixed(2);
         });   
     }
 
@@ -1374,7 +1478,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
               showClose: false,
               closeByEscape: false,
               scope: $scope,
-              className: 'ngdialog-theme-default statistic-menu'       
+              className: 'ngdialog-theme-default statistic-menu draggable'       
             }).then(function(value){
                 /* confirm end simulation
                       clear marker, polyline, event

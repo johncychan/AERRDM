@@ -8,24 +8,26 @@
 		</div>	
 	</div>
 
-	<div id="overview-content">
+	<div id="stat-content">
     <div class="info-row clearfix">
   		<div id="event-info-container">
   			<table id="event-info-table"> 
           <tr>
-            <th colspan="4">Overall Statistic</th>
+            <th colspan="5">Overall Statistic</th>
           </tr>
-          <tr>
+          <tr >
             <th>Total Nearby Facilities</th>
             <th>Total Involved Facilities</th>
             <th>Total Resources</th>
             <th>Total Expenditure</th>
+            <th>Time to Complete</th>
           </tr>
           <tr >
             <td>{{singleVm.facilitiesSum['Total']}}</td>
-            <td>TBC</td>
+            <td>{{singleVm.totalInvolved}}</td>
             <td>{{singleVm.totalResourceNum}}</td>
             <td>{{singleVm.totalExpenditure}}</td>
+            <td>{{singleVm.totalCompleteTime}}</td>
           </tr>
         </table>
         <div class="spacing"></div>
