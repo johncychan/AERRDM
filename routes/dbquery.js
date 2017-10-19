@@ -50,10 +50,13 @@ function FindAvaliableUser(db, sim_details, resource, callback)
 	var start = resource.Location.lat.toString();
 	start = start.concat(",");
 	start = start.concat(resource.Location.lng);
+	var end = sim_details.Location.lat.toString();
+	end = end.concat(",");
+	end = end.concat(sim_details.Location.lng);
 	console.log(date);
 	db.collection("users").findOneAndUpdate({facility: resource.Facility, active:{$exists: false}, Timestamp: {$gt: date}}, 
 		{$set: {active: { sim_id: sim_details._id, Severity: sim_details.Severity, Category: sim_details.Category,
-				StartPoint: start, EndPoint: sim_details.Location, Deadline: sim_details.Deadline, Responded: false}
+				StartPoint: start, EndPoint: end, Deadline: sim_details.Deadline, Responded: false}
 				}
 		}, 
 		function(err, doc) {
