@@ -6,6 +6,7 @@ var dbquery	= require('./dbquery.js');
 var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyAujhH1hwdmgb2obrZ_45nyDzPuNfY2qKk&libraries=places';
 var google_direction_api = 'https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAujhH1hwdmgb2obrZ_45nyDzPuNfY2qKk&libraries=places';
 
+
 // Place Object
 function Place(p, type, rnum, rcost, destination, mode) {
 	this.name = p.name;

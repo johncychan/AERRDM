@@ -1045,6 +1045,40 @@
         padding: 5px 10px;
       }
 
+      #stat-content{
+        padding: 10px;
+        width: 100%;
+        margin-top: 12px;
+      }
+
+      #stat-content #event-info-container{
+        width: 100%;
+      }
+
+      #stat-content #event-info-container #event-info-table{
+        width: 95%;
+        margin: 0 auto;
+      }
+
+      #stat-content th:not(:first-child){
+        line-height: 1.5em;
+        padding: 10px 0;
+      }
+
+      #stat-content th{
+        border: 0;
+        border-bottom: 2px solid #FFF !important;
+      }
+
+      #stat-content tr:nth-child(odd){
+        background-color: #f7f7f7;
+      }
+
+      #stat-content td{
+        text-align: center;
+        padding: 5px 10px;
+      }
+
       /*[id^=ngdialog] */.ngdialog-content{
         box-shadow: 2px 2px 5px rgba(0,0,0,.2) !important;
         padding: 0 !important;
@@ -1583,20 +1617,20 @@
       .simulation-menu-open:checked ~ .simulation-menu-item:nth-child(3) {
         -webkit-transition-duration: 180ms;
                 transition-duration: 180ms;
-        -webkit-transform: translate3d(0.08361px, -88.99997px, 0);
-                transform: translate3d(0.08361px, -88.99997px, 0);
+        -webkit-transform: translate3d(0.08361px, -80.99997px, 0);
+                transform: translate3d(0.08361px, -80.99997px, 0);
       }
       .simulation-menu-open:checked ~ .simulation-menu-item:nth-child(4) {
         -webkit-transition-duration: 280ms;
                 transition-duration: 280ms;
-        -webkit-transform: translate3d(70.9466px, -40.47586px, 0);
-                transform: translate3d(70.9466px, -40.47586px, 0);
+        -webkit-transform: translate3d(0.08361px, -150.47586px, 0);
+                transform: translate3d(0.08361px, -150.47586px, 0);
       }
       .simulation-menu-open:checked ~ .simulation-menu-item:nth-child(5) {
         -webkit-transition-duration: 380ms;
                 transition-duration: 380ms;
-        -webkit-transform: translate3d(70.9466px, 40.47586px, 0);
-                transform: translate3d(70.9466px, 40.47586px, 0);
+        -webkit-transform: translate3d(0.08361px, -220.47586px, 0);
+                transform: translate3d(0.08361px, -220.47586px, 0);
       }
       .simulation-menu-open:checked ~ .simulation-menu-item:nth-child(6) {
         -webkit-transition-duration: 480ms;
