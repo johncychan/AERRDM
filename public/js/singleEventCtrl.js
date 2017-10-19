@@ -432,7 +432,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
                  Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
                  Deadline: singleVm.factor["Deadline"],
                  Location: singleVm.marker.position.toUrlValue(),
-                 ResourceNum: {min: 2, max: 10}
+                 ResourceNum: {min: singleVm.factor['Min resource'], max: singleVm.factor['Max resource']}
                 }
 
       }).then(function success(response) {
@@ -705,7 +705,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   }
 
   singleVm.resourceAllocation = function(resourceObj){
-    singleVm.allocatedResources = []
+    singleVm.allocatedResources = [];
+    singleVm.avgVelocity = 0;
+    singleVm.avgExpenditure = 0;
     for(var i = 0; i < resourceObj.length; i++){
       var type = " ";
       if(resourceObj[i].Type == "fire_station")
@@ -721,7 +723,17 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         Velocity: resourceObj[i].Velocity,
         Facility: resourceObj[i].Facility
       };
+
+      singleVm.avgExpenditure += resourceObj[i].Expenditure;
+      singleVm.avgVelocity += resourceObj[i].Velocity;
     }
+    console.log(singleVm.avgExpenditure);
+
+    singleVm.avgExpenditure /= resourceObj.length;
+    singleVm.avgVelocity /= resourceObj.length;
+    console.log(singleVm.avgExpenditure);
+    console.log(singleVm.avgVelocity);
+
     window.localStorage['allocatedResource'] = JSON.stringify(singleVm.allocatedResources);
     // console.log(singleVm.allocatedResources);
   }
@@ -1488,6 +1500,23 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
    }
 
 
+});
+
+
+app.filter('unique', function(){
+  return function(collection, keyname){
+    var output = [];
+    var keys = [];
+
+    angular.forEach(collection, function(item){
+      var key = item[keyname];
+      if(keys.indexOf(key) === -1){
+        keys.push(key);
+        output.push(item);
+      }
+    });
+    return output;
+  };
 });
 
 app.controller('AppCtrl', function ($scope, $mdSidenav) {

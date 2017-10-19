@@ -4,7 +4,7 @@
 			<div class="icon-container">
 				<span class="glyphicon glyphicon-info-sign" id="progress-title-icon"></span>
 			</div>
-			<span class="progress-title">Event Statistic</span>
+			<span class="progress-title">Statistic Information</span>
 		</div>	
 	</div>
 
@@ -13,16 +13,45 @@
   		<div id="event-info-container">
   			<table id="event-info-table"> 
           <tr>
-            <th colspan="4">Statistic Information</th>
+            <th colspan="4">Overall Statistic</th>
           </tr>
           <tr>
-            <th>Category</th>
+            <th>Total Nearby Facilities</th>
+            <th>Total Involved Facilities</th>
             <th>Total Resources</th>
-            <th>Total Facilities</th>
             <th>Total Expenditure</th>
           </tr>
           <tr >
             
+          </tr>
+        </table>
+        <div class="spacing"></div>
+        <table id="event-info-table"> 
+          <tr>
+            <th colspan="3">Involved Facilities Statistic</th>
+          </tr>
+          <tr>
+            <th>Type</th>
+            <th>Facility Name</th>
+            <th>Resources Sent</th>
+          </tr>
+          <tr ng-repeat = "facility in singleVm.allocatedResources | unique:'Facility'">
+            <td>{{facility.Type}}</td>
+            <td>{{facility.Facility}}</td>
+          </tr>
+        </table>
+        <div class="spacing"></div>
+        <table id="event-info-table"> 
+          <tr>
+            <th colspan="2">Vechicle Statistic</th>
+          </tr>
+          <tr >
+            <th>Type</th>
+            <th>Sent By</th>
+          </tr>
+          <tr ng-repeat="resource in singleVm.allocatedResources">
+            <td >{{resource.Type}}</td>
+            <td >{{resource.Facility}}</td>
           </tr>
         </table>
         <div class="modal-footer">

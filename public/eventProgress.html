@@ -56,14 +56,10 @@
             <td class="factor-key">Event Category </td>
             <td class="factor-value">{{singleVm.factor['Category']}}</td>
           </tr>
-          <tr class="table-content">
+          <!-- <tr class="table-content">
             <td class="factor-key">Average expenditure </td>
             <td class="factor-value">{{singleVm.factor['Resource avg. expenditure']}}</td>
-          </tr>
-          <tr class="table-content">
-            <td class="factor-key">Average velocity </td>
-            <td class="factor-value">{{singleVm.factor['Resource avg. velocity']}}</td>
-          </tr>
+          </tr> -->
         </table>
   		</div>
       <div id="task-info-container" ng-show = "singleVm.taskShow" ng-cloak>
@@ -144,13 +140,13 @@
               <th>Severity Level</th>
               <th>Category</th>
               <th>Average Expenditure</th>
-              <th>Average Velocity</th>
+              <th>Average Velcoity</th>
             </tr>
             <tr class="table-content" style="border: 1px solid #999;">
               <td >Level {{singleVm.factor['Severity Level']}}</td>
-              <td >{{singleVm.factor['Category']}}</td>
-              <td >{{singleVm.factor['Resource avg. expenditure']}}</td>
-              <td >{{singleVm.factor['Resource avg. velocity']}}</td>
+              <td style="text-align: center;">{{singleVm.factor['Category']}}</td>
+              <td style="text-align: center;">{{singleVm.avgExpenditure}}</td>
+              <td style="text-align: center;">{{singleVm.avgVelocity}}</td>
             </tr>
           </table>
         </md-tab>

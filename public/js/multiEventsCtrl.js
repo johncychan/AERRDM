@@ -373,7 +373,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       multiVm.maxExpenditure = multiVm.maxExpenditureGenerator();
     }
 
-
     multiVm.factor = {
       'ID': index,
       'Severity Level': multiVm.level,
@@ -385,7 +384,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       'Max velocity': multiVm.maxvelocity,
       'Resource avg. velocity': multiVm.velocity,
       'Deadline': multiVm.deadline,
-      'Location': multiVm.marker.position.toUrlValue()
+      'Location': {lat: multiVm.marker.position.lat(), lng: multiVm.marker.position.lng()}
     }
 
     console.log("Event List Index: "+index);
@@ -492,6 +491,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       headers : { 'Content-Type': 'application/json' },
       data    : {
                   expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
+                  ResourcesNum: {min: multi.factor['Min resource'], max: multi.factor['Max resource']},
                   events: multiVm.eventList
                 }
 

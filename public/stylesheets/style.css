@@ -990,14 +990,14 @@
 
       .statistic-menu{
         margin: auto;
-        width: 650px;
+        width: 600px;
         position: absolute !important;
         overflow: hidden !important;
         opacity: 1;
       }
 
       .statistic-menu .ngdialog-content{
-        width: 650px !important;
+        width: 590px !important;
       }
 
       .overview-menu{
@@ -1393,6 +1393,10 @@
         /*line-height: 2;*/
       }
       /* end event progress */
+
+      .spacing{
+        padding: 10px 17px 10px 17px;
+      }
 
       /* simluation setting panel end */
       .simulation-menu {
