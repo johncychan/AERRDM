@@ -693,6 +693,10 @@
         margin: 0 0 5px 0;
       }
 
+      .infoWin-header-container > div{
+        padding-top: 5px;
+      }
+
       #infoWin-header{
         color: #004d66;
         font-weight: 500;
@@ -990,14 +994,14 @@
 
       .statistic-menu{
         margin: auto;
-        width: 650px;
+        width: 600px;
         position: absolute !important;
         overflow: hidden !important;
         opacity: 1;
       }
 
       .statistic-menu .ngdialog-content{
-        width: 650px !important;
+        width: 590px !important;
       }
 
       .overview-menu{
@@ -1361,10 +1365,17 @@
         line-height: 1em;
       }
 
+      #resource-info-container #expenditure-header{
+        text-align: left;
+      }
 
       #resource-info-container #expenditure{
         width: 100px;
         padding: 0 10px 0 15px !important;
+        border-right: 0;
+      }
+
+      #resource-info-container #distance{
         border-right: 0;
       }
 
@@ -1393,6 +1404,10 @@
         /*line-height: 2;*/
       }
       /* end event progress */
+
+      .spacing{
+        padding: 10px 17px 10px 17px;
+      }
 
       /* simluation setting panel end */
       .simulation-menu {

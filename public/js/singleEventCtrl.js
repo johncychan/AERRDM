@@ -424,7 +424,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
                  Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
                  Deadline: singleVm.factor["Deadline"],
                  Location: {lat: singleVm.marker.position.lat(), lng: singleVm.marker.position.lng()},
-                 ResourceNum: {min: 2, max: 10}
+                 ResourceNum: {min: singleVm.factor['Min resource'], max: singleVm.factor['Max resource']}
                 }
 
       }).then(function success(response) {
@@ -669,7 +669,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   }
 
   singleVm.resourceAllocation = function(resourceObj){
-    singleVm.allocatedResources = []
+    singleVm.allocatedResources = [];
+    singleVm.avgVelocity = 0;
+    singleVm.avgExpenditure = 0;
+    singleVm.resourceSent = 0;
+
+
+
     for(var i = 0; i < resourceObj.length; i++){
       var type = " ";
       if(resourceObj[i].Type == "fire_station")
@@ -679,13 +685,28 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       else if(resourceObj[i].Type == "police")
         type = "Police Car";
 
+
       singleVm.allocatedResources[i] = {
         Type: type,
         Expenditure: resourceObj[i].Expenditure,
-        Velocity: resourceObj[i].Velocity,
-        Facility: resourceObj[i].Facility
+        Duration: resourceObj[i].Duration.toFixed(2),
+        Distance: resourceObj[i].Distance.toFixed(2),
+        Facility: resourceObj[i].Facility,
       };
+
+      singleVm.avgExpenditure += resourceObj[i].Expenditure;
+      singleVm.avgVelocity += resourceObj[i].Velocity;
     }
+
+
+
+    console.log(singleVm.avgExpenditure);
+
+    singleVm.avgExpenditure /= resourceObj.length;
+    singleVm.avgVelocity /= resourceObj.length;
+    console.log(singleVm.avgExpenditure);
+    console.log(singleVm.avgVelocity);
+
     window.localStorage['allocatedResource'] = JSON.stringify(singleVm.allocatedResources);
     // console.log(singleVm.allocatedResources);
   }
@@ -1011,7 +1032,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
     var element =   "<div>"+
               "<div class=\"infoWin-header-container\">"+
-                "<p id=\"infoWin-header\" class=\"facility-header\">Location</p>"+"<span class=\"facility-name\">"+facility_name+"</span>"+
+                "<div><p id=\"infoWin-header\" class=\"facility-header\">Location</p>"+"<span class=\"facility-name\">"+facility_name+"</span></div>"+
+                "<div><p id=\"infoWin-header\" class=\"facility-header\">Distance</p>"+"<span class=\"facility-name\">"+facilityObj.distance+"</span></div>"+
               "</div> " + 
               "<div>" +
                 "<div id=\"facility-info-container\">"+
@@ -1167,7 +1189,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
           $timeout(function(){
             startAnimation(routeNum)
-
           }, 6000);  
         }
       } 
@@ -1323,11 +1344,24 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           console.log(count);
           console.log(singleVm.resourcesNum);
           if(count == singleVm.resourcesNum){
-
-            getStat();
             // close progress menu
             singleVm.dialog.close();
-            
+
+            // open statistic menu
+            ngDialog.openConfirm({ 
+              template: 'eventStatistic.html',
+              overlay: true,
+              showClose: false,
+              closeByEscape: false,
+              scope: $scope,
+              className: 'ngdialog-theme-default statistic-menu'       
+            }).then(function(value){
+                /* confirm end simulation
+                      clear marker, polyline, event
+                */
+                $route.reload();
+                $window.location.reload();
+            });
           }
           return;
       }
@@ -1421,7 +1455,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
       receiveAnimate(index, 50);
     }
-
+  
      function updateReceivePoly(i,d) {
     // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
       if (poly2[i].getPath().getLength() > 20) {
@@ -1440,6 +1474,34 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
    }
 
 
+
+   singleVm.getCount = function(i) {
+    var iCount = iCount || 0;
+    for (var j = 0; j < singleVm.allocatedResources.length; j++) {
+      if (singleVm.allocatedResources[j].Facility == i) {
+        iCount++;
+      }
+    }
+    return iCount;
+  }
+
+});
+
+
+app.filter('unique', function(){
+  return function(collection, keyname){
+    var output = [];
+    var keys = [];
+
+    angular.forEach(collection, function(item){
+      var key = item[keyname];
+      if(keys.indexOf(key) === -1){
+        keys.push(key);
+        output.push(item);
+      }
+    });
+    return output;
+  };
 });
 
 app.controller('AppCtrl', function ($scope, $mdSidenav) {
