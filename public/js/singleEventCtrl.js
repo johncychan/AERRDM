@@ -117,7 +117,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   // random location
   singleVm.randomLocation = function(){
 
-    var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House", "Moonlight Ciinema Sydney", "Jubilee Park", "Woolahra", "Kensington"];
+    var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House", "Moonlight Ciinema Sydney", "Jubilee Park", "Woolahra"];
     var max = place.length-1;
     var min = 0;
     var index = Math.floor((Math.random()*(max-min+1))+min);
@@ -551,6 +551,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
     for(var i = 0; i < singleVm.sendMessageLine.length; i++){
       singleVm.sendMessageLine[i].setMap(null);
+      singleVm.requestMarkers[i].setMap(null);
     }
 
     var defer = $q.defer();
@@ -810,6 +811,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
     singleVm.avgExpenditure /= resourceObj.length;
     singleVm.avgVelocity /= resourceObj.length;
+
+    singleVm.avgExpenditure = singleVm.avgExpenditure.toFixed(2);
     // console.log(singleVm.avgExpenditure);
     // console.log(singleVm.avgVelocity);
 
