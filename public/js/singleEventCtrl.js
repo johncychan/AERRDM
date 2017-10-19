@@ -46,6 +46,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var polylines = [];
   var requestMarkers = [];
   singleVm.requestMarkers = [];
+  singleVm.sendMessageLine = [];
+  singleVm.messageLine = [];
 
   var count = 0;
   var startLocation = new Array();
@@ -489,13 +491,20 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     
   }
 
+
+
   receiveResponseFromFac = function(){
     console.log("put message marker");
+
+    for(var i = 0; i < singleVm.sendMessageLine.length; i++){
+      singleVm.sendMessageLine[i].setMap(null);
+    }
+
     var defer = $q.defer();
     console.log(facilityObj);
       for(var i = 0; i < facilityObj.facilities.length; ++i){
         endLoc = singleVm.marker.position;
-        polyline[i] = new google.maps.Polyline({
+        singleVm.sendMessageLine[i] = new google.maps.Polyline({
           path: [facilityObj.facilities[i].location, singleVm.marker.position],
 
           geodestic: true,
@@ -518,14 +527,14 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
   moveReceiveMarker = function(endLoc, polyline){
     var eol = [];
-    var poly2 = [];
+    // var poly2 = [];
     var timerHandle = [];
-    for (var i = 0; i < polyline.length; i++) {
+    for (var i = 0; i < singleVm.sendMessageLine.length; i++) {
         // console.log(i);
-        poly2[i] = new google.maps.Polyline({
+        singleVm.messageLine[i] = new google.maps.Polyline({
             path: []
         });
-        polyline[i].setMap(singleVm.map);
+        singleVm.sendMessageLine[i].setMap(singleVm.map);
         singleVm.requestMarkers[i].setMap(singleVm.map);
         // console.log(singleVm.requestMarkers[i]);
         startReceiveAnimation(i);
@@ -540,7 +549,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         // console.log(facilityObj.facilities[i].location);
 
         endLoc[i] = facilityObj.facilities[i].location;
-        polyline[i] = new google.maps.Polyline({
+        singleVm.sendMessageLine[i] = new google.maps.Polyline({
           path: [singleVm.marker.position, facilityObj.facilities[i].location],
 
           geodestic: true,
@@ -563,14 +572,14 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
   moveReqMarker = function(endLoc, polyline){
     var eol = [];
-    var poly2 = [];
+    // var poly2 = [];
     var timerHandle = [];
-    for (var i = 0; i < polyline.length; i++) {
+    for (var i = 0; i < singleVm.sendMessageLine.length; i++) {
         // console.log(i);
-        poly2[i] = new google.maps.Polyline({
+        singleVm.messageLine[i] = new google.maps.Polyline({
             path: []
         });
-        polyline[i].setMap(singleVm.map);
+        singleVm.sendMessageLine[i].setMap(singleVm.map);
         singleVm.requestMarkers[i].setMap(singleVm.map);
         // console.log(singleVm.requestMarkers[i]);
         startRequestAnimation(i);
@@ -642,7 +651,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           }
 
         }
+<<<<<<< HEAD
         // console.log(startLoc);
+=======
+>>>>>>> 000b9e0e4c7e8659919ee6a5a4571b9a288d7a68
 
         $rootScope.$emit("CallParentMethod", {});
         singleVm.resourceAllocation(response.data);
@@ -699,6 +711,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       singleVm.avgVelocity += resourceObj[i].Velocity;
     }
 
+<<<<<<< HEAD
 
 
     // console.log(singleVm.avgExpenditure);
@@ -707,6 +720,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     singleVm.avgVelocity /= resourceObj.length;
     // console.log(singleVm.avgExpenditure);
     // console.log(singleVm.avgVelocity);
+=======
+    singleVm.avgExpenditure /= resourceObj.length;
+    singleVm.avgVelocity /= resourceObj.length;
+
+>>>>>>> 000b9e0e4c7e8659919ee6a5a4571b9a288d7a68
 
     window.localStorage['allocatedResource'] = JSON.stringify(singleVm.allocatedResources);
     // console.log(singleVm.allocatedResources);
@@ -1096,9 +1114,11 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       singleVm.circle.setMap(null);
       for(var i = 0; i < singleVm.requestMarkers.length; ++i){
         singleVm.requestMarkers[i].setMap(null);
-        // console.log(polyline[i]);
-        // polyline[i].setMap(null);
+        singleVm.sendMessageLine[i].setMap(null);
+        // singleVm.messageLine[i].setMap(null);
       }
+
+
 
       // polyline.setMap(null);
       var directionDisplay = new Array();
@@ -1334,6 +1354,15 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         }).then(function success(response) {
             console.log(response.data);
             statObj = response.data;
+
+            singleVm.totalResourceNum = 0;
+            singleVm.totalExpenditure = 0;
+            for(var i = 0; i < response.data.length; i++){
+              singleVm.totalResourceNum+=response.data[i].num_resources;
+              singleVm.totalExpenditure+=response.data[i].total_expenditure;
+            }
+
+            console.log(singleVm.totalExpenditure);
         });   
     }
 
@@ -1398,7 +1427,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           // console.log("End of animation");
           return;
       }
-      var p = polyline[index].GetPointAtDistance(d);
+      var p = singleVm.sendMessageLine[index].GetPointAtDistance(d);
       singleVm.requestMarkers[index].setPosition(p);
       updateRequestPoly(index,d);
       timerHandle[index] =  $timeout(function() {
@@ -1408,9 +1437,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
     function startRequestAnimation(index){
 
-      eol[index] = polyline[index].Distance();
+      eol[index] = singleVm.sendMessageLine[index].Distance();
 
-      poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
+      singleVm.messageLine[index] = new google.maps.Polyline({path: [singleVm.sendMessageLine[index].getPath().getAt(0)],
               strokeColor:"#FFFF00", strokeWeight:3});
 
       requestAnimate(index, 50);
@@ -1418,18 +1447,18 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
      function updateRequestPoly(i,d) {
     // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
-      if (poly2[i].getPath().getLength() > 20) {
-            poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
+      if (singleVm.messageLine[i].getPath().getLength() > 20) {
+            singleVm.messageLine[i] = new google.maps.Polyline([singleVm.sendMessageLine[i].getPath().getAt(lastVertex-1)]);
 
           }
 
-      if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
-          if (poly2[i].getPath().getLength() > 1) {
-              poly2[i].getPath().removeAt(poly2[i].getPath().getLength() - 1)
+      if (singleVm.sendMessageLine[i].GetIndexAtDistance(d) < lastVertex + 2) {
+          if (singleVm.messageLine[i].getPath().getLength() > 1) {
+              singleVm.messageLine[i].getPath().removeAt(singleVm.messageLine[i].getPath().getLength() - 1)
           }
-              poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
+              singleVm.messageLine[i].getPath().insertAt(singleVm.messageLine[i].getPath().getLength(),singleVm.sendMessageLine[i].GetPointAtDistance(d));
       } else {
-          poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),endLoc[i].latlng);
+          posingleVm.messageLinely2[i].getPath().insertAt(singleVm.messageLine[i].getPath().getLength(),endLoc[i].latlng);
       }
    }
 
@@ -1441,7 +1470,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           // console.log("End of animation");
           return;
       }
-      var p = polyline[index].GetPointAtDistance(d);
+      var p = singleVm.sendMessageLine[index].GetPointAtDistance(d);
       singleVm.requestMarkers[index].setPosition(p);
       updateReceivePoly(index,d);
       timerHandle[index] =  $timeout(function() {
@@ -1451,9 +1480,9 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
     function startReceiveAnimation(index){
 
-      eol[index] = polyline[index].Distance();
+      eol[index] = singleVm.sendMessageLine[index].Distance();
 
-      poly2[index] = new google.maps.Polyline({path: [polyline[index].getPath().getAt(0)],
+      singleVm.messageLine[index] = new google.maps.Polyline({path: [singleVm.sendMessageLine[index].getPath().getAt(0)],
               strokeColor:"#FFFF00", strokeWeight:3});
 
       receiveAnimate(index, 50);
@@ -1461,18 +1490,18 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   
      function updateReceivePoly(i,d) {
     // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
-      if (poly2[i].getPath().getLength() > 20) {
-            poly2[i] = new google.maps.Polyline([polyline[i].getPath().getAt(lastVertex-1)]);
+      if (singleVm.messageLine[i].getPath().getLength() > 20) {
+            singleVm.messageLine[i] = new google.maps.Polyline([singleVm.sendMessageLine[i].getPath().getAt(lastVertex-1)]);
 
           }
 
-      if (polyline[i].GetIndexAtDistance(d) < lastVertex + 2) {
-          if (poly2[i].getPath().getLength() > 1) {
-              poly2[i].getPath().removeAt(poly2[i].getPath().getLength() - 1)
+      if (singleVm.sendMessageLine[i].GetIndexAtDistance(d) < lastVertex + 2) {
+          if (singleVm.messageLine[i].getPath().getLength() > 1) {
+              singleVm.messageLine[i].getPath().removeAt(singleVm.messageLine[i].getPath().getLength() - 1)
           }
-              poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),polyline[i].GetPointAtDistance(d));
+              singleVm.messageLine[i].getPath().insertAt(singleVm.messageLine[i].getPath().getLength(),singleVm.sendMessageLine[i].GetPointAtDistance(d));
       } else {
-          poly2[i].getPath().insertAt(poly2[i].getPath().getLength(),singleVm.marker.position.latlng);
+          singleVm.messageLine[i].getPath().insertAt(singleVm.messageLine[i].getPath().getLength(),singleVm.marker.position.latlng);
       }
    }
 
