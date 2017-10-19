@@ -1337,7 +1337,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       marker[index].setPosition(p);
       updatePoly(index,d);
       timerHandle[index] =  $timeout(function() {
-        animate(index, (d + singleVm.step*5));
+        animate(index, (d + singleVm.step*5 + index));
       }, tick);
   }
 
