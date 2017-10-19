@@ -1287,18 +1287,33 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     }
 
     function getStat(){
+      console.log("get stats");
         $http({
 
         method  : 'POST',
-        url     : '/singleEvent',
+        url     : '/singleEvent/GetStats',
         //     // set the headers so angular passing info as form data (not request payload)
         headers : { 'Content-Type': 'application/json' },
         data    : {
-                   
+                   sim_id: facilityObj.sim_id
                   }
 
         }).then(function success(response) {
             console.log(response.data);
+            ngDialog.openConfirm({ 
+              template: 'eventStatistic.html',
+              overlay: true,
+              showClose: false,
+              closeByEscape: false,
+              scope: $scope,
+              className: 'ngdialog-theme-default statistic-menu'       
+            }).then(function(value){
+                /* confirm end simulation
+                      clear marker, polyline, event
+                */
+                $route.reload();
+                $window.location.reload();
+            });
         });   
     }
 
@@ -1314,25 +1329,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           console.log(singleVm.resourcesNum);
           if(count == singleVm.resourcesNum){
 
-
+            getStat();
             // close progress menu
             singleVm.dialog.close();
 
             // open statistic menu
-            ngDialog.openConfirm({ 
-              template: 'eventStatistic.html',
-              overlay: true,
-              showClose: false,
-              closeByEscape: false,
-              scope: $scope,
-              className: 'ngdialog-theme-default statistic-menu'       
-            }).then(function(value){
-                /* confirm end simulation
-                      clear marker, polyline, event
-                */
-                $route.reload();
-                $window.location.reload();
-            });
+            
           }
           return;
       }
