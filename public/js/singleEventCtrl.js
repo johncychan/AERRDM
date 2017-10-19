@@ -426,7 +426,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
                  Expenditure: {min: singleVm.factor['Min expenditure'], max: singleVm.factor['Max expenditure']},
                  Velocity: {min: singleVm.factor['Min velocity'], max: singleVm.factor['Max velocity']},
                  Deadline: singleVm.factor["Deadline"],
-                 Location: singleVm.marker.position.toUrlValue(),
+                 Location: {lat: singleVm.marker.position.lat(), lng: singleVm.marker.position.lng()},
                  ResourceNum: {min: 2, max: 10}
                 }
 
@@ -606,11 +606,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
 
   checkPlan = function(){
-    console.log("check plan");
     $http({
 
       method  : 'POST',
-      url     : '/assignResource',
+      url     : '/singleEvent/assignResource',
       headers : { 'Content-Type': 'application/json' },
       data    : {
                   sim_id: facilityObj.sim_id
