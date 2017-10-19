@@ -54,7 +54,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var speed = 0.000005, wait = 1;
   var infowindow = null;
   var facilityObj;
-  
+  var statObj;
   var myPano;
   var panoClient;
   var nextPanoId;
@@ -402,6 +402,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     })
     .then($timeout(sendReqtToFac, 20000))
     .then($timeout(receiveResponseFromFac, 28000))
+    .then($timeout(getStat, 29000))
     .then($timeout(checkPlan, 10000));
 
     singleVm.panelShow = "true";
@@ -1288,7 +1289,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
     function getStat(){
       console.log("get stats");
-        $http({
+      return $http({
 
         method  : 'POST',
         url     : '/singleEvent/GetStats',
@@ -1300,20 +1301,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
         }).then(function success(response) {
             console.log(response.data);
-            ngDialog.openConfirm({ 
-              template: 'eventStatistic.html',
-              overlay: true,
-              showClose: false,
-              closeByEscape: false,
-              scope: $scope,
-              className: 'ngdialog-theme-default statistic-menu'       
-            }).then(function(value){
-                /* confirm end simulation
-                      clear marker, polyline, event
-                */
-                $route.reload();
-                $window.location.reload();
-            });
+            statObj = response.data;
         });   
     }
 
