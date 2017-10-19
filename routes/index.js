@@ -78,6 +78,7 @@ module.exports = function(passport, clients, db){
 
 	// Single Event Initiate
 	router.post('/singleEvent', function(req, res, next) {
+
 		console.log(req.body);
 		var radius = 5000;
 

@@ -933,18 +933,18 @@
 
       #progress-menu-container{
         position: relative;
-        height: 288px;
+        height: 300px;
         overflow: hidden;
       }
 
       .progress-first-extend{
         transition: all linear 0.9s;
-        height: 425px !important;
+        height: 435px !important;
       }
 
       .progress-second-extend{
         transition: all linear 0.6s;
-        height: 575px !important;
+        height: 590px !important;
       }
 
       .progress-content-extend{
@@ -988,12 +988,19 @@
         filter: blur(5px);*/
       }
 
+      .statistic-menu{
+        margin: auto;
+        width: 600px;
+        position: absolute !important;
+        overflow: hidden !important;
+        opacity: 1;
+      }
+
+      .statistic-menu .ngdialog-content{
+        width: 590px !important;
+      }
+
       .overview-menu{
-        /*right: auto !important;
-        bottom: auto !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        margin: 200px 0 20px 10px;*/
         margin: auto;
         width: 550px;
         position: absolute !important;
@@ -1034,7 +1041,7 @@
         padding: 5px 10px;
       }
 
-      [id^=ngdialog] .ngdialog-content{
+      /*[id^=ngdialog] */.ngdialog-content{
         box-shadow: 2px 2px 5px rgba(0,0,0,.2) !important;
         padding: 0 !important;
         background-color: #FFF !important;
@@ -1143,14 +1150,13 @@
 
       #stageInfo{
         padding: 20px 0 10px 0;
-
-        font-size: 14px;
+        font-size: 16px;
         text-align: center;
         color: #4d6b79;
       }
 
       #progressBar{
-        padding: 0 120px;
+        padding: 5px 120px;
       }
 
       /*#stage{
@@ -1177,6 +1183,12 @@
       #dot-search.ng-hide{
         opacity: 0;
       }
+
+      .spinner.ng-hide{
+        opacity: 0;
+      }
+
+
 
       .facility-row{
         padding: 2px 0 0 0;
@@ -1254,7 +1266,7 @@
         margin: -125px 0 0 -125px;
         position: absolute;
         z-index: 10;
-        top: 170px;
+        top: 176px;
       }
 
       #dot-search{
@@ -1381,6 +1393,10 @@
         /*line-height: 2;*/
       }
       /* end event progress */
+
+      .spacing{
+        padding: 10px 17px 10px 17px;
+      }
 
       /* simluation setting panel end */
       .simulation-menu {
@@ -2103,4 +2119,207 @@ dot::after {
   }
 }
 
+.spinner {
+  margin: 100px auto;
+  width: 60px;
+  left: 44%;
+  top: 8%;
+  height: 60px;
+  position: absolute;
+  text-align: center;
+  
+  -webkit-animation: sk-rotate 2.0s infinite linear;
+  animation: sk-rotate 2.0s infinite linear;
+}
+
+.dot1, .dot2 {
+  width: 60%;
+  height: 60%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: #333;
+  border-radius: 100%;
+  
+  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.dot2 {
+  top: auto;
+  bottom: 0;
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes sk-rotate { 100% { -webkit-transform: rotate(360deg) }}
+@keyframes sk-rotate { 100% { transform: rotate(360deg); -webkit-transform: rotate(360deg) }}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+
+
+.container {
+    height:50px;
+    width:40px;
+    position:absolute;
+    left:0;
+    right:0;
+    top:150px;
+    /*bottom:0;*/
+    margin:auto;
+}
+.container::after {
+    /*content:'Sending';*/
+    color:#007298;
+    font-weight:700;
+    position:absolute;
+    bottom:-50px;
+    left:-10px;
+}
+.box {
+    position:relative;
+    height:50px;
+    width:40px;
+    animation: box 5s infinite linear;
+}
+
+.border {
+    background:#007298;
+    position:absolute;
+}
+
+.border.one {
+    height:4px;
+    top:0;
+    left:0;
+    animation: border-one 5s infinite linear;
+}
+
+.border.two {
+    top:0;
+    right:0;
+    height:100%;
+    width:4px;
+    animation: border-two 5s infinite linear;
+}
+
+.border.three {
+    bottom:0;
+    right:0;
+    height:4px;
+    width:100%;
+    animation: border-three 5s infinite linear;
+}
+
+.border.four {
+    bottom:0;
+    left:0;
+    height:100%;
+    width:4px;
+    animation: border-four 5s infinite linear;
+}
+
+.line {
+    height:4px;
+    background:#007298;
+    position:absolute;
+    width:0%;
+    left:25%;
+}
+
+.line.one {
+    top:25%;
+    width:0%;
+    animation: line-one 5s infinite linear;
+}
+
+.line.two {
+    top:45%;
+    animation: line-two 5s infinite linear;
+}
+
+.line.three {
+    top:65%;
+    animation: line-three 5s infinite linear;
+}
+
+@keyframes border-one {
+    0%   {width:0;}
+    10%  {width:100%;}
+    100% {width:100%;}
+}
+
+@keyframes border-two {
+    0%   {height:0;}
+    10%  {height:0%;}
+    20%  {height:100%;}
+    100% {height:100%;}
+}
+
+@keyframes border-three {
+    0%   {width:0;}
+    20%  {width:0%;}
+    30%  {width:100%;}
+    100% {width:100%;}
+}
+
+@keyframes border-four {
+    0%   {height:0;}
+    30%  {height:0%;}
+    40%  {height:100%;}
+    100% {height:100%;}
+}
+
+@keyframes line-one {
+    0%   {left:25%;width:0;}
+    40%  {left:25%;width:0%;}
+    43%  {left:25%;width:50%;}
+    52%  {left:25%;width:50%;}
+    54%  {left:25%;width:0% }
+    55%  {right:25%;left:auto;}
+    63%  {width:10%;right:25%;left:auto;}
+    100% {width:10%;right:25%;left:auto;}
+}
+
+@keyframes line-two {
+    0%   {width:0;}
+    42%  {width:0%;}
+    45%  {width:50%;}
+    53%  {width:50%;}
+    54%  {width:0% }
+    60%  {width:50%}
+    100% {width:50%;}
+}
+
+@keyframes line-three {
+    0%   {width:0;}
+    45%  {width:0%;}
+    48%  {width:50%;}
+    51%  {width:50%;}
+    52%  {width:0% }
+    100% {width:0%;}
+}
+
+@keyframes box {
+    0%   {opacity:1;margin-left:0px;height:50px;width:40px;}
+    55%  {margin-left:0px;height:50px;width:40px;}
+    60%  {margin-left:0px;height:35px;width:50px;}
+    74%  {msthin-left:0;}
+    80%  {margin-left:-50px;opacity:1;}
+    90% {height:35px;width:50px;margin-left:50px;opacity:0;}
+    100% {opacity:0;}
+}
 
