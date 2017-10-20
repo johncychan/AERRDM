@@ -3,7 +3,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
 
 	var accessData = window.localStorage['selectedFacility'];
     var resourceNum;
-    var markers;
+    var resourceMarkers = [];
 	facilityVm.selectedFacility = angular.fromJson(accessData);
     var eventLocation = angular.fromJson(localStorage["eventLocation"]);
     facilityVm.eventStatis = angular.fromJson(localStorage['eventStatis']);
@@ -36,7 +36,14 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         marker.setMap(facilityVm.map);
         facilityVm.map.setCenter(loc);
 
-        
+        for(var i = 0; i < resourceNum; ++i){
+            console.log("create marker");
+            resourceMarkers[i] = new google.maps.Marker({
+                position: loc,
+                map: facilityVm.map,
+                icon: "./img/ambulance.svg"
+            });
+        }
         
         console.log(facilityVm.simStatis);
 
@@ -52,7 +59,10 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         }).then(function success(response){
             
 
-            console.log(response.data);
+            console.log(response.data[0].location);
+            for(var i = 0; i < resourceNum; ++i){
+                resourceMarkers[i].setPosition(response.data[0].location);
+            }
         })
     }, 2000);
     });

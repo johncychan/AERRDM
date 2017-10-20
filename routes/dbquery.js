@@ -274,7 +274,7 @@ function InsertMultiSimulation(db, req, radius, events, facilities, callback)
 
 function FinishedJob(db, user_id, callback)
 {
-	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user._id)}, 
+	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user_id)}, 
 		{
 			$set: {			
 			"active.Complete" : true,

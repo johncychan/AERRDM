@@ -1035,7 +1035,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       position: latlng,
       map: singleVm.map,
       animation: google.maps.Animation.BOUNCE,
-      icon: "./img/robot.svg"
+      icon: "./img/searching.svg"
     })
     singleVm.agentNum++;
     var facilityElement = "";
@@ -1070,7 +1070,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       position: latlng,
       map: singleVm.map,
       animation: google.maps.Animation.BOUNCE,
-      icon: "./img/robot.svg"
+      icon: "./img/searching.svg"
     })
     singleVm.agentNum++;
     var facilityElement = "";
@@ -1105,7 +1105,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       position: latlng,
       map: singleVm.map,
       animation: google.maps.Animation.BOUNCE,
-      icon: "./img/robot.svg"
+      icon: "./img/searching.svg"
     })
     singleVm.agentNum++;
 
