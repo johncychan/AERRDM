@@ -201,7 +201,6 @@ module.exports = function(passport, clients, db){
 			if(flag == 0) // job accept
 			{
 				dbquery.UpdateSimResponses(db, req.body.sim_id, -1, function (err, results) {
-					console.log("\n\n\n " + results.ResWaitOn);
 					if(results.ResWaitOn == 0)
 						clients[results.Initiator].emit("sim update", response);	
 
@@ -214,9 +213,9 @@ module.exports = function(passport, clients, db){
 				var rtval = "No job has been assigned to you";				
 			}
 
-			else if(flag == 2) // job declined
+			else if(flag == 2) // job declined !!!!!!!!!!!!!!!!!!!!!!!!!!!! Need to remove username from resource
 			{
-				dbquery.UpdateSimResponses(db, req.body.sim_id, 1, function (err, results) {
+				dbquery.UpdateSimResponses(db, req.body.sim_id, -1, function (err, results) {
 					if(results.ResWaitOn == 0)
 						clients[results.Initiator].emit("sim update", response);
 
@@ -289,7 +288,7 @@ module.exports = function(passport, clients, db){
 		
 		if(complete == true)
 		{
-			dbquery.FinishedJob(db, req.user._id, function () {
+			dbquery.FinishedJob(db, req.user._id, function(doc) {
 				res.writeHead(200, {'Content-Type': 'text/plain'});
 				res.write("OK");
 				return res.end();
@@ -298,7 +297,7 @@ module.exports = function(passport, clients, db){
 	});
 
 	// Change to search based on mobile location
-	router.post('/activeSims', function(req, res, next) {
+/*	router.post('/activeSims', function(req, res, next) {
 		var rtval = [];
 
 		dbquery.UpdatedGPS(db, req, function(err, sims) {
@@ -320,7 +319,7 @@ module.exports = function(passport, clients, db){
 			return res.end();
 		});
 	});
-
+*/
 	router.post('/singleEvent/UpdatedGPS', function(req, res, next) {
 		dbquery.UpdatedGPS(db, req.body.sim_id, function(mobileResources) {
 			res.writeHead(200, {'Content-Type': 'application/json'});
@@ -449,10 +448,21 @@ module.exports = function(passport, clients, db){
 	router.post('/multiEvent/assignResources', function(req, res, next) {
 		res.writeHead(200, {'Content-Type': 'application/json'});
 		console.log(req.body.sim_id);
-/*		dbquery.SimulationDetails(db, req.body.sim_id, function(err, sim_details) {
-			var Events = req.body.Events;
-			
-		});		*/
+		dbquery.SimulationDetails(db, req.body.sim_id, function(err, sim_details) {
+			var Events = sim_details.Events;
+			var Facilities = sim_details.Facilities;
+			console.log("Generate Start");
+			simulation.MultiGenerateResources(Events, Facilities, sim_details, function(EventHeaps) {
+				console.log("Generate Done");
+				var Selection = simulation.MultiSelection(EventHeaps, Events);
+				console.log("Selection Complete");
+				console.log(JSON.stringify(Selection.Resources));
+				console.log("test");
+				res.write(JSON.stringify(Selection.Resources));
+console.log("test2");
+				return res.end();
+			});
+		});		
 	});
 
 	return router;

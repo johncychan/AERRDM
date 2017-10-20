@@ -6,7 +6,6 @@ var dbquery	= require('./dbquery.js');
 var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyAujhH1hwdmgb2obrZ_45nyDzPuNfY2qKk&libraries=places';
 var google_direction_api = 'https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAujhH1hwdmgb2obrZ_45nyDzPuNfY2qKk&libraries=places';
 
-
 // Place Object
 function Place(p, type, rnum, rcost, destination, mode) {
 	this.name = p.name;
@@ -132,8 +131,8 @@ function DirectionsURL(start_location, end_location)
 {
 	var url = google_direction_api.concat("&origin=", start_location.lat,",",start_location.lng);
 	url = url.concat("&destination=", end_location.lat,",",end_location.lng);
-	url = url.concat("&departure_time=", parseInt(new Date().valueOf()/1000));
-	console.log(url);
+	var date = new Date()-5*60000;
+	url = url.concat("&departure_time=", parseInt(date.valueOf()));
 	return url;
 }
 
