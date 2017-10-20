@@ -6,18 +6,16 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
     var resourceMarkers = [];
 	facilityVm.selectedFacility = angular.fromJson(accessData);
     var eventLocation = angular.fromJson(localStorage["eventLocation"]);
+    // event information
     facilityVm.eventStatis = angular.fromJson(localStorage['eventStatis']);
+    // simulatoin information
     facilityVm.simStatis = angular.fromJson(localStorage['simulationStatis']);
+    // resources information
     facilityVm.resource = angular.fromJson(localStorage['resources']);
-
-    console.log(facilityVm.resource);
-    console.log(facilityVm.resource[0].Facility);
-
 
     resourceNum = facilityVm.resource.length;
 
     var loc = facilityVm.selectedFacility.Location;
-    console.log(loc);
 
 	NgMap.getMap("map").then(function(map){
         facilityVm.map = map;
@@ -35,7 +33,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
             icon: "./img/placeholder.svg",
             animation: google.maps.Animation.DROP
         });
-        // console.log(marker);
+
         marker.setMap(facilityVm.map);
         facilityVm.map.setCenter(loc);
 
@@ -47,8 +45,6 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                 icon: "./img/ambulance.svg"
             });
         }
-        
-        console.log(facilityVm.simStatis);
 
         $interval(function updateGPS(){            
         // console.log(facilityVm.selectedFacility.id);
@@ -62,7 +58,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         }).then(function success(response){
             
 
-            console.log(response.data[0].location);
+            // update mobile resource real time location
             for(var i = 0; i < resourceNum; ++i){
                 resourceMarkers[i].setPosition(response.data[0].location);
             }
