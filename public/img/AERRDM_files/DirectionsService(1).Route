@@ -1,0 +1,158 @@
+/**/_xdc_._a1ni20 && _xdc_._a1ni20( {
+   "geocoded_waypoints" : [
+      {
+         "geocoder_status" : "OK",
+         "place_id" : "Eio0IE1hY3F1YXJpZSBTdCwgU3lkbmV5IE5TVyAyMDAwLCBBdXN0cmFsaWE",
+         "types" : [ "street_address" ]
+      },
+      {
+         "geocoder_status" : "OK",
+         "place_id" : "EicxMDggS2luZyBTdCwgU3lkbmV5IE5TVyAyMDAwLCBBdXN0cmFsaWE",
+         "types" : [ "street_address" ]
+      }
+   ],
+   "routes" : [
+      {
+         "bounds" : {
+            "northeast" : {
+               "lat" : -33.8656556,
+               "lng" : 151.2124279
+            },
+            "southwest" : {
+               "lat" : -33.8689894,
+               "lng" : 151.2083288
+            }
+         },
+         "copyrights" : "Map data ©2017 Google",
+         "legs" : [
+            {
+               "distance" : {
+                  "text" : "0.9 km",
+                  "value" : 855
+               },
+               "duration" : {
+                  "text" : "5 mins",
+                  "value" : 306
+               },
+               "end_address" : "108 King St, Sydney NSW 2000, Australia",
+               "end_location" : {
+                  "lat" : -33.8689894,
+                  "lng" : 151.2091978
+               },
+               "start_address" : "4 Macquarie St, Sydney NSW 2000, Australia",
+               "start_location" : {
+                  "lat" : -33.866984,
+                  "lng" : 151.2123561
+               },
+               "steps" : [
+                  {
+                     "distance" : {
+                        "text" : "50 m",
+                        "value" : 50
+                     },
+                     "duration" : {
+                        "text" : "1 min",
+                        "value" : 12
+                     },
+                     "end_location" : {
+                        "lat" : -33.8665413,
+                        "lng" : 151.2124279
+                     },
+                     "html_instructions" : "Head \u003cb\u003enorth\u003c/b\u003e on \u003cb\u003eMacquarie St\u003c/b\u003e toward \u003cb\u003eHunter St\u003c/b\u003e",
+                     "polyline" : {
+                        "points" : "rsumEgt|y[g@Co@I"
+                     },
+                     "start_location" : {
+                        "lat" : -33.866984,
+                        "lng" : 151.2123561
+                     },
+                     "travel_mode" : "DRIVING"
+                  },
+                  {
+                     "distance" : {
+                        "text" : "0.4 km",
+                        "value" : 365
+                     },
+                     "duration" : {
+                        "text" : "2 mins",
+                        "value" : 130
+                     },
+                     "end_location" : {
+                        "lat" : -33.8656556,
+                        "lng" : 151.2086678
+                     },
+                     "html_instructions" : "Turn \u003cb\u003eleft\u003c/b\u003e onto \u003cb\u003eHunter St\u003c/b\u003e",
+                     "maneuver" : "turn-left",
+                     "polyline" : {
+                        "points" : "zpumEut|y[KbBObBCTMnBEp@?HAVGx@a@tA}@vCQd@"
+                     },
+                     "start_location" : {
+                        "lat" : -33.8665413,
+                        "lng" : 151.2124279
+                     },
+                     "travel_mode" : "DRIVING"
+                  },
+                  {
+                     "distance" : {
+                        "text" : "0.4 km",
+                        "value" : 359
+                     },
+                     "duration" : {
+                        "text" : "2 mins",
+                        "value" : 136
+                     },
+                     "end_location" : {
+                        "lat" : -33.8688695,
+                        "lng" : 151.2083288
+                     },
+                     "html_instructions" : "Turn \u003cb\u003eleft\u003c/b\u003e onto \u003cb\u003ePitt St\u003c/b\u003e",
+                     "maneuver" : "turn-left",
+                     "polyline" : {
+                        "points" : "jkumEe}{y[lGZhAJf@D`CJdADx@B"
+                     },
+                     "start_location" : {
+                        "lat" : -33.8656556,
+                        "lng" : 151.2086678
+                     },
+                     "travel_mode" : "DRIVING"
+                  },
+                  {
+                     "distance" : {
+                        "text" : "81 m",
+                        "value" : 81
+                     },
+                     "duration" : {
+                        "text" : "1 min",
+                        "value" : 28
+                     },
+                     "end_location" : {
+                        "lat" : -33.8689894,
+                        "lng" : 151.2091978
+                     },
+                     "html_instructions" : "Turn \u003cb\u003eleft\u003c/b\u003e onto \u003cb\u003eKing St\u003c/b\u003e",
+                     "maneuver" : "turn-left",
+                     "polyline" : {
+                        "points" : "l_vmEa{{y[@OF{@LaB"
+                     },
+                     "start_location" : {
+                        "lat" : -33.8688695,
+                        "lng" : 151.2083288
+                     },
+                     "travel_mode" : "DRIVING"
+                  }
+               ],
+               "traffic_speed_entry" : [],
+               "via_waypoint" : []
+            }
+         ],
+         "overview_polyline" : {
+            "points" : "rsumEgt|y[wAM[fEW`EIpA_BlFQd@lGZpBPfEPx@B@OT}C"
+         },
+         "summary" : "Hunter St and Pitt St",
+         "warnings" : [],
+         "waypoint_order" : []
+      }
+   ],
+   "status" : "OK"
+}
+ )

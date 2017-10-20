@@ -1,0 +1,55 @@
+<div>
+	<div class="modal-header safari_top_radius">
+		<div id="progress-title-content">
+			<div class="icon-container">
+				<span class="glyphicon glyphicon-info-sign" id="progress-title-icon"></span>
+			</div>
+			<span class="progress-title">Statistic Information</span>
+		</div>	
+	</div>
+
+	<div id="stat-content">
+    <div class="info-row clearfix">
+  		<div id="event-info-container">
+  			<table id="event-info-table"> 
+          <tr>
+            <th colspan="5">Overall Statistic</th>
+          </tr>
+          <tr >
+            <th>Total Nearby Facilities</th>
+            <th>Total Involved Facilities</th>
+            <th>Total Resources</th>
+            <th>Total Expenditure</th>
+            <th>Time to Complete</th>
+          </tr>
+          <tr >
+            <td>{{singleVm.facilitiesSum['Total']}}</td>
+            <td>{{singleVm.totalInvolved}}</td>
+            <td>{{singleVm.totalResourceNum}}</td>
+            <td>{{singleVm.totalExpenditure}}</td>
+            <td>{{singleVm.totalCompleteTime}}</td>
+          </tr>
+        </table>
+        <div class="spacing"></div>
+        <table id="event-info-table"> 
+          <tr>
+            <th colspan="3">Involved Facilities Statistic</th>
+          </tr>
+          <tr>
+            <th>Type</th>
+            <th>Facility Name</th>
+            <th>Resources Sent</th>
+          </tr>
+          <tr ng-repeat = "facility in singleVm.allocatedResources | unique:'Facility'">
+            <td>{{facility.Type}}</td>
+            <td>{{facility.Facility}}</td>
+            <td>{{singleVm.getCount(facility.Facility)}}</td>
+          </tr>
+        </table>
+        <div class="spacing"></div>
+        <div class="modal-footer">
+          <input type="submit" value="Confirm" class="button event-start" ng-click="confirm(1)" />
+        </div>
+  		</div>
+    </div>
+</div>

@@ -78,6 +78,7 @@ module.exports = function(passport, clients, db){
 
 	// Single Event Initiate
 	router.post('/singleEvent', function(req, res, next) {
+
 		console.log(req.body);
 		var radius = 5000;
 
@@ -88,7 +89,7 @@ module.exports = function(passport, clients, db){
 			if(resources_list)
 			{
 				dbquery.InsertSimulation(db, req, resources_list, radius, function(err, r) {
-		
+					console.log(r.insertedId);
 					var resource_names = Object.keys(resources_list);
 					console.log(resource_names);	
 					var promises = [];

@@ -1,0 +1,157 @@
+/**/_xdc_._i22gga && _xdc_._i22gga( {
+   "geocoded_waypoints" : [
+      {
+         "geocoder_status" : "OK",
+         "place_id" : "Ei45My05NSBHZW9yZ2UgU3QsIFRoZSBSb2NrcyBOU1cgMjAwMCwgQXVzdHJhbGlh",
+         "types" : [ "street_address" ]
+      },
+      {
+         "geocoder_status" : "OK",
+         "place_id" : "EicxMDggS2luZyBTdCwgU3lkbmV5IE5TVyAyMDAwLCBBdXN0cmFsaWE",
+         "types" : [ "street_address" ]
+      }
+   ],
+   "routes" : [
+      {
+         "bounds" : {
+            "northeast" : {
+               "lat" : -33.8594586,
+               "lng" : 151.2092511
+            },
+            "southwest" : {
+               "lat" : -33.8689894,
+               "lng" : 151.2083125
+            }
+         },
+         "copyrights" : "Map data ©2017 Google",
+         "legs" : [
+            {
+               "distance" : {
+                  "text" : "1.2 km",
+                  "value" : 1210
+               },
+               "duration" : {
+                  "text" : "7 mins",
+                  "value" : 411
+               },
+               "end_address" : "108 King St, Sydney NSW 2000, Australia",
+               "end_location" : {
+                  "lat" : -33.8689894,
+                  "lng" : 151.2091978
+               },
+               "start_address" : "93-95 George St, The Rocks NSW 2000, Australia",
+               "start_location" : {
+                  "lat" : -33.8594586,
+                  "lng" : 151.2087757
+               },
+               "steps" : [
+                  {
+                     "distance" : {
+                        "text" : "0.2 km",
+                        "value" : 207
+                     },
+                     "duration" : {
+                        "text" : "1 min",
+                        "value" : 59
+                     },
+                     "end_location" : {
+                        "lat" : -33.8612669,
+                        "lng" : 151.2083125
+                     },
+                     "html_instructions" : "Head \u003cb\u003esouth\u003c/b\u003e on \u003cb\u003eGeorge St\u003c/b\u003e",
+                     "polyline" : {
+                        "points" : "rdtmE{}{y[XBD@~@H~@L`@F^Fx@J\\FJH@?DBJBFBFD"
+                     },
+                     "start_location" : {
+                        "lat" : -33.8594586,
+                        "lng" : 151.2087757
+                     },
+                     "travel_mode" : "DRIVING"
+                  },
+                  {
+                     "distance" : {
+                        "text" : "88 m",
+                        "value" : 88
+                     },
+                     "duration" : {
+                        "text" : "1 min",
+                        "value" : 21
+                     },
+                     "end_location" : {
+                        "lat" : -33.8614075,
+                        "lng" : 151.2092511
+                     },
+                     "html_instructions" : "Turn \u003cb\u003eleft\u003c/b\u003e onto \u003cb\u003eAlfred St\u003c/b\u003e",
+                     "maneuver" : "turn-left",
+                     "polyline" : {
+                        "points" : "|otmE}z{y[Hm@D_@JmB"
+                     },
+                     "start_location" : {
+                        "lat" : -33.8612669,
+                        "lng" : 151.2083125
+                     },
+                     "travel_mode" : "DRIVING"
+                  },
+                  {
+                     "distance" : {
+                        "text" : "0.8 km",
+                        "value" : 834
+                     },
+                     "duration" : {
+                        "text" : "5 mins",
+                        "value" : 303
+                     },
+                     "end_location" : {
+                        "lat" : -33.8688695,
+                        "lng" : 151.2083288
+                     },
+                     "html_instructions" : "\u003cb\u003eAlfred St\u003c/b\u003e turns \u003cb\u003eright\u003c/b\u003e and becomes \u003cb\u003ePitt St\u003c/b\u003e",
+                     "polyline" : {
+                        "points" : "xptmEy`|y[|@Fd@B~@FR@N@N?j@Fv@FZBn@Dl@DxBRvANx@Dz@DhAJH?lGZhAJf@D`CJdADx@B"
+                     },
+                     "start_location" : {
+                        "lat" : -33.8614075,
+                        "lng" : 151.2092511
+                     },
+                     "travel_mode" : "DRIVING"
+                  },
+                  {
+                     "distance" : {
+                        "text" : "81 m",
+                        "value" : 81
+                     },
+                     "duration" : {
+                        "text" : "1 min",
+                        "value" : 28
+                     },
+                     "end_location" : {
+                        "lat" : -33.8689894,
+                        "lng" : 151.2091978
+                     },
+                     "html_instructions" : "Turn \u003cb\u003eleft\u003c/b\u003e onto \u003cb\u003eKing St\u003c/b\u003e",
+                     "maneuver" : "turn-left",
+                     "polyline" : {
+                        "points" : "l_vmEa{{y[@OF{@LaB"
+                     },
+                     "start_location" : {
+                        "lat" : -33.8688695,
+                        "lng" : 151.2083288
+                     },
+                     "travel_mode" : "DRIVING"
+                  }
+               ],
+               "traffic_speed_entry" : [],
+               "via_waypoint" : []
+            }
+         ],
+         "overview_polyline" : {
+            "points" : "rdtmE{}{y[~C\\xCb@^PNHNmAJmB|@FdBJ~AJpDVpEb@tBJrAJvIf@hHZVmD"
+         },
+         "summary" : "Pitt St",
+         "warnings" : [],
+         "waypoint_order" : []
+      }
+   ],
+   "status" : "OK"
+}
+ )

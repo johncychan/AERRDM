@@ -37,13 +37,22 @@
                   <input type="number"  ng-model = "singleVm.factor['Max expenditure']" class="factor-input" name="max_expenditure" min="101" max="200" required placeholder = "max. 200"/>
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <td class="factor-key"> Resources velocity (km/h) </td>
                 <td class="factor-value minValue">
                   <input type="number"  ng-model = "singleVm.factor['Min velocity']" class="factor-input" name="min_velocity" min="20" max="60" required placeholder = "min. 20"/><span style="padding-left: 9px; color: #666666">to</span>
                 </td>
                 <td class="factor-value maxValue">
-                  <input type="number"  ng-model = "singleVm.factor['Max velocity']" class="factor-input" name="max_velocity" min="61" max="100" required placeholder = "max. 100"/><!-- <span class="factor-unit">km/h</td> -->
+                  <input type="number"  ng-model = "singleVm.factor['Max velocity']" class="factor-input" name="max_velocity" min="61" max="100" required placeholder = "max. 100"/>
+                </td>
+              </tr> -->
+              <tr>
+                <td class="factor-key"> Number of resources </td>
+                <td class="factor-value minValue">
+                  <input type="number"  ng-model = "singleVm.factor['Min resource']" class="factor-input" name="min_resource" min="2" ng-max="singleVm.factor['Max resource']" required placeholder = "min. 2"/><span style="padding-left: 9px; color: #666666">to</span>
+                </td>
+                <td class="factor-value maxValue">
+                  <input type="number"  ng-model = "singleVm.factor['Max resource']" class="factor-input" name="max_resource" ng-min="singleVm.factor['Min resource']" max="10" required placeholder = "max. 10"/>
                 </td>
               </tr>
               <tr>
@@ -54,7 +63,7 @@
             <div class="modal-footer">
               <button type="button" class="button event-setting-reset ripple" ng-click="singleVm.reset()">Reset</button>
 
-              <input ng-disabled="factorForm.deadline.$invalid || factorForm.level.$invalid || factorForm.velocity.$invalid || factorForm.min_expenditure.$invalid || factorForm.max_expenditure.$invalid || factorForm.min_velocity.$invalid || factorForm.max_velocity.$invalid " type="submit" value="ok" class="button event-start" ng-click="singleVm.eventSet()" />
+              <input ng-disabled="factorForm.deadline.$invalid || factorForm.level.$invalid || factorForm.velocity.$invalid || factorForm.min_expenditure.$invalid || factorForm.max_expenditure.$invalid || factorForm.min_resource.$invalid || factorForm.max_resource.$invalid " type="submit" value="ok" class="button event-start" ng-click="singleVm.eventSet()" />
             </div>
           </form>
         </div>

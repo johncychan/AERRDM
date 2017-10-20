@@ -11,6 +11,15 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $route, $scope, $rootS
 		indexVm.hideFacility = false;
 		indexVm.facility = facilitySelected.getFacility();
 
+		for(var i = 0; i < indexVm.facility.length; i++){
+			if(indexVm.facility[i].Type == "fire_station")
+				indexVm.facility[i].Type = "Fire Station";
+			else if(indexVm.facility[i].Type == "hospital")
+				indexVm.facility[i].Type = "Hospital";
+			else if(indexVm.facility[i].Type == "police")
+				indexVm.facility[i].Type = "Police Station";
+		}
+
 		indexVm.resource = angular.fromJson(localStorage["allocatedResource"]);
 		if(indexVm.facility.length > 0){
 			indexVm.isExist = true;
@@ -28,7 +37,7 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $route, $scope, $rootS
 			}
 		}
 		window.localStorage['resources'] = JSON.stringify(resourceList);
-		window.open("/facilityWindow.html",'_blank');
+		window.open("/facilityWindow.html",'_blank', "width=750,height=750");
 	}
 
 	indexVm.routeRedirect = function(url){

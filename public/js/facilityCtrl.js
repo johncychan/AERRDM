@@ -2,17 +2,19 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
 	var facilityVm = this;
 
 	var accessData = window.localStorage['selectedFacility'];
-
+    var resourceNum;
+    var resourceMarkers = [];
 	facilityVm.selectedFacility = angular.fromJson(accessData);
     var eventLocation = angular.fromJson(localStorage["eventLocation"]);
     facilityVm.eventStatis = angular.fromJson(localStorage['eventStatis']);
     facilityVm.simStatis = angular.fromJson(localStorage['simulationStatis']);
     facilityVm.resource = angular.fromJson(localStorage['resources']);
 
-    // console.log(facilityVm.resource);
-    // console.log(eventLocation);
-    // console.log(facilityVm.simStatis);
-    // console.log(facilityVm.selectedFacility);
+    console.log(facilityVm.resource);
+    console.log(facilityVm.resource[0].Facility);
+
+
+    resourceNum = facilityVm.resource.length;
 
     var loc = facilityVm.selectedFacility.Location;
     console.log(loc);
@@ -20,8 +22,6 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
 	NgMap.getMap("map").then(function(map){
         facilityVm.map = map;
         facilityVm.map.setZoom(14);
-        // show search box as defualt
-        // facilityVm.searchExtend();
         var marker = new google.maps.Marker({
             position: loc,
             map: facilityVm.map,
@@ -39,26 +39,35 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         marker.setMap(facilityVm.map);
         facilityVm.map.setCenter(loc);
 
-        console.log(facilityVm.selectedFacility);
+        for(var i = 0; i < resourceNum; ++i){
+            console.log("create marker");
+            resourceMarkers[i] = new google.maps.Marker({
+                position: loc,
+                map: facilityVm.map,
+                icon: "./img/ambulance.svg"
+            });
+        }
+        
+        console.log(facilityVm.simStatis);
 
-        $interval(function updateGPS(){
-            
-        console.log(facilityVm.selectedFacility.id);
+        $interval(function updateGPS(){            
+        // console.log(facilityVm.selectedFacility.id);
         $http({
             method  : 'POST',
             url     : '/singleEvent/UpdatedGPS',
             headers : { 'Content-Type': 'application/json' },
             data    : {
-                        sim_id: facilityVm.selectedFacility.id
+                        sim_id: facilityVm.simStatis.data.sim_id
                       }
         }).then(function success(response){
-            console.log(response);
+            
+
+            console.log(response.data[0].location);
+            for(var i = 0; i < resourceNum; ++i){
+                resourceMarkers[i].setPosition(response.data[0].location);
+            }
         })
-    }, 1000);
+    }, 2000);
     });
 
-    
-
-    
-   
 });

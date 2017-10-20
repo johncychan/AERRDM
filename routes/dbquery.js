@@ -210,6 +210,7 @@ function SetPlan(db, sim_id, plan, stats, count, callback)
 {
 
 	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set:{"Plan":plan, "Statistics":stats, ResWaitOn:count}}, function(err, results) {
+
 		console.log("Plan saved.");
 		callback(err, results);
 	});
