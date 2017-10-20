@@ -411,14 +411,24 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       return $timeout(100)
     })
     .then($timeout(sendReqtToFac, 20000))
-    .then($timeout(receiveResponseFromFac, 28000))
-    .then($timeout(sendFinalToFac, 45000))
+    .then($timeout(receiveResponseFromFac, 35000))
+    .then($timeout(singleVm.removeFacAgent, 43000))
+    .then($timeout(sendFinalToFac, 51000))
     .then($timeout(getStat, 29000))
     .then($timeout(checkPlan, 10000));
 
     singleVm.panelShow = "true";
   } 
 
+  singleVm.removeFacAgent = function(){
+    var defer = $q.defer();
+    console.log("in");
+    for(var i = 0; i < singleVm.sendMessageLine.length; i++){
+      singleVm.agentMarker[i].setMap(null);
+    }
+    defer.resolve("resolved");
+    return defer.promise;
+  }
 
   singleVm.getFaciLoc = function(){
     console.log("getFaciLoc");
@@ -499,6 +509,27 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       return defer.promise;
   }
 
+
+  facilityAgent = function(){
+
+    console.log(facilityObj.facilities);
+
+    for(var i = 0; i < facilityObj.facilities.length; ++i){
+
+      var latlng = facilityObj.facilities[i].location;
+
+      console.log(latlng);
+
+      singleVm.agentMarker[i] = new google.maps.Marker({
+        position: latlng,
+        map: singleVm.map,
+        animation: google.maps.Animation.BOUNCE,
+        icon: "./img/searching.svg"
+      })
+    }
+  }
+
+
   receiveResponseFromFac = function(){
     console.log("put message marker");
 
@@ -556,6 +587,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
 
     var defer = $q.defer();
     console.log(singleVm.distinctFac);
+
+
     for(var i = 0; i < singleVm.distinctFac.length; ++i){
       // console.log(facilityObj.facilities[i].location);
 
@@ -630,6 +663,10 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   sendReqtToFac = function(){
     console.log("put message marker");
     var defer = $q.defer();
+
+
+    facilityAgent();
+
     console.log(facilityObj);
       for(var i = 0; i < facilityObj.facilities.length; ++i){
         // console.log(facilityObj.facilities[i].location);
@@ -767,7 +804,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     // }, delayArray[stage]);
 
         $timeout(function(){
-          setRoutes()}, 45000);
+          setRoutes()}, 50500);
     })
   }
 
@@ -864,7 +901,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var progressHandle = [];
   // var delayArray = [0, 1500, 3500, 5500, 7500, 7600, 8100];
 
-  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 5500, 2500, 1000, 8000, 8000, 1500, 5500, 9700 ,5500 ,1000, 2000];
+  var delayArray = [0, 2000, 3000, 1900, 1700, 100, 500, 5500, 2500, 1000, 8500, 8000, 8000, 1500, 5500, 9700 ,5500 ,1000, 2000];
 
 
   function progressInfoControl(stage){
@@ -912,39 +949,43 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       singleVm.dotShow = true;
     }
     else if(stage == 10){
+      singleVm.stageIcon = "fa fa-wrench fg-lg";
+      singleVm.stage = "Facilities Generate Plan";
+    }
+    else if(stage == 11){
       singleVm.stageIcon = "fa fa-envelope-o fa-lg";
       singleVm.stage = "Receiving Response from Facilities";
     }
-    else if(stage == 11){
+    else if(stage == 12){
       singleVm.dotShow = false;
     }
-    else if(stage == 12){
+    else if(stage == 13){
       singleVm.stageIcon = "fa fa-envelope-open-o fa-lg";
       singleVm.spinDowShow = true;
       singleVm.stage = "Analysing Response from Facilities";
     }
-    else if(stage == 13){
+    else if(stage == 14){
       singleVm.spinDowShow = false;
       singleVm.stageIcon = "fa fa-envelope fa-lg";
       singleVm.sendTaskShow = true;
       singleVm.stage = "Sending Final Plan to Facilities";
     }
-    else if(stage == 14){
+    else if(stage == 15){
       singleVm.stageIcon = "fa fa-play-circle-o fa-lg";
       singleVm.sendTaskShow = false;
       singleVm.dotShow = true;
       singleVm.stage = "Facilities Execute Final Plan";
     }
-    else if(stage == 15){
+    else if(stage == 16){
       singleVm.stage = "Resources Allocaton";
     }
-    else if(stage == 16){
+    else if(stage == 17){
       singleVm.dotShow = false;
       singleVm.eventShow = false;
       singleVm.taskShow = false;
       singleVm.facilityShow = false;
     }
-    else if(stage == 17){
+    else if(stage == 18){
       singleVm.resourceShow = true;
       singleVm.autoExtend = "progress-content-auto";
     }
@@ -1031,12 +1072,12 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       icon: "./img/police-station.svg",
       animation: google.maps.Animation.DROP
     })
-    singleVm.agentMarker[singleVm.agentNum] = new google.maps.Marker({
-      position: latlng,
-      map: singleVm.map,
-      animation: google.maps.Animation.BOUNCE,
-      icon: "./img/searching.svg"
-    })
+    // singleVm.agentMarker[singleVm.agentNum] = new google.maps.Marker({
+    //   position: latlng,
+    //   map: singleVm.map,
+    //   animation: google.maps.Animation.BOUNCE,
+    //   icon: "./img/searching.svg"
+    // })
     singleVm.agentNum++;
     var facilityElement = "";
 
@@ -1066,13 +1107,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       icon: "./img/hospital.svg",
       animation: google.maps.Animation.DROP
     })
-    singleVm.agentMarker[singleVm.agentNum] = new google.maps.Marker({
-      position: latlng,
-      map: singleVm.map,
-      animation: google.maps.Animation.BOUNCE,
-      icon: "./img/searching.svg"
-    })
-    singleVm.agentNum++;
+    // singleVm.agentMarker[singleVm.agentNum] = new google.maps.Marker({
+    //   position: latlng,
+    //   map: singleVm.map,
+    //   animation: google.maps.Animation.BOUNCE,
+    //   icon: "./img/searching.svg"
+    // })
+    // singleVm.agentNum++;
     var facilityElement = "";
     facilityElement = facilitiesInfo(facilityObj, "hospital");
 
@@ -1101,13 +1142,13 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       icon: "./img/fire-station.svg",
       animation: google.maps.Animation.DROP
     })
-    singleVm.agentMarker[singleVm.agentNum] = new google.maps.Marker({
-      position: latlng,
-      map: singleVm.map,
-      animation: google.maps.Animation.BOUNCE,
-      icon: "./img/searching.svg"
-    })
-    singleVm.agentNum++;
+    // singleVm.agentMarker[singleVm.agentNum] = new google.maps.Marker({
+    //   position: latlng,
+    //   map: singleVm.map,
+    //   animation: google.maps.Animation.BOUNCE,
+    //   icon: "./img/searching.svg"
+    // })
+    // singleVm.agentNum++;
 
     var facilityElement = "";
     facilityElement = facilitiesInfo(facilityObj, "fire_station");
