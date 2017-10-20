@@ -25,6 +25,7 @@ app.config(function (localStorageServiceProvider){
 	localStorageServiceProvider.setPrefix('meanMapApp');
 });
 
+// factory 
 app.factory('facilitySelected', function(){
 	var selectedFacility = {};
 	var pickedFacility = {};

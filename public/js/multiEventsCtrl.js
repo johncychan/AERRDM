@@ -72,12 +72,14 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     google.maps.event.clearListeners(multiVm.map, 'click');
   }
 
+  // detect ESC key to remove pin cursor
   multiVm.mapKeyUp = function($event){
     var onKeyUpResult = $event.keyCode;
     if(onKeyUpResult == 27)
       defaultCursor();
   }
 
+  // set cursor back to default
   function defaultCursor() {
     clearMapClickEvent();
     multiVm.map.setOptions({draggableCursor:''});
@@ -282,18 +284,20 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   }
 
+  // close current opened info window
   multiVm.closeInfoWin = function(){
     if (multiVm.lastOpenedInfoWindow) {
           multiVm.lastOpenedInfoWindow.close();
       }
   }
   
+  // redirect function
   multiVm.callFunction = function(name){
     if(angular.isFunction(multiVm[name]))
       multiVm[name]()
   }
 
-
+  // info window redirect function
   multiVm.infoWinRedirect = function(toFunction){
     // remove last compile element object
     multiVm.compiled.remove();
@@ -312,6 +316,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   multiVm.category_list = ["Medical Help", "Urban Fire", "Chemical Leakage"];
 
+
+  /* factor generator */
   multiVm.levelGenerator = function(){
     return Math.floor((Math.random()*5)+1);
   }
@@ -391,8 +397,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.eventList[index] = new Array();
     multiVm.eventList[index] = multiVm.factor;
   }
+  /* end factor generator */
 
-
+  // open progress menu
     multiVm.progrssMenuOpen = function () {
       ngDialog.open({ 
         template: 'eventProgress.html',
@@ -404,12 +411,13 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     };
 
 
+  // 
   multiVm.apply = function(){
     console.log(multiVm.factor);
     $mdDialog.hide();
   }
 
-
+  // pop out event overview menu
   multiVm.confirmStart = function(){
     console.log(multiVm.markersList);
     console.log(multiVm.eventList);
@@ -419,6 +427,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.overviewMenu();
   }
 
+  // event overview windows, confirm to start event
   multiVm.overviewMenu = function () {
     ngDialog.openConfirm({ 
       template: 'multiEventOverview.html',
@@ -432,6 +441,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     });
   };
 
+  // set event
   multiVm.eventSet = function(){
       $mdDialog.hide();
       multiVm.closeInfoWin();
@@ -568,6 +578,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   }
 
 
+  // get task from server
   getTasks = function(dataObj){
     return $http({
 
@@ -578,6 +589,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
                   sim_id: dataObj.sim_id
       }
     }).then(function success(response){
+      // if success
         console.log(response.data);
         for(var i = 0; i < response.data.length; ++i){
           startLoc.push(response.data[i].Location);
@@ -600,15 +612,12 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.fireTruck = fireTruckNum;
   }
 
+  // store allocated resources
   multiVm.resourceAllocation = function(resourceObj){
     multiVm.allocatedResources = []
     for(var i = 0; i < resourceObj.length; i++){
 
     }
-  }
-
-  multiVm.taskSummary = function(){
-
   }
 
   multiVm.facilitesSummary = function(totalFacilites, totalHospital, totalPoliceStation, totalFireStation) {
@@ -620,6 +629,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     }
   }
 
+  // open factor dialog menu to let user change factor
   multiVm.setDataField = function(index){
     // generate factor
     $mdDialog.show(
@@ -652,6 +662,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   var delayArray = [0, 5000, 5000, 5000, 5000, 100, 500, 500, 950, 1500, 5500, 5500, 5500];
 
 
+  // progress controll
   function progressInfoControl(stage){
     // currentProgressStage = stage;
     if(stage > delayArray.length){
@@ -738,7 +749,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     else{
       // progress menu opened for first time, then check whether it is opened atm
       if(!ngDialog.isOpen(multiVm.dialog.id)){
-        console.log("in");
         multiVm.dialog = ngDialog.open({ 
           template: 'eventProgress.html',
           overlay: false,
@@ -750,7 +760,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     }
   };
 
-
+  // create marker for vehcile
   function createMarker(latlng, label, html) {
     var marker = new google.maps.Marker({
         position: latlng,
@@ -765,6 +775,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     return marker;
   }  
 
+  // put police station marker to polica station
   function putPolice(facilityObj, label, type){
     var iconUrl;
     var latlng = facilityObj.location;
@@ -782,7 +793,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     var compiled = $compile(facilityElement)($scope)
     marker.infoWin = new google.maps.InfoWindow({
-      // content: "<showTag></showTag>"
       content: compiled[0]
 
     });
@@ -791,9 +801,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       marker.infoWin.open(multiVm.map, marker);
     });
 
-    // return marker;
   }
 
+  // put hospital marker to hospital
   function putHospital(facilityObj, label, type){
     var iconUrl;
     var latlng = facilityObj.location;
@@ -821,6 +831,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // return marker;
   }
 
+  // put fire station marker to fire station
   function putFire(facilityObj, label, type){
     var iconUrl;
     var latlng = facilityObj.location;
@@ -849,6 +860,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // return marker;
   }
 
+  // facility info window attribute
   function facilitiesInfo(facilityObj, facility_type){
     var type = "";
     var resource_number = 0;
@@ -888,6 +900,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     return element;
   }
 
+  // search radar animation
   function searchCircle(){
     var _radius = 5000;
     var rMin = _radius * 2/5;
@@ -921,6 +934,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     }, 20);
   }
 
+  // set route between event and facility
     function setRoutes(){
 
       var directionDisplay = new Array();
@@ -1031,6 +1045,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     var markerStarted = false;
 
+    // control simulation speed
     multiVm.stepControl = function(step){
       multiVm.step = multiVm.step + step;
       if(multiVm.step > maxStep){
@@ -1147,6 +1162,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       }, tick);
   }
 
+  // start resource deploy simulation
     function startAnimation(index){
 
       eol[index] = polyline[index].Distance();
