@@ -9,9 +9,12 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
     facilityVm.eventStatis = angular.fromJson(localStorage['eventStatis']);
     facilityVm.simStatis = angular.fromJson(localStorage['simulationStatis']);
     facilityVm.resource = angular.fromJson(localStorage['resources']);
-    console.log(facilityVm.resource);
-    resourceNum = facilityVm.resource.length;
 
+    console.log(facilityVm.resource);
+    console.log(facilityVm.resource[0].Facility);
+
+
+    resourceNum = facilityVm.resource.length;
 
     var loc = facilityVm.selectedFacility.Location;
     console.log(loc);

@@ -37,7 +37,7 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $route, $scope, $rootS
 			}
 		}
 		window.localStorage['resources'] = JSON.stringify(resourceList);
-		window.open("/facilityWindow.html",'_blank');
+		window.open("/facilityWindow.html",'_blank', "width=750,height=750");
 	}
 
 	indexVm.routeRedirect = function(url){
