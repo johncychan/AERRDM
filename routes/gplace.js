@@ -3,8 +3,8 @@ var Promise 	= require('promise');
 var request 	= require('request');
 var dbquery	= require('./dbquery.js');
 
-var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
-var google_direction_api = 'https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyCHtY3X8alDlbzNilleVSNS9ba5rhbpIh0';
+var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyA75ZyKpIeJKL9ECkSQGBR5A92_4M3l3CE';
+var google_direction_api = 'https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyA75ZyKpIeJKL9ECkSQGBR5A92_4M3l3CE';
 
 // Place Object
 function Place(p, type, rnum, rcost, destination, mode) {
@@ -131,8 +131,8 @@ function DirectionsURL(start_location, end_location)
 {
 	var url = google_direction_api.concat("&origin=", start_location.lat,",",start_location.lng);
 	url = url.concat("&destination=", end_location.lat,",",end_location.lng);
-	url = url.concat("&departure_time=", parseInt(new Date().valueOf()/1000));
-	console.log(url);
+	var date = new Date()-5*60000;
+	url = url.concat("&departure_time=", parseInt(date.valueOf()));
 	return url;
 }
 

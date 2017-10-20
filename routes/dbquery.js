@@ -206,10 +206,10 @@ function SimulationDetails(db, sim_id, callback)
 	});
 }
 
-function SetPlan(db, sim_id, plan, stats, callback)
+function SetPlan(db, sim_id, plan, stats, count, callback)
 {
 
-	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set:{"Plan":plan, "Statistics":stats}}, function(err, results) {
+	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set:{"Plan":plan, "Statistics":stats, ResWaitOn:count}}, function(err, results) {
 		console.log("Plan saved.");
 		callback(err, results);
 	});
@@ -274,7 +274,7 @@ function InsertMultiSimulation(db, req, radius, events, facilities, callback)
 
 function FinishedJob(db, user_id, callback)
 {
-	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user._id)}, 
+	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user_id)}, 
 		{
 			$set: {			
 			"active.Complete" : true,
@@ -285,9 +285,45 @@ function FinishedJob(db, user_id, callback)
 			if (err)
 				throw err;
 
-			callback();
+			callback(doc);
 		}
 	);
+}
+
+function CheckAvaliabilityMulti(db, newRes, details)
+{
+	return new Promise(function(resolve, reject) {
+		var date = new Date(new Date()-5*60000);
+		var start = newRes.Location.lat.toString();
+		start = start.concat(",");
+		start = start.concat(newRes.Location.lng);
+		var end = details.Location.lat.toString();
+		end = end.concat(",");
+		end = end.concat(details.Location.lng);
+		console.log(date);
+		db.collection("users").findOneAndUpdate({facility: newRes.Facility, active:{$exists: false}, Timestamp: {$gt: date}}, 
+			{$set: {active: { sim_id: details._id, Severity: details.Severity, Category: details.Category,
+					StartPoint: start, EndPoint: end, Deadline: details.Deadline, Responded: false, Complete: false}
+					}
+			}, 
+			function(err, doc) {
+				if(err)
+					reject(err);
+				console.log(doc.lastErrorObject.updatedExisting);
+				if(doc.lastErrorObject.updatedExisting == true)
+				{
+					console.log(doc.value._id);
+					newRes["user"]= doc.value._id;
+				}
+				else
+				{
+					console.log("null user");
+					newRes["user"]= null;
+				}
+				resolve(err, newRes);
+			}
+		);
+	});
 }
 
 module.exports.RequiredResources = RequiredResources;
@@ -311,3 +347,4 @@ module.exports.Response = Response;
 module.exports.UpdateSimResponses = UpdateSimResponses;
 module.exports.InsertMultiSimulation = InsertMultiSimulation;
 module.exports.FinishedJob = FinishedJob;
+module.exports.CheckAvaliabilityMulti = CheckAvaliabilityMulti;
