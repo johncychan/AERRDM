@@ -9,7 +9,9 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $route, $scope, $rootS
     });
 
 	indexVm.listFacility = function(){
-		indexVm.hideFacility = false;
+		$timeout(function(){
+			indexVm.hideFacility = false;
+		}, 40000);
 		// factory function
 		// vaule set in event controller
 		indexVm.facility = facilitySelected.getFacility();
