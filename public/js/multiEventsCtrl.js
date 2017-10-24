@@ -487,9 +487,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       //     // set the headers so angular passing info as form data (not request payload)
       headers : { 'Content-Type': 'application/json' },
       data    : {
-                  expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
+                  Expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
                   ResourcesNum: {min: multiVm.factor['Min resource'], max: multiVm.factor['Max resource']},
-                  events: multiVm.eventList
+                  Events: multiVm.eventList
                 }
 
       }).then(function success(response) {
