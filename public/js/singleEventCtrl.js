@@ -437,6 +437,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       singleVm.agentMarker[i].setMap(null);
     }
     defer.resolve("resolved");
+    console.log(defer);
     return defer.promise;
   }
 
