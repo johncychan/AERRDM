@@ -26,6 +26,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.markerIndex = 0;
   multiVm.markersList = [];
   multiVm.eventList = [];
+  multiVm.eventObj = [];
 
   var speed = 0.000005, wait = 1;
   var infowindow = null;
@@ -98,22 +99,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       multiVm.markersList.length = 0;
       multiVm.marker.setMap(null);
     }
-    // var place = [
-    // "-33.86035933, 151.2050238",
-    // "151.2050238, 151.19059978",
-    // "-33.89035505, 151.2260241",
-    // "-33.87666251, 151.19473463",
-    // "-33.85315971, 151.18648391",
-    // "-33.86033052, 151.21215368",
-    // "-33.88528746, 151.19362093",
-    // "-33.88556935, 151.18516061",
-    // "-33.87114333, 151.20569572",
-    // "-33.86434054, 151.20310438",
-    // "-33.88490885, 151.23425777",
-    // "-33.8906694, 151.21657942"
-    // ];
-
-    // var place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House", "Moonlight Ciinema Sydney", "Woolahra", "Westfield Bondi Junction"];
 
     var max = 5;
     var min = 2;
@@ -373,6 +358,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.minvelocity = multiVm.minVelocityGenerator();
     multiVm.maxvelocity = multiVm.maxVelocityGenerator();
     multiVm.deadline = multiVm.deadlineGenerator();
+    multiVm.minResource = 2;
+    multiVm.maxResource = 10;
 
     if(index == 0){
       multiVm.minExpenditure = multiVm.minExpenditureGenerator();
@@ -381,7 +368,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     multiVm.factor = {
       'ID': index,
-      'Severity Level': multiVm.level,
+      'Severity': multiVm.level,
       'Category': multiVm.category_list[multiVm.category],
       'Resource avg. expenditure': multiVm.expenditure,
       'Min expenditure': multiVm.minExpenditure,
@@ -389,13 +376,22 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       'Min velocity': multiVm.minvelocity,
       'Max velocity': multiVm.maxvelocity,
       'Resource avg. velocity': multiVm.velocity,
+      'Min resource': multiVm.minResource,
+      'Max resource': multiVm.maxResource,
       'Deadline': multiVm.deadline,
       'Location': {lat: multiVm.marker.position.lat(), lng: multiVm.marker.position.lng()}
+    } 
+    var tmp = {
+      'ID': index,
+      'Location': {lat: multiVm.marker.position.lat(), lng: multiVm.marker.position.lng()},
+      'Category': multiVm.category_list[multiVm.category],
+      'Severity': multiVm.level,
+      'Deadline': multiVm.deadline
     }
-
     console.log("Event List Index: "+index);
     multiVm.eventList[index] = new Array();
     multiVm.eventList[index] = multiVm.factor;
+    multiVm.eventObj.push(tmp);
   }
   /* end factor generator */
 
@@ -479,7 +475,11 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
 
   multiVm.getFaciLoc = function(){
+    searchCircle();
     console.log("getFaciLoc");
+    console.log(multiVm.minExpenditure + " " + multiVm.maxExpenditure);
+    console.log(multiVm.factor['Min resource'] + " " + multiVm.factor['Max resource']);
+    console.log(multiVm.eventObj);
     return $http({
 
       method  : 'POST',
@@ -487,38 +487,14 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       //     // set the headers so angular passing info as form data (not request payload)
       headers : { 'Content-Type': 'application/json' },
       data    : {
-                  expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
-                  ResourcesNum: {min: multiVm.factor['Min resource'], max: multiVm.factor['Max resource']},
-                  events: multiVm.eventList
+                  Expenditure: {min: multiVm.minExpenditure, max: multiVm.maxExpenditure},
+                  ResourceNum: {min: multiVm.factor['Min resource'], max: multiVm.factor['Max resource']},
+                  Events: multiVm.eventObj
                 }
 
       }).then(function success(response) {
 
         console.log(response.data);
-        var totalFacilites = 0;
-        var totalPoliceStation = 0;
-        var totalHospital = 0;
-        var totalFireStation = 0;
-        var ambulanceNum = 0;
-        var policeCarNum = 0;
-        var fireTruckNum = 0;
-
-
-        for(var i = 0; i < response.data.facilities.length; ++i){
-          totalFacilites++;
-          if(response.data.facilities[i].type == "hospital"){
-            ambulanceNum = response.data.resources.hospital.num;
-            totalHospital++;
-          }
-          else if(response.data.facilities[i].type == "police"){
-            policeCarNum = response.data.resources.police.num;
-            totalPoliceStation++;
-          }
-          else if(response.data.facilities[i].type == "fire_station"){
-            fireTruckNum = response.data.resources.fire_station.num;
-            totalFireStation++;
-          }
-        }
 
         $timeout(function(){
           for(var i = 0; i < response.data.facilities.length; ++i){
@@ -533,9 +509,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
             }
           }
         }, 5000);
-        // sendReqtToFac(response.data);
-        receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum);
-        multiVm.facilitesSummary(totalFacilites, totalHospital, totalPoliceStation, totalFireStation);
 
         return response.data;
 
@@ -604,28 +577,11 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     })
   }
 
-
-  function receiveEventTask(ambulanceNum, policeCarNum, fireTruckNum){
-    multiVm.totalResources = ambulanceNum+policeCarNum+fireTruckNum;
-    multiVm.ambulance = ambulanceNum;
-    multiVm.police = policeCarNum;
-    multiVm.fireTruck = fireTruckNum;
-  }
-
   // store allocated resources
   multiVm.resourceAllocation = function(resourceObj){
     multiVm.allocatedResources = []
     for(var i = 0; i < resourceObj.length; i++){
 
-    }
-  }
-
-  multiVm.facilitesSummary = function(totalFacilites, totalHospital, totalPoliceStation, totalFireStation) {
-    multiVm.facilitiesSum = {
-      'Total': totalFacilites,
-      'Hospital': totalHospital,
-      'Polication Station': totalPoliceStation,
-      'Fire Station': totalFireStation
     }
   }
 
@@ -902,6 +858,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   // search radar animation
   function searchCircle(){
+    for(var i = 0; i < multiVm.eventObj; ++i){
+      
+    }
     var _radius = 5000;
     var rMin = _radius * 2/5;
     var rMax = _radius;
