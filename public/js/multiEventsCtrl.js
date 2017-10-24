@@ -27,6 +27,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.markersList = [];
   multiVm.eventList = [];
   multiVm.eventObj = [];
+  multiVm.circles = [];
 
   var speed = 0.000005, wait = 1;
   var infowindow = null;
@@ -454,6 +455,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.hamCheck = false;
     // hide search box
     multiVm.searchExtend();
+    for(var i = 0; i < multiVm.markersList.length; ++i){
+      multiVm.markersList[i].setDraggable(false);
+    }
     // // close info window
     // multiVm.closeInfoWin();
 
@@ -475,7 +479,10 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
 
   multiVm.getFaciLoc = function(){
-    searchCircle();
+    console.log(multiVm.eventObj);
+    for(var i = 0; i < multiVm.eventObj.length; ++i){
+      searchCircle(multiVm.eventObj[i], i);
+    }
     console.log("getFaciLoc");
     console.log(multiVm.minExpenditure + " " + multiVm.maxExpenditure);
     console.log(multiVm.factor['Min resource'] + " " + multiVm.factor['Max resource']);
@@ -515,48 +522,17 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       });
   }
 
-  sendReqtToFac = function(dataObj){
-    console.log(dataObj.facilities.length);
-    for(var i = 0; i < dataObj.facilities.length; ++i){
-      endLoc[i] = dataObj.facilities.location;
-      polylines[i] = new google.maps.Polyline({
-        path: [multiVm.marker.position, dataObj.facilities.location],
-        geodestic: true,
-        strokeColor: '#178cd',
-        strokeOpacity: 0.6,
-        strokeWeight: 2
-      });
-      requestMarker[i] = new google.maps.Marker({
-        position: multiVm.marker.position,
-        map: multiVm.map,
-        icon: "img/bomb.svg"
-      });
-    }
-    moveReqMarker(endLoc, polylines, requestMarker);
-  }
-
-  moveReqMarker = function(endLoc, polyline, marker){
-    var eol = [];
-    var poly2 = [];
-    var timerHandle = [];
-    for (var i = 0; i < polyline.length; i++) {
-        var dfd = $.Deferred();
-        poly2[i] = new google.maps.Polyline({
-            path: []
-        });
-        marker[i].setMap(map);
-        polyline[i].setMap(map);
-        startAnimation(i);
-    }
-  }
-
 
   // get task from server
   getTasks = function(dataObj){
+    console.log(dataObj);
+    for(var i = 0; i < multiVm.circles.length; ++i){
+      multiVm.circles[i].setMap(null);
+    }
     return $http({
 
       method  : 'POST',
-      url     : '/assignResource',
+      url     : '/multiEvent/assignResources',
       headers : { 'Content-Type': 'application/json' },
       data    : {
                   sim_id: dataObj.sim_id
@@ -567,10 +543,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
         for(var i = 0; i < response.data.length; ++i){
           startLoc.push(response.data[i].Location);
         }
-
-        progressHandle[stage] = $timeout(function(){
-      progressInfoControl(stage);
-    }, delayArray[stage]);
 
         $timeout(function(){
           setRoutes()}, 20000);
@@ -857,40 +829,39 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   }
 
   // search radar animation
-  function searchCircle(){
-    for(var i = 0; i < multiVm.eventObj; ++i){
-      
-    }
-    var _radius = 5000;
-    var rMin = _radius * 2/5;
+  function searchCircle(event, index){
+    console.log(event);
+    var _radius = event.Severity * 1000;
+    // var _radius = 5000;
+    var rMin = 0;
     var rMax = _radius;
     var direction = 1;
 
     var circleOption = {
-      center: multiVm.marker.position,
+      center: event.Location,
       fillColor: '#3878c7',
-      fillOpacity: 0.2,
+      fillOpacity: 0.3,
       map: multiVm.map,
 
-      radius: rMin,
+      radius: 0,
       strokeColor: '#3878c7',
-          strokeOpacity: 0.2,
-          strokeWeight: 0.5
+      strokeOpacity: 0.3,
+      strokeWeight: 0.3
     }
-    var circle = new google.maps.Circle(circleOption);
+    multiVm.circles[index] = new google.maps.Circle(circleOption);
 
     var circleTimer = $interval(function(){
-      var radius = circle.getRadius();
+      var radius = multiVm.circles[index].getRadius();
       if((radius > rMax) || (radius) < rMin){
         direction *= -1;
       }
-      var _par = (radius/_radius) - 0.7;
+      var _par = (radius/_radius);
 
       circleOption.radius = radius + direction * 10;
-      circleOption.fillOpacity = 0.6 * _par;
+      circleOption.fillOpacity = 0.2 * _par;
 
-      circle.setOptions(circleOption);
-    }, 20);
+      multiVm.circles[index].setOptions(circleOption);
+    }, event.Severity * 5, event.Severity * 100);
   }
 
   // set route between event and facility
