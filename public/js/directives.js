@@ -8,7 +8,10 @@ app.directive('draggable', function() {
     }
   };
 });
- 
+
+/**
+    add to HTML tag to let the text blinl
+*/
 app.directive('blink', ['$interval', function($interval) {
   return function(scope, element, attrs) {
       var timeoutId;
@@ -35,6 +38,9 @@ function isEmpty(value) {
     return angular.isUndefined(value) || value === '' || value === null || value !== value;
 }
 
+/**
+    dynamic min value directive
+*/
 app.directive('ngMin', function () {
     return {
         restrict: 'A',
@@ -60,6 +66,9 @@ app.directive('ngMin', function () {
     };
 });
 
+/**
+    dynamic max value directive
+*/
 app.directive('ngMax', function () {
     return {
         restrict: 'A',
