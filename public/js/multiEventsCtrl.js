@@ -416,8 +416,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   // pop out event overview menu
   multiVm.confirmStart = function(){
-    console.log(multiVm.markersList);
-    console.log(multiVm.eventList);
     $mdDialog.hide();
     multiVm.closeInfoWin();
     //pop out overview event windows
@@ -828,7 +826,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   // search radar animation
   function searchCircle(event, index){
-    console.log(event);
     var _radius = event.Severity * 1000;
     // var _radius = 5000;
     var rMin = 0;
