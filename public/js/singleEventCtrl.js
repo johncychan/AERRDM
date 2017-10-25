@@ -453,8 +453,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     /**
       simulation sequence
     */
-    putSearchMarker();
     singleVm.getFaciLoc()
+    .then($timeout(putSearchMarker, 9000))
     .then(putFacMarker)
     .then($timeout(sendReqtToFac, 20000))
     .then($timeout(receiveResponseFromFac, 35000))
@@ -573,7 +573,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
         position: latlng,
         map: singleVm.map,
         animation: google.maps.Animation.BOUNCE,
-        icon: "./img/searching.svg"
+        icon: "./img/archive.svg"
       })
     }
   }
@@ -1593,6 +1593,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
           return;
       }
       var p = polyline[index].GetPointAtDistance(d);
+
+      window.localStorage['updateLoc'] = angular.toJson(p);
 
       marker[index].setPosition(p);
       updatePoly(index,d);

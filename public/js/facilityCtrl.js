@@ -181,6 +181,9 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                 marker[i] = createMarker(loc, facilityVm.resource.Type);
               }           
 
+
+              console.log(marker);
+
               $timeout(function(){
                 startAnimation(routeNum)
               }, 6000);  
@@ -223,33 +226,14 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                 marker[index].setPosition(endLocation[index].latlng);
                 /** if vehicle arrived, count plus 1 */
                 count++;
-
-                /** if count equal to number of resource deployed, pop out statistic menu */
-                if(count == facilityVm.resourcesNum){
-                    /** close progress menu */
-                    facilityVm.dialog.close();
-
-                    /** open statistic menu */
-                    ngDialog.openConfirm({ 
-                      template: 'eventStatistic.html',
-                      overlay: true,
-                      showClose: false,
-                      closeByEscape: false,
-                      scope: $scope,
-                      className: 'ngdialog-theme-default statistic-menu draggable'       
-                    }).then(function(value){
-                        /** 
-                          confirm end simulation
-                          clear marker, polyline, event
-                        */
-                        $route.reload();
-                        $window.location.reload();
-                    });
-                  }
-                  return;
+                return;
               }
               var p = polyline[index].GetPointAtDistance(d);
 
+            // console.log(window.localStorage['updateLoc']);
+
+            // var cp = angular.fromJson(window.localStorage['updateLoc']);
+            // console.log(cp);
             marker[index].setPosition(p);
             updatePoly(index,d);
             timerHandle[index] =  $timeout(function() {
@@ -277,8 +261,6 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
        }
 
     });
-
-
 
 
 

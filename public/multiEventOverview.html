@@ -19,14 +19,12 @@
             <th>ID</th>
             <th>Category</th>
             <th>Severity</th>
-            <th>Resources needed</th>
             <th>Average Deadline</th>
           </tr>
           <tr ng-repeat="event in multiVm.eventList">
             <td>{{event.ID}}</td>
             <td>{{event.Category}}</td>
             <td>Level {{event['Severity Level']}}</td>
-            <td>TBC</td>
             <td>{{event.Deadline}}</td>
           </tr>
         </table>
