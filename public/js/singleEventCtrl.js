@@ -643,6 +643,7 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     send final plan marker to selected facilities
   */
   sendFinalToFac = function(){
+    /** remove analytic marker */
     singleVm.analyticsMarker.setMap(null);
     for(var i = 0; i < singleVm.sendMessageLine.length; i++){
       fadeOut(singleVm.sendMessageLine[i], 0 , 200);
