@@ -9,3 +9,14 @@ The title of the project: Automatic Emergency Rescue Resource Deployment in Metr
   $npm start
   
 ## Further details about the files and folder structure will be provided soon.
+
+## Authors
+
+**Weicheng Yin && John Chan**: Public folder (web frontend)
+
+* Weicheng Yin: Javascript (Logic)
+* John Chan: CSS (Decoration / UI)
+
+**Claudio Villella**: Remaining folders (server)
+
+**Aden Prior**: Mobile application (mobile of root folder)

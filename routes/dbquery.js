@@ -92,6 +92,7 @@ function CheckJobRequest(db, user_id, callback)
 	});
 }
 
+// Inserting the simulation into the database
 function InsertSimulation(db, req, resources_list, radius, callback)
 {
 	var content = req.body;
@@ -105,6 +106,7 @@ function InsertSimulation(db, req, resources_list, radius, callback)
 		}); 
 }
 
+// Sets the simulated resource total
 function SetSimResouceCount(db, sim_id, req_count, callback)
 {
 	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set: {ResRequired: req_count, ResWaitOn: req_count}}, function (err, r)
@@ -113,11 +115,14 @@ function SetSimResouceCount(db, sim_id, req_count, callback)
 	});
 }
 
+
+// Adds facility to database
 function InsertFacility(db, dbr, place)
 {
 	db.collection("Facilities").insertOne({Sim_id: mongodb.ObjectId(dbr.insertedId), Place: place});
 }
 
+// Finds facilities from database
 function FindFacilities(db, id, type, callback)
 {
 		db.collection("Facilities").find({Sim_id: mongodb.ObjectId(id), 'Place.type': type}, {Place: 1}).toArray(function (err, places) { 
@@ -126,6 +131,7 @@ function FindFacilities(db, id, type, callback)
 
 }
 
+// The current active simulated resources, including mobile
 function ActiveSims(db, req, callback)
 {	
 	db.collection("Simulations").find({active: {$exists: true}}).toArray(function(err, docs) {
@@ -133,6 +139,7 @@ function ActiveSims(db, req, callback)
 	});
 }
 
+// Updates the gps across all mobile resources on frontend
 function UpdatedGPS(db, sim_id, callback)
 {
 	db.collection("users").find({"active.sim_id": mongodb.ObjectId(sim_id)}, {_id: 1, Location: 1}).toArray(function(err, docs) {
@@ -150,6 +157,7 @@ function UpdatedGPS(db, sim_id, callback)
 	});
 }
 
+// Job request response function, handling the response from mobile application's to the web server
 function Response(db, user_id, sim_id, response, callback)
 {
 	console.log(response);
@@ -187,6 +195,7 @@ function Response(db, user_id, sim_id, response, callback)
 	}
 }
 
+// Simulated resource response updater
 function UpdateSimResponses(db, sim_id, update_value, callback)
 {
 	db.collection("Simulations").findOneAndUpdate({_id: mongodb.ObjectId(sim_id)}, {$inc: {ResWaitOn: update_value}}, 
@@ -196,6 +205,7 @@ function UpdateSimResponses(db, sim_id, update_value, callback)
 	);
 }
 
+// Finding a simulation's details and statistics
 function SimulationDetails(db, sim_id, callback)
 {
 	db.collection("Simulations").findOne({_id: mongodb.ObjectId(sim_id)}, function(err, details) {
@@ -206,6 +216,7 @@ function SimulationDetails(db, sim_id, callback)
 	});
 }
 
+// Stores the plan and relevant statistics
 function SetPlan(db, sim_id, plan, stats, count, callback)
 {
 
@@ -216,6 +227,17 @@ function SetPlan(db, sim_id, plan, stats, count, callback)
 	});
 }
 
+function MultiSetPlan(db, sim_id, plan, stats, insufficient, callback)
+{
+
+	db.collection("Simulations").updateOne({_id: mongodb.ObjectId(sim_id)}, {$set:{"Plan":plan, "Statistics":stats, "Insufficient":insufficient}}, function(err, results) {
+
+		console.log("Plan saved.");
+		callback(err, results);
+	});
+}
+
+// Retrieves plan from database
 function GetPlan(db, sim_id, callback)
 {
 	db.collection("Simulations").find({_id: mongodb.ObjectId(sim_id)}, {"Plan": 1}).toArray( 
@@ -231,6 +253,7 @@ function GetPlan(db, sim_id, callback)
 	});
 }
 
+// Retrieves stats from database
 function GetStats(db, sim_id, callback)
 {
 	db.collection("Simulations").find({_id: mongodb.ObjectId(sim_id)}, {"Statistics": 1}).toArray( 
@@ -246,12 +269,13 @@ function GetStats(db, sim_id, callback)
 	});
 }
 
-
+// Reset user for new job requests using sim_id
 function ResetUserBySimId(db, sim_id)
 {
 	db.collection("users").updateMany({"active.sim_id": mongodb.ObjectId(sim_id)}, {$unset: {active: ""}});
 }
 
+// Reset user using the user initiator
 function ResetUserByInitiator(db, initiator)
 {
 	db.collection("Simulations").find({Initiator: initiator},{_id:1}).forEach(function(doc) {
@@ -259,13 +283,13 @@ function ResetUserByInitiator(db, initiator)
 	});
 }
 
+// Insert the multi simulation into the database
 function InsertMultiSimulation(db, req, radius, events, facilities, callback)
 {
 	var content = req.body;
 	db.collection("Simulations").insertOne({Expenditure: content.Expenditure, ResourceNum: content.ResourceNum, 
 		Radius: radius, start: new Date(), Initiator: req.connection.remoteAddress, Events: events, Facilities: facilities} ,
 		function(err, r) {
-			console.log(r.insertedId);
 			if(err)
 				throw err;
 
@@ -273,9 +297,10 @@ function InsertMultiSimulation(db, req, radius, events, facilities, callback)
 	}); 
 }
 
+// Handles user's finishing a job request
 function FinishedJob(db, user_id, callback)
 {
-	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user_id)}, 
+	db.collection("users").updateOne({ "_id" : mongodb.ObjectId(user_id), active: {$exists:true}}, 
 		{
 			$set: {			
 			"active.Complete" : true,
@@ -291,6 +316,7 @@ function FinishedJob(db, user_id, callback)
 	);
 }
 
+// Check availability of user for multiple event simulation
 function CheckAvaliabilityMulti(db, newRes, details)
 {
 	return new Promise(function(resolve, reject) {
@@ -349,3 +375,4 @@ module.exports.UpdateSimResponses = UpdateSimResponses;
 module.exports.InsertMultiSimulation = InsertMultiSimulation;
 module.exports.FinishedJob = FinishedJob;
 module.exports.CheckAvaliabilityMulti = CheckAvaliabilityMulti;
+module.exports.MultiSetPlan = MultiSetPlan;

@@ -14,7 +14,10 @@ function FindMobileResources(sim_details, type, db)
 				return reject(err);
 
 			var heap = new Heap(function(a, b) {
-				return a.Cost - b.Cost;
+				if(a.Cost > b.Cost)
+					return 1;
+				else
+					return -1;
 			});		
 
 			var durations = [];
@@ -136,30 +139,27 @@ function CreateMobileResource(sim_details, facility, directions, expenditure, ty
 	this.Facility = facility.name;
 	this.Type = type;
 	this.Expenditure = expenditure;
-	this.Duration = directions.time / 60;
-	this.Distance = directions.distance / 1000;
+	this.Duration = directions.time;
+	this.Distance = directions.distance;
 	this.User_id = "";
 	this.Cost = Cost(sim_details, this);
 }
 
-function CreateMobileResourceMulti(sim_details, facility, directions, expenditure, type)
+function CreateMobileResourceMulti(sim_details, facility, directions, expenditure, e_id)
 {
-	this.id = new Mongodb.ObjectId();
-	this.Location = facility.location;
-	this.Facility = facility.name;
-	this.Type = type;
-	this.Expenditure = expenditure;
-	this.Duration = directions.time / 60;
-	this.Distance = directions.distance / 1000;
-	this.User_id = "";
-	this.Cost = [];
-	for(var i = 0; i < sim_details.Events.length; i++)
-	{
-		var details = {Location: sim_details.Events[i].Location, Severity: sim_details.Events[i].Severity, 
-			Category: sim_details.Events[i].Category, Deadline: sim_details.Events[i].Deadline, Radius: sim_details.Radius,
-			Expenditure: sim_details.Expenditure};
-		this.Cost.push(Cost(details, this));	
-	} 
+	var mobile = {};
+	mobile['id'] = "";
+	mobile['Location'] = facility.location;
+	mobile['Facility'] = facility.name;
+	mobile['Type'] = facility.type;
+	mobile['Expenditure'] = expenditure;
+	mobile['Duration'] = directions.time;
+	mobile['Distance'] = directions.distance;
+	var details = {Severity: sim_details.Events[e_id].Severity, Radius: sim_details.Radius, Expenditure: sim_details.Expenditure, Deadline: sim_details.Events[e_id].Deadline}; 
+	mobile['Cost'] = Cost(details, mobile);
+	mobile['Events'] = facility.events;
+	mobile['Severity'] = sim_details.Events[e_id].Severity;
+	return mobile;
 }
 
 function Cost(sim_details, resource)
@@ -170,7 +170,8 @@ function Cost(sim_details, resource)
 	var E_t = Normalisation(distance, 0, sim_details.Radius);
 	var E_m = Normalisation(resource.Expenditure, sim_details.Expenditure.min, sim_details.Expenditure.max);
 	var dline = Deadline(resource.Duration, sim_details.Deadline);
-	var cost = w_t*E_t+w_m*E_m*dline;
+	var cost = parseFloat(w_t)*parseFloat(E_t)+parseFloat(w_m)*parseFloat(E_m)*parseInt(dline);
+
 	return cost; 
 }
 
@@ -188,130 +189,210 @@ function Deadline(duration, deadline)
 		return Infinity;
 }
 
-/*				events[i]["RequireResources"] = eventsRequiredResources[i];
-				var resource_names = Object.keys(eventsRequiredResources[i]);*/
-
 function MultiGenerateResources(Events, Facilities, sim_details, callback)
 {
 	var EventHeaps = {};
 	var EventDetails = [];
 	var details = [];
 
-	// Generate Heaps and Details
-	for(var i = 0; i < Events.length; i++)
+	// Generate Heaps
+	for(var e_id = 0; e_id < Events.length; e_id++)
 	{
-		var ReqRes = Events[i]["RequireResources"];
+		var ReqRes = Events[e_id]["RequireResources"];
 		var ReqType = Object.keys(ReqRes);
 		
-		for(var j = 0; j < ReqType.length; j++)
+		for(var t_id = 0; t_id < ReqType.length; t_id++)
 		{
-			EventHeaps[i] = {};
-			EventHeaps[i][ReqType[j]] = new Heap(function(a, b) {
-											return a[0].Cost - b[0].Cost;
-										}); 
-		}
+			console.log(e_id + " " + ReqType[t_id]); 
+			if(EventHeaps[e_id] == undefined)
+				EventHeaps[e_id] = {};
 
-		details[i] = {Location: Events[i].location, "_id": sim_details._id, Severity: Events[i].severity, 
-			Category: Events[i].Category, Deadline: Events[i].Deadline};		
+			EventHeaps[e_id][ReqType[t_id]] = new Heap(function(a, b) {
+											return a.Cost - b.Cost;
+										}); 	
+		}
 	}
 
 	console.log("setup Complete");
 	var directionPromise = [];
 	var AvaliabilityPromise = [];
 
-	for(var i = 0; i < Facilities.length; i++)
+	for(var f_id = 0; f_id < Facilities.length; f_id++)
 	{
-		for(var j = 0; j < Facilities[i].events.length; j++)
+		var f_events = Facilities[f_id].events;
+
+		for(var fe_id = 0; fe_id < f_events.length; fe_id++)
 		{
-			directionPromise.push(gplace.Directions(Facilities[i].location, Events[j].Location));
+			directionPromise.push(gplace.Directions(Facilities[f_id].location, Events[f_events[fe_id]].Location));
 		}
 	}
 
 	Promise.all(directionPromise).then(function(directions) {
-		console.log("Directions complete");
-		for(var i = 0; i < Facilities.length; i++)
+		console.log("Directions Promise Complete");
+		var dpcount = 0;
+
+		for(var f_id = 0; f_id < Facilities.length; f_id++)
 		{
-			console.log(Facilities[i].name);
-			var numRes = Facilities[i].resourceNum;
-			var resType = Facilities[i].type;
-			var eventsReq = Facilities[i].events;
+			var f_events = Facilities[f_id].events;
+			var numRes = Facilities[f_id].resourceNum;
+			var resType = Facilities[f_id].type;
 			var expenditure = Math.random() * (sim_details.Expenditure.max-sim_details.Expenditure.min+1) + sim_details.Expenditure.min;
 			expenditure = parseFloat(expenditure.toFixed(2));
-
-			var newRes = [];
-			newRes[0] = new CreateMobileResourceMulti(sim_details, Facilities[i], directions[i], expenditure, resType);
-			newRes[1] = eventsReq;
-
-			for(var j = 0; j < newRes[1].length; j++)
+			
+			for(var rnum = 0; rnum < numRes; rnum++)
 			{
-				EventHeaps[newRes[1][j]][resType].push(newRes);
+				r_id = new Mongodb.ObjectId();
+
+				for(var fe_id = 0; fe_id < f_events.length; fe_id++)
+				{
+					var e_id = f_events[fe_id];
+					var temp_res = CreateMobileResourceMulti(sim_details, Facilities[f_id], directions[dpcount], expenditure, e_id);
+					temp_res.id = r_id;
+					EventHeaps[e_id][resType].push(temp_res);
+					dpcount++;
+				}
+				if(rnum < numRes)
+					dpcount = dpcount - f_events.length;
 			}
 		}
 
+		console.log("Finish Generation");
 		callback(EventHeaps);
-	});
-}
-
-function CheckAvailabilityCallback (db, sim_details, mobileRes, callback)
-{
-	dbquery.FindAvaliableUser(db, sim_details, mobileRes, function (err, user_id) {
-		if(err)
-			return reject(err);
-
-		if(user_id != null)
-		{
-			console.log("User: "+ user_id);
-			mobileRes.User_id = user_id;
-		}
-		return resolve(mobileRes);
 	});
 }
 
 function MultiSelection(EventHeaps, Events)
 {
 	var mobileRes = {};
-	var insufficient = false; 
-	for(var i = 0; i < Events.length; i++)
+	var keyedRes = {};
+	var insufficient = {};
+
+	var insufficient_flag = false; 
+
+	for(var e_id = 0; e_id < Events.length; e_id++)
 	{
-		console.log("event " + i);
-		var ReqRes = Events[i]["RequireResources"];
-		var ReqType = Object.keys(ReqRes);
+		var curEvent = Events[e_id];
+		var resources = curEvent.RequireResources;		
+		var types = Object.keys(resources);
 
-		for(var j = 0; j < ReqType.length; j++)
-		{	
-			console.log(ReqType[j]);
-			var ReqResNum = ReqRes[ReqType[j]].num;
-			console.log(ReqResNum);
-			mobileRes[i] = {};
-			mobileRes[i][ReqType[j]] = [];
+		insufficient[e_id] = [];
+		keyedRes[e_id] = new Map();
 
-			for(var k = 0; k < ReqResNum && insufficient == false; k++)
+		for(var t_id = 0; t_id < types.length; t_id++)
+		{
+			var curType = types[t_id];
+			for(var res = 0; res < resources[curType].num && insufficient_flag == false; res++)
 			{
-				if(EventHeaps[i][ReqType[j]].size() != 0)
+				if(EventHeaps[e_id][curType].size() > 0)
 				{
-					mobileRes[i][ReqType[j]].push(EventHeaps[i][ReqType[j]].pop());
+					var temp = EventHeaps[e_id][curType].pop()
+					keyedRes[e_id].set(temp.id, temp);
 				}
-	
+
 				else
 				{
-					mobileRes[i][ReqType[j]] = false;
-					insufficient = true;
 					console.log("insufficient");
+					insufficient_flag = true;
+					insufficient[e_id].push(curType);
 				}
+			}
 
-//				console.log(EventHeaps[i][ReqType[j]].size() + " " + insufficient + " " + k + " " + ReqResNum);
-			}	
-	
-			insufficient = false;
+			insufficient_flag = false;		
 		}
 	}
 
-	console.log("....");
-	var Selection = {Resources: mobileRes, Heaps: EventHeaps};
+	var Selection = {KeyedResources: keyedRes, Insufficient: insufficient, Heaps: EventHeaps};
+
 	return Selection;
 }
 
+function MultiRemoveDuplicates(Selection)
+{
+	var events = Object.keys(Selection.KeyedResources);
+
+	do 
+	{ 
+		changed = false;
+		for(var e_id = 0; e_id < events.length; e_id++)
+		{
+			for(var [key, value] of Selection.KeyedResources[e_id])
+			{
+				for(var e_id2 = e_id+1; e_id2 < events.length; e_id2++)
+				{
+					if(Selection.KeyedResources[e_id2].has(key))
+					{
+						changed = true;
+
+						var cmp = SeverityCompare(value, Selection.KeyedResources[e_id2].get(key), Selection.Insufficient[e_id], Selection.Insufficient[e_id2]);
+			
+						if(cmp == 1)
+						{
+							Selection.KeyedResources[e_id2].delete(key);
+
+							if(Selection.Heaps[e_id2][value.Type].size() > 0)
+							{
+								var res = Selection.Heaps[e_id2][value.Type].pop();
+								Selection.KeyedResources[e_id2].set(res.id, res);
+							}
+
+							else
+							{
+								Selection.Insufficient[e_id2].push(value.type);
+							}
+						}
+
+						else if(cmp == -1)
+						{
+							Selection.KeyedResources[e_id].delete(key);
+
+							if(Selection.Heaps[e_id][value.Type].size() > 0)
+							{
+								var res = Selection.Heaps[e_id][value.Type].pop();
+								Selection.KeyedResources[e_id].set(res.id, res);
+							}
+
+							else
+							{
+								Selection.Insufficient[e_id].push(value.type);
+							}
+
+							e_id2 = events.length;
+						}
+					}
+				}
+			}
+		}
+	}while(changed == true);
+
+	return Selection;
+}
+
+function SeverityCompare(a,b,i1,i2)
+{
+	if(a.Severity >= b.Severity && !(i1.includes(a.Type) && i2.includes(b.Type)))
+	{
+		if(!i1.includes(a.Type))
+			return 1;
+		else
+			return -1;
+	}
+
+	else
+	{
+		if(a.Severity < b.Severity && !(i1.includes(a.Type) && i2.includes(b.Type)))
+		{
+			if(!i2.includes(b.Type))
+				return -1;
+			else
+				return 1;
+		}
+
+		else
+			return 0;
+	}
+}
 
 module.exports.FindMobileResources = FindMobileResources;
 module.exports.MultiGenerateResources = MultiGenerateResources;
 module.exports.MultiSelection = MultiSelection;
+module.exports.MultiRemoveDuplicates = MultiRemoveDuplicates;

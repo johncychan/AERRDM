@@ -3,8 +3,8 @@ var Promise 	= require('promise');
 var request 	= require('request');
 var dbquery	= require('./dbquery.js');
 
-var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyDOSzWxSohyPrEc0hPadb1heO9jF7vTIe8&libraries=places';
-var google_direction_api = 'https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyDOSzWxSohyPrEc0hPadb1heO9jF7vTIe8&libraries=places';
+var google_map_api = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyAujhH1hwdmgb2obrZ_45nyDzPuNfY2qKk&libraries=places';
+var google_direction_api = 'https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAujhH1hwdmgb2obrZ_45nyDzPuNfY2qKk&libraries=places';
 
 // Place Object
 function Place(p, type, rnum, rcost, destination, mode) {
@@ -12,18 +12,8 @@ function Place(p, type, rnum, rcost, destination, mode) {
 	this.location = p.geometry.location;
 	this.distance = Distance(p.geometry.location, destination);
 	this.type = type;
-
-	if(mode == "Single")
-	{
-		this.resourceNum = Math.floor(Math.random() * (rnum.max-rnum.min+1) + rnum.min);
-		this.resourceCost = Math.floor(Math.random() * (rcost.max-rcost.min+1) + rcost.min);
-	}
-
-	if(mode == "Multi")
-	{
-		this.resourceNum = 0;
-		this.resourceCost = 0;
-	}
+	this.resourceNum = Math.floor(Math.random() * (rnum.max-rnum.min+1) + rnum.min);
+	this.resourceCost = Math.floor(Math.random() * (rcost.max-rcost.min+1) + rcost.min);
 }
 
 function PlaceQuery (location, radius, type, name) {
@@ -96,6 +86,7 @@ function FilterResults(rtval, type, rnum, rcost, destination, dbr, db, mode)
 
 function FacilitiesSearch(url, type, rnum, rcost, destination, dbr, db, mode)
 {
+	console.log("Facility Search for " + type);
 	return new Promise(function(resolve, reject) {	
 		request(url, function(error, response, body) {
 			if(error)
@@ -124,14 +115,14 @@ function Distance(loc1, loc2)
 
 	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-	return (radius*c)/1000;
+	return (radius*c);
 }
 
 function DirectionsURL(start_location, end_location)
 {
 	var url = google_direction_api.concat("&origin=", start_location.lat,",",start_location.lng);
 	url = url.concat("&destination=", end_location.lat,",",end_location.lng);
-	var date = new Date()-5*60000;
+	var date = new Date()+5*60000;
 	url = url.concat("&departure_time=", parseInt(date.valueOf()));
 	return url;
 }
@@ -139,6 +130,8 @@ function DirectionsURL(start_location, end_location)
 function Directions(start_location, end_location)
 {
 	var url = DirectionsURL(start_location, end_location);
+	var t = 0;
+	var d = 0;
 
 	return new Promise(function(resolve, reject) {
 		request(url, function(error, response, body) {
@@ -149,8 +142,19 @@ function Directions(start_location, end_location)
 			}
 
 			var rtval = JSON.parse(body);
-			var t = rtval.routes[0].legs[0].duration_in_traffic.value;
-			var d = rtval.routes[0].legs[0].distance.value;
+
+			if(rtval.routes[0] != undefined)
+			{
+				t = rtval.routes[0].legs[0].duration_in_traffic.value;
+				d = rtval.routes[0].legs[0].distance.value;
+			}
+			else
+			{
+				var speed = Math.floor(Math.random() * 51 + 60);
+				d = Distance(start_location, end_location);
+				t = ((d/1000)/speed)*60;
+			}
+
 			var directions = {time: t, distance: d};
 
 			return resolve(directions);

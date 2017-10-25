@@ -123,6 +123,7 @@ module.exports = function(passport, clients, db){
 		});
 	});
 
+	//Single Event Assignment of Resources
 	router.post('/singleEvent/assignResource', function(req, res, next) {
 		res.writeHead(200, {'Content-Type': 'application/json'});
 		console.log(req.body.sim_id);
@@ -191,6 +192,7 @@ module.exports = function(passport, clients, db){
 		});
 	});
 
+	//Mobile Responding to job recieved
 	router.post('/mobile/requestResponse', isAuthenticated, function(req, res){
 		console.log(req.body.response + " " + req.body.sim_id);
 		var response = "Plan is now available,";
@@ -226,6 +228,7 @@ module.exports = function(passport, clients, db){
 		
 	});
 
+	// Mobile checking if any jobs are available
 	router.get('/mobile/jobRequest', isAuthenticated, function(req, res) {
 		console.log(req.user);
 		dbquery.CheckJobRequest(db, req.user._id, function(err, doc) {
@@ -276,6 +279,7 @@ module.exports = function(passport, clients, db){
 		return res.end();
 	});
 
+	// Mobile updating its GPS on the server
 	router.post('/mobile/currentLocation', isAuthenticated, function(req, res, next) {
 		dbquery.UpdateLocation(db, req);
 		res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -283,6 +287,7 @@ module.exports = function(passport, clients, db){
 		return res.end();
 	});
 
+	// Mobile notifying the server they have completed the job.
 	router.post('/mobile/finished', isAuthenticated, function(req, res, next) {
 		var complete = req.body.Complete;
 		
@@ -296,30 +301,7 @@ module.exports = function(passport, clients, db){
 		}
 	});
 
-	// Change to search based on mobile location
-/*	router.post('/activeSims', function(req, res, next) {
-		var rtval = [];
-
-		dbquery.UpdatedGPS(db, req, function(err, sims) {
-			if(err)
-				throw err
-			
-			console.log(sims);
-			res.writeHead(200, {'Content-Type': 'application/json'});
-			
-			for(var i = 0; i < sims.length; i++)
-			{
-				var simEvent = {'_id': sims[i]._id, 'Category': sims[i].Category,
-					'Severity': sims[i].Severity, 'Location': sims[i].Location,
-					'Deadline': sims[i].Deadline};
-				rtval.push(simEvent);
-			}
-
-			res.write(JSON.stringify(rtval));
-			return res.end();
-		});
-	});
-*/
+	// Get mobile application GPS
 	router.post('/singleEvent/UpdatedGPS', function(req, res, next) {
 		dbquery.UpdatedGPS(db, req.body.sim_id, function(mobileResources) {
 			res.writeHead(200, {'Content-Type': 'application/json'});
@@ -328,6 +310,7 @@ module.exports = function(passport, clients, db){
 		});
 	});
 
+    // Get events plan
 	router.post('/singleEvent/GetPlan', function(req, res, next) {
 		console.log(req.body.sim_id);
 		dbquery.GetPlan(db, req.body.sim_id, function(err, plan) {
@@ -343,6 +326,7 @@ module.exports = function(passport, clients, db){
 		});
 	});
 
+    // Collect event stats
 	router.post('/singleEvent/GetStats', function(req, res, next) {
 		dbquery.GetStats(db, req.body.sim_id, function(err, stats) {
 			res.writeHead(200, {'Content-Type': 'application/json'});
@@ -373,52 +357,60 @@ module.exports = function(passport, clients, db){
 		Promise.all(eventInfoPromise).then(function(eventsRequiredResources) {
 			var EventFaciltiesSearch = [];
 
-			for(var i = 0; i < events.length; i++)
+			for(var e_id = 0; e_id < events.length; e_id++)
 			{
-				events[i]["RequireResources"] = eventsRequiredResources[i];
-				var resource_names = Object.keys(eventsRequiredResources[i]);
-
+				console.log("Event " + e_id + " " + events[e_id].Category); 
+				events[e_id]["RequireResources"] = eventsRequiredResources[e_id];
+				var resource_names = Object.keys(eventsRequiredResources[e_id]);
+				console.log("Event " + e_id + " " + resource_names);
 				for(var j = 0; j < resource_names.length; j++)
 				{
-					var url = gplace.PlaceQuery(events[i].Location, 5000, resource_names[j], eventsRequiredResources[i][resource_names[j]].gname);
-					EventFaciltiesSearch.push(gplace.FacilitiesSearch(url, resource_names[j], req.body.ResourceNum, req.body.Expenditure, events[i].Location, null, db, "Multi"));
+					var url = gplace.PlaceQuery(events[e_id].Location, 5000, resource_names[j], eventsRequiredResources[e_id][resource_names[j]].gname);
+					EventFaciltiesSearch.push(gplace.FacilitiesSearch(url, resource_names[j], req.body.ResourceNum, req.body.Expenditure, events[e_id].Location, null, db, "Multi"));
 				}
 			}
 
-			Promise.all(EventFaciltiesSearch).then(function(eventFacilities) {		
-				var count = 0;
+			Promise.all(EventFaciltiesSearch).then(function(eventFacilities) {
+				var curEventFacilities = [];
+				var pos = 0;
 				var facilities = [];
-				for(var i = 0; i < events.length; i++)
+				var event_types = null;
+
+				for(var e_id = 0; e_id < events.length; e_id++)
 				{
-					event_type_count = Object.keys(eventsRequiredResources[i]).length;
-					var pos = count + event_type_count;
-					for(var j = count; j < pos; j++)
+					console.log(eventsRequiredResources[e_id]);
+					event_types = Object.keys(eventsRequiredResources[e_id]);
+
+					for(i = pos; i < pos+event_types.length; i++)
 					{
-						for(var k = 0; k < eventFacilities[j].length; k++)
+						curEventFacilities = curEventFacilities.concat(eventFacilities[i]);
+					}
+
+					console.log(curEventFacilities.length);
+					for(var f_id = 0; f_id < curEventFacilities.length; f_id++)
+					{	
+						var type = curEventFacilities[f_id].type;
+						if(event_types.indexOf(curEventFacilities[f_id].type) != -1)
 						{
-							var fname = eventFacilities[j][k].name;
-							if(facilities[fname] == undefined)
+							if(facilities[curEventFacilities[f_id].name] == undefined)
 							{
-								rnummax = req.body.ResourceNum.max;
-								rnummin = req.body.ResourceNum.min;
-								rcostmax = req.body.Expenditure.max;
-								rcostmin = req.body.Expenditure.min;
-								
-								eventFacilities[j][k]["resourceNum"] = Math.floor(Math.random() * (rnummax-rnummin+1) + rnummin);
-								eventFacilities[j][k]["resouceCost"] = Math.floor(Math.random() * (rcostmax-rcostmin+1) + rcostmin);
-								eventFacilities[j][k]["events"] = [i]; 
-								facilities[fname] = eventFacilities[j][k]; 
+								curEventFacilities[f_id]["events"] = [e_id];
+								facilities[curEventFacilities[f_id].name] = curEventFacilities[f_id];
 							}
 
 							else
 							{
-								facilities[fname].events.push(i);
+								facilities[curEventFacilities[f_id].name]["events"].push(e_id);
 							}
 						}
 					}
+
+					curEventFacilities = [];
+					pos = pos + event_types.length;
 				}
 
 				var key = Object.keys(facilities);
+
 				FinalFacilities = [];
 
 				for(var i = 0; i < key.length; i++)
@@ -436,15 +428,7 @@ module.exports = function(passport, clients, db){
 		});		
 	});
 
-/*
-	db.collection("Simulations").insertOne({Expenditure: content.Expenditure, ResourceNum: content.ResourceNum, 
-		Radius: radius, start: new Date(), Initiator: req.connection.remoteAddress, Events: events} ,
-
-	generate facility resources
-	assign users
-	
-*/
-
+	// Assign resources in multiple event simulation
 	router.post('/multiEvent/assignResources', function(req, res, next) {
 		res.writeHead(200, {'Content-Type': 'application/json'});
 		console.log(req.body.sim_id);
@@ -456,11 +440,43 @@ module.exports = function(passport, clients, db){
 				console.log("Generate Done");
 				var Selection = simulation.MultiSelection(EventHeaps, Events);
 				console.log("Selection Complete");
-				console.log(JSON.stringify(Selection.Resources));
-				console.log("test");
-				res.write(JSON.stringify(Selection.Resources));
-console.log("test2");
-				return res.end();
+				Selection = simulation.MultiRemoveDuplicates(Selection);
+				console.log("Duplicates Removed");
+
+				var FinalResults = {};
+				var events = Object.keys(Selection.KeyedResources);
+				var Statistics = {};
+				for(var e_id = 0; e_id < events.length; e_id++)
+				{
+					Statistics[e_id] = {};
+					var ReqRes = Events[e_id]["RequireResources"];
+					var ReqType = Object.keys(ReqRes);
+
+					for(var i = 0; i < ReqType.length; i++)
+					{
+						Statistics[e_id][ReqType[i]] = {total_time: 0, total_distance: 0, total_expenditure: 0, num_resources: 0, completion_time: 0}; 
+					}
+
+					FinalResults[e_id] = [];
+
+					for(var value of Selection.KeyedResources[e_id])
+					{
+						FinalResults[e_id].push(value[1]);
+
+						Statistics[e_id][value[1].Type].total_time += value[1].Duration;
+						Statistics[e_id][value[1].Type].total_distance += value[1].Distance;
+						Statistics[e_id][value[1].Type].total_expenditure += value[1].Expenditure;
+						Statistics[e_id][value[1].Type].num_resources++;
+
+						if(value[1].Duration > Statistics[e_id][value[1].Type].completion_time)
+							Statistics[e_id][value[1].Type].completion_time = value[1].Duration; 
+					}
+				}
+				dbquery.MultiSetPlan(db, req.body.sim_id, FinalResults, Statistics, Selection.Insufficient, 
+					function(err, results) {
+						res.write(JSON.stringify({FinalResults, Insufficient: Selection.Insufficient, "Statistics": Statistics}));
+						return res.end();
+				});
 			});
 		});		
 	});
