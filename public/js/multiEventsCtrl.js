@@ -474,6 +474,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.panelShow = "true";
   } 
 
+  /** total facility */
   multiVm.totalFacility = 0;
   multiVm.getFaciLoc = function(){
 
