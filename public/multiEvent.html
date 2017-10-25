@@ -120,29 +120,17 @@
     <span class="sim-hamburger sim-hamburger-3"></span>
   </label>
 
-  <a ng-click = "multiVm.placeMarker()" class="simulation-menu-item ripple"> 
-    <i class="fa fa-map-marker" aria-hidden="true"></i> 
-    <md-tooltip md-direction="top" > Place Marker </md-tooltip>
-  </a>
-  <a ng-click = "multiVm.stepControl(+0.5)" class="simulation-menu-item ripple"> 
-    <i class="fa fa-forward"></i>
-    <md-tooltip md-direction="top"> Speed Up </md-tooltip>
+  <a ng-click = "multiVm.stopTimeout()" class="simulation-menu-item ripple"> 
+    <i class="fa fa-stop"></i> 
+    <md-tooltip md-direction="bottom"> Stop Simulation </md-tooltip>
   </a>
   <a ng-click = "multiVm.stepControl(-0.5)" class="simulation-menu-item ripple"> 
     <i class="fa fa-backward"></i> 
     <md-tooltip md-direction="bottom"> Speed Down </md-tooltip>
   </a>
-  <a ng-click = "multiVm.stopTimeout()" class="simulation-menu-item ripple"> 
-    <i class="fa fa-stop"></i> 
-    <md-tooltip md-direction="bottom"> Stop Simulation </md-tooltip>
-  </a>
-  <a ng-click = "multiVm.pauseTimeout()" class="simulation-menu-item ripple"> 
-    <i class="fa fa-pause"> </i> 
-    <md-tooltip md-direction="bottom"> Pause Simulation </md-tooltip>
-  </a>
-  <a ng-click = "multiVm.restartTimeout()" class="simulation-menu-item ripple">
-    <i class="fa fa-play"></i> 
-    <md-tooltip md-direction="top"> Play Simulation </md-tooltip>
+  <a ng-click = "multiVm.stepControl(+0.5)" class="simulation-menu-item ripple"> 
+    <i class="fa fa-forward"></i>
+    <md-tooltip md-direction="top"> Speed Up </md-tooltip>
   </a>
 </nav>
 
