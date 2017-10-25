@@ -440,7 +440,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.progrssMenuOpen();
     searchAni()
     .then($timeout(multiVm.getFaciLoc, 9000))
-    .then($timeout(getTasks, 13000));
+    .then($timeout(getTasks, 8000));
     
     multiVm.panelShow = "true";
   } 
