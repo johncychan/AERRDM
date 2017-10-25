@@ -525,10 +525,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   // get task from server
   getTasks = function(dataObj){
-    console.log(dataObj);
-    for(var i = 0; i < multiVm.circles.length; ++i){
-      multiVm.circles[i].setMap(null);
-    }
+    console.log("getTasks");
+
     return $http({
 
       method  : 'POST',
@@ -867,6 +865,11 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   // set route between event and facility
     function setRoutes(){
 
+      console.log("setRoutes");
+      //delete map circle instances
+      for(let i = 0; i < multiVm.circles.length; ++i){
+        multiVm.circles[i].setMap(null);
+      }
       var directionDisplay = new Array();
       var startLocLength;
 
