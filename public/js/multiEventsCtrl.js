@@ -234,11 +234,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       draggable: true,
       animation: google.maps.Animation.DROP
     });
-
     multiVm.marker.set("id", multiVm.markerIndex);
 
     multiVm.markersList.push(multiVm.marker);
-
     multiVm.factorGenerate(multiVm.markerIndex);
     multiVm.markerElement(multiVm.markerIndex);
     multiVm.markerNotPlace = false;
@@ -382,7 +380,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       'Deadline': multiVm.deadline,
       'Location': {lat: multiVm.marker.position.lat(), lng: multiVm.marker.position.lng()}
     } 
-
     // var tmp = {
     //   'ID': index,
     //   'Location': {lat: multiVm.marker.position.lat(), lng: multiVm.marker.position.lng()},
@@ -391,6 +388,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     //   'Deadline': multiVm.deadline
     // }
     console.log("Event List Index: "+index);
+
     multiVm.eventList[index] = new Array();
     multiVm.eventList[index] = multiVm.factor;
     // multiVm.eventObj.push(tmp);
@@ -478,6 +476,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
 
   multiVm.getFaciLoc = function(){
+
     // multiVm.eventList[index]
     for(var i = 0; i < multiVm.eventList.length; i++){
       console.log(multiVm.eventList[i]);
@@ -498,6 +497,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     console.log(multiVm.minExpenditure + " " + multiVm.maxExpenditure);
     console.log(multiVm.factor['Min resource'] + " " + multiVm.factor['Max resource']);
     console.log(multiVm.eventObj);
+
     return $http({
 
       method  : 'POST',
@@ -549,12 +549,14 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     }).then(function success(response){
       // if success
         console.log(response.data);
-        for(var i = 0; i < response.data.length; ++i){
-          startLoc.push(response.data[i].Location);
+        console.log(response.data.FinalResults);
+        for(var i = 0; i < Object.keys(response.data.FinalResults).length; ++i){
+          for(var j = 0; j < response.data.FinalResults[i].length; ++j){
+            startLoc.push(response.data.FinalResults[i][j].Location);
+          }
+          setRoutes(startLoc, multiVm.eventList[i]);
+          startLoc = [];
         }
-
-        $timeout(function(){
-          setRoutes()}, 20000);
     })
   }
 
@@ -873,9 +875,9 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   }
 
   // set route between event and facility
-    function setRoutes(){
-
-      console.log("setRoutes");
+    function setRoutes(start, end){
+      console.log(start);
+      console.log(end);
       //delete map circle instances
       for(let i = 0; i < multiVm.circles.length; ++i){
         multiVm.circles[i].setMap(null);
@@ -893,10 +895,10 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
       var travelMode = google.maps.DirectionsTravelMode.DRIVING;
       var requests = new Array();
-      for(var i = 0; i < startLoc.length; ++i){
+      for(var i = 0; i < start.length; ++i){
         requests[i] = {
-          origin: startLoc[i],
-          destination: multiVm.marker.position,
+          origin: start[i],
+          destination: end.Location,
           travelMode: travelMode
         };
         directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
@@ -918,12 +920,12 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
             polyline[routeNum] = new google.maps.Polyline({
             path: [],
-                strokeColor: '#FFFF00',
+                strokeColor: '#1784cd',
                 strokeWeight: 3 
                 });
             poly2[routeNum] = new google.maps.Polyline({
                 path: [],
-                strokeColor: '#FFFF00',
+                strokeColor: '#1784cd',
                 strokeWeight: 3
                 });    
 
