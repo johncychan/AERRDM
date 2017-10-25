@@ -28,6 +28,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.eventList = [];
   multiVm.eventObj = [];
   multiVm.circles = [];
+  multiVm.simID = 0;
 
   var speed = 0.000005, wait = 1;
   var infowindow = null;
@@ -37,28 +38,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   var nextPanoId;
 
   multiVm.place = ["UTS Library", "UNSW Art & Design", "Sydney Central Station", "Sydney Opera House", "Moonlight Ciinema Sydney", "Woolahra", "Westfield Bondi Junction"];
-
-  var iconBase = "./img/";
-  var icons = {
-    ambulance:{
-      url: iconBase + "ambulance.svg"
-    },
-    fireTruck:{
-      icon: iconBase + "firetruck.svg"
-    },
-    policeCar:{
-      icon: iconBase + "police-car.svg"
-    },
-    hospital:{
-      icon: iconBase + "hospital.svg"
-    },
-    fireStation:{
-      icon: iconBase + "fire-station.svg"
-    },
-    policeStation:{
-      icon: iconBase + "polica-station.svg"
-    }
-  };
 
   NgMap.getMap("map").then(function(map){
     multiVm.map = map;
@@ -127,13 +106,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
           multiVm.placeMarkerByRandomAndSearch(results[0].geometry.location);
         });
     }
-
-    // var geocoder = new google.maps.Geocoder();
-    // geocoder.geocode({'address': place[index]}, function(results, status){
-    //   multiVm.map.setCenter(results[0].geometry.location);
-    //   var latLng = new google.maps.LatLng(parseFloat(place[geo.lat]));
-    //   multiVm.placeMarkerByRandomAndSearch(results[0].geometry.location)
-    // });
   }
 
   // enable user to click on the map to place marker
@@ -455,8 +427,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     for(var i = 0; i < multiVm.markersList.length; ++i){
       multiVm.markersList[i].setDraggable(false);
     }
-    // // close info window
-    // multiVm.closeInfoWin();
 
     // clear onclick event in map
     clearMapClickEvent();
@@ -468,12 +438,22 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     // open progress menu
     multiVm.progrssMenuOpen();
-    
-    multiVm.getFaciLoc().then(getTasks);
+    searchAni()
+    .then($timeout(multiVm.getFaciLoc, 9000))
+    .then($timeout(getTasks, 13000));
     
     multiVm.panelShow = "true";
   } 
 
+  searchAni = function(){
+    var defer = $q.defer();
+    for(var i = 0; i < multiVm.eventObj.length; ++i){
+    searchCircle(multiVm.eventObj[i], i);
+    }
+    defer.resolve("resolved");
+    
+    return defer.promise;
+  }
 
   multiVm.getFaciLoc = function(){
 
@@ -489,15 +469,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       }
       multiVm.eventObj.push(tmp);
     }
-    for(var i = 0; i < multiVm.eventObj.length; ++i){
-      searchCircle(multiVm.eventObj[i], i);
-    }
-
-    console.log("getFaciLoc");
-    console.log(multiVm.minExpenditure + " " + multiVm.maxExpenditure);
-    console.log(multiVm.factor['Min resource'] + " " + multiVm.factor['Max resource']);
-    console.log(multiVm.eventObj);
-
     return $http({
 
       method  : 'POST',
@@ -513,8 +484,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       }).then(function success(response) {
 
         console.log(response.data);
-
-        $timeout(function(){
+        multiVm.simID = response.data.sim_id;
           for(var i = 0; i < response.data.facilities.length; ++i){
             if(response.data.facilities[i].type == "hospital"){
               putHospital(response.data.facilities[i]);
@@ -526,7 +496,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
               putFire(response.data.facilities[i]);
             }
           }
-        }, 5000);
+
 
         return response.data;
 
@@ -544,7 +514,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       url     : '/multiEvent/assignResources',
       headers : { 'Content-Type': 'application/json' },
       data    : {
-                  sim_id: dataObj.sim_id
+                  sim_id: multiVm.simID
       }
     }).then(function success(response){
       // if success
@@ -552,7 +522,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
         console.log(response.data.FinalResults);
         for(var i = 0; i < Object.keys(response.data.FinalResults).length; ++i){
           for(var j = 0; j < response.data.FinalResults[i].length; ++j){
-            startLoc.push(response.data.FinalResults[i][j].Location);
+            startLoc.push(response.data.FinalResults[i][j]);
           }
           setRoutes(startLoc, multiVm.eventList[i]);
           startLoc = [];
@@ -700,19 +670,25 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   };
 
   // create marker for vehcile
-  function createMarker(latlng, label, html) {
-    var marker = new google.maps.Marker({
+  function createMarker(latlng, type) {
+    var markerIcon;
+    if(type == 'hospital')
+      markerIcon = "./img/ambulance.svg";
+    else if(type == 'police')
+      markerIcon = "./img/police-car.svg";
+    else if(type == "fire_station")
+      markerIcon = "./img/fire-truck.svg";
+    var tempMarker = new google.maps.Marker({
         position: latlng,
         map: multiVm.map,
-        title: label,
-        // zIndex: Math.round(latlng.lat()*-100000)<<5,
-        icon: "./img/police-car.svg",
+        
+        icon: markerIcon,
         animation: google.maps.Animation.DROP
         });
-        marker.myname = label;
 
-    return marker;
-  }  
+
+    return tempMarker;
+  } 
 
   // put police station marker to polica station
   function putPolice(facilityObj, label, type){
@@ -897,15 +873,15 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       var requests = new Array();
       for(var i = 0; i < start.length; ++i){
         requests[i] = {
-          origin: start[i],
+          origin: start[i].Location,
           destination: end.Location,
           travelMode: travelMode
         };
-        directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
+        directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i], start[i].Type));
       }
 
       
-      function makeRouteCallback(routeNum, dip){
+      function makeRouteCallback(routeNum, dip, type){
         if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
           startAnimation(routeNum);
           return;
@@ -946,7 +922,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
                     startLocation[routeNum].latlng = legs[i].start_location;
                     startLocation[routeNum].address = legs[i].start_address;
                     // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-                    marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
+                    marker[routeNum] = createMarker(legs[i].start_location, type);
                   }
                   endLocation[routeNum].latlng = legs[i].end_location;
                   endLocation[routeNum].address = legs[i].end_address;
