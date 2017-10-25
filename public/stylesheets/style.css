@@ -2125,6 +2125,11 @@
   border-bottom: 1px solid #999;
 }
 
+
+#multiStat-header th{
+  line-height: 1.5em;
+}
+
 body {
   font-family: sans-serif;
 }

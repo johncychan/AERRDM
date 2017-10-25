@@ -21,8 +21,8 @@
       </div>
     </div>
   </div>
-  <div class="resouces-info-row">
-    <div id="resource-info-container" style="left: -20px;">
+  <div class="resouces-info-row" style="overflow-y:scroll;">
+    <div id="resource-info-container" style="left: -20px; overflow-y:scroll;">
       <md-tabs md-dynamic-height md-border-bottom>
         <md-tab label="Resource Info">
           <div>
@@ -67,21 +67,44 @@
           </table>
         </md-tab>
         <md-tab label="Statistic Info">
-          <table id="event-info-table" style="width: 445px;"> 
+          <table id="event-info-table" style="width: 445px;" class="mutil-stat"> 
             <tr>
-              <th colspan="4" id="resource-header">Event Information</th>
+              <th colspan="5" id="resource-header">Statistic Information</th>
             </tr>
-            <tr>
-              <th>Total Facilities Found</th>
-              <th>Category</th>
-              <th>Avg. Expenditure</th>
+            <tr id="multiStat-header">
+              <th >Total Facilities Found</th>
+              <th >Total Involved Facilities</th>
+              <th >Total Num. of Resource Assign</th>
+              <th >Total Expenditure</th>
+              <th >Time to Complete</th>
             </tr>
             <tr class="table-content" style="border: 1px solid #999;">
               <td >{{multiVm.totalFacility}}</td>
-              <td style="text-align: center;">{{singleVm.factor['Category']}}</td>
-              <td class="factor-value" style="text-align: center;">{{singleVm.avgExpenditure}}</td>
+              <td style="text-align: center;">{{multiVm.numSelectedFac}}</td>
+              <td style="text-align: center;">{{multiVm.numResourceAssign}}</td>
+              <td style="text-align: center;">{{multiVm.totalExpenditure}}</td>
+              <td style="text-align: center;">{{multiVm.totalCompletionTime}}</td>
             </tr>
           </table>
+          <div>&nbsp;</div>
+          <div ng-repeat="event in multiVm.eventObj">
+            <table id="event-info-table" style="width: 445px;"> 
+              <tr>
+                <th colspan="3" id="resource-header">Event {{$index+1}} Statistic - {{event['Category']}}</th>
+              </tr>
+              <tr>
+                <th>No. of Resource Assigned</th>
+                <th>Total Expenditure</th>
+                <th>Time to Complete</th>
+              </tr>
+              <tr class="table-content multi-eventInfo">
+                <td style="text-align:center;">{{multiVm.eachEvent[$index].Assigned}}</td>
+                <td style="text-align:center;">{{multiVm.eachEvent[$index].Expenditure}}</td>
+                <td style="text-align: center;">{{multiVm.eachEvent[$index].TimeComplete}}</td>
+              </tr>
+            </table>
+            <div>&nbsp;</div>
+          </div>
         </md-tab>
       </md-tabs>
     </div>

@@ -29,6 +29,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   multiVm.eventObj = [];
   multiVm.circles = [];
 
+  
+
   var speed = 0.000005, wait = 1;
   var infowindow = null;
   
@@ -550,19 +552,60 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       }
     }).then(function success(response){
       // if success
-        console.log(response.data);
-        console.log(response.data.FinalResults);
-        multiVm.resourceAllocation(response.data.FinalResults);
-        for(var i = 0; i < Object.keys(response.data.FinalResults).length; ++i){
-          for(var j = 0; j < response.data.FinalResults[i].length; ++j){
-            startLoc.push(response.data.FinalResults[i][j].Location);
-          }
-          setRoutes(startLoc, multiVm.eventList[i]);
-          startLoc = [];
+      var keys = [];
+      multiVm.allResource = [];
+      multiVm.distinctFac = [];
+      multiVm.numSelectedFac = 0;
+      multiVm.numResourceAssign = 0;
+      multiVm.totalExpenditure = 0;
+      multiVm.totalCompletionTime = 0;
+      multiVm.eachEventExpenditure = {};
+      multiVm.eachEvent = [];
+
+      console.log(response.data);
+      console.log(response.data.FinalResults);
+      multiVm.resourceAllocation(response.data.FinalResults);
+      for(var i = 0; i < Object.keys(response.data.FinalResults).length; ++i){
+        var eachExpenditure = 0;
+        var eachCompleteTime = 0;
+        for(var j = 0; j < response.data.FinalResults[i].length; ++j){
+          startLoc.push(response.data.FinalResults[i][j].Location);
+          multiVm.allResource.push(response.data.FinalResults[i][j]);
+          multiVm.totalCompletionTime += response.data.FinalResults[i][j].Duration;
+          console.log(response.data.FinalResults[i][j].Expenditure);
+          eachExpenditure += response.data.FinalResults[i][j].Expenditure;  
+          eachCompleteTime += response.data.FinalResults[i][j].Duration;
         }
 
+        multiVm.eachEvent[i] = {
+          Expenditure: eachExpenditure.toFixed(2),
+          Assigned: response.data.FinalResults[i].length,
+          TimeComplete: eachCompleteTime.toFixed(2)
+        }
 
+        setRoutes(startLoc, multiVm.eventList[i]);
+        startLoc = [];
+      }
+      console.log(multiVm.allResource);
+      angular.forEach(multiVm.allResource, function(item){
+        var key = item['Facility'];
+        if(keys.indexOf(key) === -1){
+          keys.push(key);
+          multiVm.distinctFac.push(item);
+        }
+      });
 
+      /** number of facility selected and number of resources have been assigned */
+      multiVm.numResourceAssign = multiVm.allResource.length;
+      multiVm.numSelectedFac = multiVm.distinctFac.length;
+
+      console.log(multiVm.eachEventExpenditure);
+
+      for(var i = 0; i < multiVm.numResourceAssign; i++){
+        multiVm.totalExpenditure += multiVm.allResource[i].Expenditure;
+      }
+      multiVm.totalExpenditure = multiVm.totalExpenditure.toFixed(2);
+      multiVm.totalCompletionTime = multiVm.totalCompletionTime.toFixed(2);
 
     })
   }
@@ -605,7 +648,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       }
     }
     console.log(multiVm.numResource);
-    console.log(multiVm.allocatedResources[3]);
+    console.log(multiVm.allocatedResources);
   }
 
   // open factor dialog menu to let user change factor
