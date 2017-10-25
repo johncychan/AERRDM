@@ -326,8 +326,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     return Math.floor((Math.random()*(max-min+1))+min);
   }
   singleVm.deadlineGenerator = function(){
-    var max = 120;
-    var min = 40;
+    var max = 30;
+    var min = 15;
     return Math.floor((Math.random()*(max-min+1))+min);
   }
   singleVm.minExpenditureGenerator = function(){
