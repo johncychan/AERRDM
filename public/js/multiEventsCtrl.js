@@ -474,7 +474,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     multiVm.panelShow = "true";
   } 
 
-
+  multiVm.totalFacility = 0;
   multiVm.getFaciLoc = function(){
 
     // multiVm.eventList[index]
@@ -514,7 +514,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       }).then(function success(response) {
 
         console.log(response.data);
-
+        multiVm.totalFacility = response.data.facilities.length;
         $timeout(function(){
           for(var i = 0; i < response.data.facilities.length; ++i){
             if(response.data.facilities[i].type == "hospital"){

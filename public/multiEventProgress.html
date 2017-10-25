@@ -41,10 +41,10 @@
               <tr ng-repeat="resource in multiVm.allocatedResources" class="table-content">
                 <td id="type">{{resource.Type}}</td>
                 <td class="factor-value" id="facility">{{resource.Facility}}</td>
-                <td class="factor-value" id="expenditure" >{{resource.Expenditure}}</td>
+                <td class="factor-value" id="expenditure" style="text-align: center;">{{resource.Expenditure}}</td>
                 <td class="factor-value" id="distance">{{resource.Distance}}</td>
                 <td class="factor-value" id="distance">{{resource.Duration}}</td>
-                <td class="factor-value">{{resource.Assign}}</td>
+                <td class="factor-value" style="text-align: center;">{{resource.Assign}}</td>
               </tr>
             </table>
           </div>
@@ -59,8 +59,8 @@
               <th>Severity Level</th>
               <th>Category</th>
             </tr>
-            <tr ng-repeat="event in multiVm.eventObj" class="table-content" style="border: 1px solid #999;">
-              <td>{{$index+1}}</td>
+            <tr ng-repeat="event in multiVm.eventObj" class="table-content multi-eventInfo">
+              <td style="text-align:center;">{{$index+1}}</td>
               <td style="text-align:center;">Level {{event['Severity']}}</td>
               <td style="text-align: center;">{{event['Category']}}</td>
             </tr>
@@ -72,12 +72,12 @@
               <th colspan="4" id="resource-header">Event Information</th>
             </tr>
             <tr>
-              <th>Severity Level</th>
+              <th>Total Facilities Found</th>
               <th>Category</th>
               <th>Avg. Expenditure</th>
             </tr>
             <tr class="table-content" style="border: 1px solid #999;">
-              <td >Level {{singleVm.factor['Severity Level']}}</td>
+              <td >{{multiVm.totalFacility}}</td>
               <td style="text-align: center;">{{singleVm.factor['Category']}}</td>
               <td class="factor-value" style="text-align: center;">{{singleVm.avgExpenditure}}</td>
             </tr>

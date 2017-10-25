@@ -178,11 +178,11 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
               }
               polyline[routeNum].setMap(facilityVm.map);  
               for(var i = 0; i < resourceNum; ++i){
-                marker[i] = createMarker(loc, facilityVm.resource.Type);
+                resourceMarkers[i] = createMarker(loc, facilityVm.resource.Type);
               }           
 
 
-              console.log(marker);
+              console.log(resourceMarkers);
 
               $timeout(function(){
                 startAnimation(routeNum)
@@ -223,7 +223,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
             markerStarted = true;
             current_point = d;
             if (d > eol[index]) {
-                marker[index].setPosition(endLocation[index].latlng);
+                resourceMarkers[index].setPosition(endLocation[index].latlng);
                 /** if vehicle arrived, count plus 1 */
                 count++;
                 return;
@@ -234,7 +234,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
 
             // var cp = angular.fromJson(window.localStorage['updateLoc']);
             // console.log(cp);
-            marker[index].setPosition(p);
+            resourceMarkers[index].setPosition(p);
             updatePoly(index,d);
             timerHandle[index] =  $timeout(function() {
                 animate(index, (d + facilityVm.step*5 + index*0.2));
