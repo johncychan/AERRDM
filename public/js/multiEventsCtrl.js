@@ -464,7 +464,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // change back to default google map cursor
     defaultCursor();
     // // start progress menu animation
-    // progressInfoControl(0);
+    progressInfoControl(12);
 
     // open progress menu
     multiVm.progrssMenuOpen();
@@ -489,7 +489,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       }
       multiVm.eventObj.push(tmp);
     }
-    for(var i = 0; i < multiVm.eventObj.length; ++i){
+    console.log(multiVm.eventObj.length);
+    for(var i = 0; i < multiVm.eventList.length; ++i){
       searchCircle(multiVm.eventObj[i], i);
     }
 
@@ -550,6 +551,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       // if success
         console.log(response.data);
         console.log(response.data.FinalResults);
+        multiVm.resourceAllocation(response.data.FinalResults);
         for(var i = 0; i < Object.keys(response.data.FinalResults).length; ++i){
           for(var j = 0; j < response.data.FinalResults[i].length; ++j){
             startLoc.push(response.data.FinalResults[i][j].Location);
@@ -557,15 +559,52 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
           setRoutes(startLoc, multiVm.eventList[i]);
           startLoc = [];
         }
+
+
+
+
     })
   }
 
   // store allocated resources
   multiVm.resourceAllocation = function(resourceObj){
-    multiVm.allocatedResources = []
-    for(var i = 0; i < resourceObj.length; i++){
+    multiVm.allocatedResources = [];
+    multiVm.avgVelocity = 0;
+    multiVm.avgExpenditure = 0;
+    multiVm.resourceSent = 0;
+    multiVm.numResource = 0;
 
+
+    /** dentify type */
+    for(var i = 0; i < Object.keys(resourceObj).length; i++){
+      for(var j = 0; j < resourceObj[i].length; j++){
+        var type = " ";
+        console.log(resourceObj[i][j]);
+        if(resourceObj[i][j].Type == "fire_station")
+          type = "Fire Truck";
+        else if(resourceObj[i][j].Type == "hospital")
+          type = "Ambulance";
+        else if(resourceObj[i][j].Type == "police")
+          type = "Police Car";
+
+        /** push resource into object */
+        multiVm.allocatedResources[multiVm.numResource] = {
+          Type: type,
+          Expenditure: resourceObj[i][j].Expenditure,
+          Duration: resourceObj[i][j].Duration.toFixed(2),
+          Distance: resourceObj[i][j].Distance.toFixed(2),
+          Facility: resourceObj[i][j].Facility,
+          Assign: i+1
+        };
+
+        multiVm.avgExpenditure += resourceObj[i][j].Expenditure;
+        multiVm.avgVelocity += resourceObj[i][j].Velocity;
+
+        multiVm.numResource++;
+      }
     }
+    console.log(multiVm.numResource);
+    console.log(multiVm.allocatedResources[3]);
   }
 
   // open factor dialog menu to let user change factor
@@ -603,6 +642,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
   // progress controll
   function progressInfoControl(stage){
+    console.log(stage);
     // currentProgressStage = stage;
     if(stage > delayArray.length){
       return;
@@ -647,6 +687,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       multiVm.stage = "Analysing Response from Facilities";
     }
     else if(stage == 12){
+      multiVm.stageIcon = "fa fa-play-circle-o fa-lg";
       multiVm.stage = "Resources Allocaton";
     }
 
@@ -677,7 +718,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // progress menu first open
     if(!multiVm.progressMenuIsOpen){
       multiVm.dialog = ngDialog.open({ 
-        template: 'eventProgress.html',
+        template: 'multiEventProgress.html',
         overlay: false,
         showClose: false,
         scope: $scope,  
@@ -814,6 +855,18 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     var resource_number = facilityObj.resourceNum;
     var facility_name = facilityObj.name;
 
+    multiVm.facilityIndex++;
+    var x=[];
+    for(var i=0;i<resource_number;i++){ 
+      x.push(i+1); 
+    }
+
+    var resource_list = "";
+    for(var i = 0; i < resource_number; i++){
+      var index = i+1;
+      resource_list += "<tr><td>"+index+"</td><td>"+type+"</td></tr>"; 
+    }
+
     var element =   "<div>"+
               "<div class=\"infoWin-header-container\">"+
                 "<p id=\"infoWin-header\" class=\"facility-header\">Location</p>"+"<span class=\"facility-name\">"+facility_name+"</span>"+
@@ -829,7 +882,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
                           "<th class=\"sub-header\">Type</th>"+
                         "</tr>"+
                         "<tr>"+
-                          
+                          resource_list
                         "</tr>"+
                       "</table>"+
                     "</div>"+
@@ -895,6 +948,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
       var travelMode = google.maps.DirectionsTravelMode.DRIVING;
       var requests = new Array();
+      console.log(start.length);
       for(var i = 0; i < start.length; ++i){
         requests[i] = {
           origin: start[i],
@@ -965,6 +1019,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
                   }
                 }               
           }
+
           polyline[routeNum].setMap(multiVm.map);             
 
           //map.fitBounds(bounds);
