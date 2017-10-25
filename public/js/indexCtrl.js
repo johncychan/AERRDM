@@ -30,6 +30,9 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $route, $scope, $rootS
 		}
 
 		indexVm.resource = angular.fromJson(localStorage["allocatedResource"]);
+
+
+
 		if(indexVm.facility.length > 0){
 			indexVm.isExist = true;
 		}
@@ -52,6 +55,10 @@ app.controller('indexCtrl', function(NgMap, $q, $compile, $route, $scope, $rootS
 				resourceList.push(resource);
 			}
 		}
+
+		// window.localStorage['currentPos']
+
+
 		console.log(resourceList);
 		/** store clicked facility into session */
 		window.localStorage['resources'] = JSON.stringify(resourceList);

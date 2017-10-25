@@ -380,16 +380,18 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       'Deadline': multiVm.deadline,
       'Location': {lat: multiVm.marker.position.lat(), lng: multiVm.marker.position.lng()}
     } 
-    var tmp = {
-      'ID': index,
-      'Location': {lat: multiVm.marker.position.lat(), lng: multiVm.marker.position.lng()},
-      'Category': multiVm.category_list[multiVm.category],
-      'Severity': multiVm.level,
-      'Deadline': multiVm.deadline
-    }
+    // var tmp = {
+    //   'ID': index,
+    //   'Location': {lat: multiVm.marker.position.lat(), lng: multiVm.marker.position.lng()},
+    //   'Category': multiVm.category_list[multiVm.category],
+    //   'Severity': multiVm.level,
+    //   'Deadline': multiVm.deadline
+    // }
+    console.log("Event List Index: "+index);
+
     multiVm.eventList[index] = new Array();
     multiVm.eventList[index] = multiVm.factor;
-    multiVm.eventObj.push(tmp);
+    // multiVm.eventObj.push(tmp);
   }
   /* end factor generator */
 
@@ -474,9 +476,28 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
 
   multiVm.getFaciLoc = function(){
+
+    // multiVm.eventList[index]
+    for(var i = 0; i < multiVm.eventList.length; i++){
+      console.log(multiVm.eventList[i]);
+      var tmp = {
+        'ID': multiVm.eventList[i].ID,
+        'Location': {lat: multiVm.eventList[i].Location.lat, lng: multiVm.eventList[i].Location.lng},
+        'Category': multiVm.eventList[i].Category,
+        'Severity': multiVm.eventList[i].Severity,
+        'Deadline': multiVm.eventList[i].Deadline
+      }
+      multiVm.eventObj.push(tmp);
+    }
     for(var i = 0; i < multiVm.eventObj.length; ++i){
       searchCircle(multiVm.eventObj[i], i);
     }
+
+    console.log("getFaciLoc");
+    console.log(multiVm.minExpenditure + " " + multiVm.maxExpenditure);
+    console.log(multiVm.factor['Min resource'] + " " + multiVm.factor['Max resource']);
+    console.log(multiVm.eventObj);
+
     return $http({
 
       method  : 'POST',
