@@ -459,12 +459,25 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     .then($timeout(sendReqtToFac, 20000))
     .then($timeout(receiveResponseFromFac, 35000))
     .then($timeout(singleVm.removeFacAgent, 43000))
+    .then($timeout(analyticsMarker, 45000))
     .then($timeout(sendFinalToFac, 51500))
     .then($timeout(getStat, 29000))
     .then($timeout(checkPlan, 10000));
 
     singleVm.panelShow = "true";
   } 
+
+  /**
+    add analytics marker
+  */
+  function analyticsMarker(){
+    singleVm.analyticsMarker = new google.maps.Marker({
+        position: singleVm.marker.position,
+        map: singleVm.map,
+        animation: google.maps.Animation.BOUNCE,
+        icon: "./img/analytics.svg"
+      })
+  }
 
   /**
     remove facility agent marker
@@ -629,6 +642,8 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
     send final plan marker to selected facilities
   */
   sendFinalToFac = function(){
+    /** remove analytic marker */
+    singleVm.analyticsMarker.setMap(null);
     for(var i = 0; i < singleVm.sendMessageLine.length; i++){
       fadeOut(singleVm.sendMessageLine[i], 0 , 200);
       singleVm.requestMarkers[i].setMap(null);
