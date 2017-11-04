@@ -73,31 +73,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
   var panoClient;
   var nextPanoId;
 
-  /**
-    vehicles and facilities marker SVG
-  */
-  var iconBase = "./img/";
-  var icons = {
-    ambulance:{
-      url: iconBase + "ambulance.svg"
-    },
-    fireTruck:{
-      icon: iconBase + "firetruck.svg"
-    },
-    policeCar:{
-      icon: iconBase + "police-car.svg"
-    },
-    hospital:{
-      icon: iconBase + "hospital.svg"
-    },
-    fireStation:{
-      icon: iconBase + "fire-station.svg"
-    },
-    policeStation:{
-      icon: iconBase + "police-station.svg"
-    }
-  };
-
   NgMap.getMap("map").then(function(map){
     singleVm.map = map;
     singleVm.map.setZoom(3);
