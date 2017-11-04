@@ -441,9 +441,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // open progress menu
     multiVm.progrssMenuOpen();
 
-    searchAni()
-    .then(multiVm.getFaciLoc)
-    .then(getTasks);
+    multiVm.getFaciLoc().then(searchAni).then(getTasks);
     
     multiVm.panelShow = "true";
   } 
@@ -452,6 +450,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   searchAni = function(){
     var defer = $q.defer();
     for(var i = 0; i < multiVm.eventObj.length; ++i){
+      console.log("IN");
       searchCircle(multiVm.eventObj[i], i);
     }
     defer.resolve("resolved");
