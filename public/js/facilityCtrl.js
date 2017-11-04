@@ -44,13 +44,13 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                 icon: "./img/police-station.svg",
                 animation: google.maps.Animation.DROP
             });
-            // for(var i = 0; i < resourceNum; ++i){
-            //     resourceMarkers[i] = new google.maps.Marker({
-            //         position: loc,
-            //         map: facilityVm.map,
-            //         icon: "./img/police-car.svg"
-            //     });
-            // }
+            for(var i = 0; i < resourceNum; ++i){
+                resourceMarkers[i] = new google.maps.Marker({
+                    position: loc,
+                    map: facilityVm.map,
+                    icon: "./img/police-car.svg"
+                });
+            }
         }
         else if(facilityVm.selectedFacility.Type == "Fire Station"){
             var marker = new google.maps.Marker({
@@ -59,13 +59,13 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                 icon: "./img/fire-station.svg",
                 animation: google.maps.Animation.DROP
             });
-            // for(var i = 0; i < resourceNum; ++i){
-            //     resourceMarkers[i] = new google.maps.Marker({
-            //         position: loc,
-            //         map: facilityVm.map,
-            //         icon: "./img/fire-truck.svg"
-            //     });
-            // }
+            for(var i = 0; i < resourceNum; ++i){
+                resourceMarkers[i] = new google.maps.Marker({
+                    position: loc,
+                    map: facilityVm.map,
+                    icon: "./img/fire-truck.svg"
+                });
+            }
         }
         else if(facilityVm.selectedFacility.Type == "Hospital"){
             var marker = new google.maps.Marker({
@@ -74,13 +74,13 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                 icon: "./img/hospital.svg",
                 animation: google.maps.Animation.DROP
             });
-            // for(var i = 0; i < resourceNum; ++i){
-            //     resourceMarkers[i] = new google.maps.Marker({
-            //         position: loc,
-            //         map: facilityVm.map,
-            //         icon: "./img/ambulance.svg"
-            //     });
-            // }
+            for(var i = 0; i < resourceNum; ++i){
+                resourceMarkers[i] = new google.maps.Marker({
+                    position: loc,
+                    map: facilityVm.map,
+                    icon: "./img/ambulance.svg"
+                });
+            }
         }
 
         var eventLoc = new google.maps.Marker({
@@ -93,7 +93,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         marker.setMap(facilityVm.map);
         facilityVm.map.setCenter(loc);
 
-        setRoutes();
+        // setRoutes();
 
         function setRoutes(){
 
@@ -260,28 +260,26 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
             }
        }
 
-    });
-
-
-
-    $interval(function updateGPS(){            
-    // console.log(facilityVm.selectedFacility.id);
-        $http({
-            method  : 'POST',
-            url     : '/singleEvent/UpdatedGPS',
-            headers : { 'Content-Type': 'application/json' },
-            data    : {
-                        sim_id: facilityVm.simStatis.data.sim_id
-                      }
-        }).then(function success(response){
+       $interval(function updateGPS(){            
+        // console.log(facilityVm.selectedFacility.id);
+            $http({
+                method  : 'POST',
+                url     : '/singleEvent/UpdatedGPS',
+                headers : { 'Content-Type': 'application/json' },
+                data    : {
+                            sim_id: facilityVm.simStatis.data.sim_id
+                          }
+            }).then(function success(response){
             
 
-            /** update mobile resource real time location */
-            for(var i = 0; i < resourceNum; ++i){
-                resourceMarkers[i].setPosition(response.data[0].location);
-            }
-        })
-    }, 2000);
+                /** update mobile resource real time location */
+                for(var i = 0; i < resourceNum; ++i){
+                    resourceMarkers[i].setPosition(response.data[0].location);
+                }
+            })
+        }, 2000);
+    });
+
 });
 
 

@@ -470,6 +470,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
     // open progress menu
     multiVm.progrssMenuOpen();
+
     
     multiVm.getFaciLoc().then(getTasks);
     
@@ -569,7 +570,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
         var eachExpenditure = 0;
         var eachCompleteTime = 0;
         for(var j = 0; j < response.data.FinalResults[i].length; ++j){
-          startLoc.push(response.data.FinalResults[i][j].Location);
+          startLoc.push(response.data.FinalResults[i][j]);
           multiVm.allResource.push(response.data.FinalResults[i][j]);
           multiVm.totalCompletionTime += response.data.FinalResults[i][j].Duration;
           console.log(response.data.FinalResults[i][j].Expenditure);
@@ -785,19 +786,25 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   };
 
   // create marker for vehcile
-  function createMarker(latlng, label, html) {
-    var marker = new google.maps.Marker({
-        position: latlng,
-        map: multiVm.map,
-        title: label,
-        // zIndex: Math.round(latlng.lat()*-100000)<<5,
-        icon: "./img/police-car.svg",
-        animation: google.maps.Animation.DROP
-        });
-        marker.myname = label;
+   function createMarker(latlng, type) {
+    var markerIcon;
+    if(type == 'hospital')
+      markerIcon = "./img/ambulance.svg";
+    else if(type == 'police')
+      markerIcon = "./img/police-car.svg";
+    else if(type == "fire_station")
+      markerIcon = "./img/fire-truck.svg";
+    var tempMarker = new google.maps.Marker({
+        position: latlng,
+        map: multiVm.map,
+        
+        icon: markerIcon,
+        animation: google.maps.Animation.DROP
+        });
 
-    return marker;
-  }  
+
+    return tempMarker;
+  } 
 
   // put police station marker to polica station
   function putPolice(facilityObj, label, type){
@@ -947,133 +954,131 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     var circleOption = {
       center: event.Location,
       fillColor: '#3878c7',
-      fillOpacity: 0.3,
+      fillOpacity: 0.2,
       map: multiVm.map,
 
-      radius: 0,
+      radius: _radius,
       strokeColor: '#3878c7',
-      strokeOpacity: 0.3,
-      strokeWeight: 0.3
+      strokeOpacity: 0.2,
+      strokeWeight: 0.2
     }
     multiVm.circles[index] = new google.maps.Circle(circleOption);
 
-    var circleTimer = $interval(function(){
-      var radius = multiVm.circles[index].getRadius();
-      if((radius > rMax) || (radius) < rMin){
-        direction *= -1;
-      }
-      var _par = (radius/_radius);
+    // var circleTimer = $interval(function(){
+    //   var radius = multiVm.circles[index].getRadius();
+    //   if((radius > rMax) || (radius) < rMin){
+    //     direction *= -1;
+    //   }
+    //   var _par = (radius/_radius);
 
-      circleOption.radius = radius + direction * 10;
-      circleOption.fillOpacity = 0.2 * _par;
+    //   circleOption.radius = radius + direction * 10;
+    //   circleOption.fillOpacity = 0.2 * _par;
 
-      multiVm.circles[index].setOptions(circleOption);
-    }, event.Severity * 5, event.Severity * 100);
+    //   multiVm.circles[index].setOptions(circleOption);
+    // }, event.Severity * 5, event.Severity * 100);
   }
 
   // set route between event and facility
     function setRoutes(start, end){
-      console.log(start);
-      console.log(end);
-      //delete map circle instances
-      for(let i = 0; i < multiVm.circles.length; ++i){
-        multiVm.circles[i].setMap(null);
-      }
-      var directionDisplay = new Array();
-      var startLocLength;
+      console.log(start);
+      console.log(end);
+      //delete map circle instances
+//       for(let i = 0; i < multiVm.circles.length; ++i){
+//         multiVm.circles[i].setMap(null);
+//       }
+      var directionDisplay = new Array();
+      var startLocLength;
 
-      var rendererOptions = {
-        map: multiVm.map,
-        suppressMarkers : true,
-        preserveViewport: true
-      }
+      var rendererOptions = {
+        map: multiVm.map,
+        suppressMarkers : true,
+        preserveViewport: true
+      }
 
-      directionsService = new google.maps.DirectionsService();
+      directionsService = new google.maps.DirectionsService();
 
-      var travelMode = google.maps.DirectionsTravelMode.DRIVING;
-      var requests = new Array();
-      console.log(start.length);
-      for(var i = 0; i < start.length; ++i){
-        requests[i] = {
-          origin: start[i],
-          destination: end.Location,
-          travelMode: travelMode
-        };
-        directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
-      }
+      var travelMode = google.maps.DirectionsTravelMode.DRIVING;
+      var requests = new Array();
+      for(var i = 0; i < start.length; ++i){
+        requests[i] = {
+          origin: start[i].Location,
+          destination: end.Location,
+          travelMode: travelMode
+        };
+        directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i], start[i].Type));
+      }
 
-      
-      function makeRouteCallback(routeNum, dip){
-        if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
-          startAnimation(routeNum);
-          return;
-        }
-        return function(response, status){
-          if(status == google.maps.DirectionsStatus.OK){
+      
+      function makeRouteCallback(routeNum, dip, type){
+        if(polyline[routeNum] && (polyline[routeNum].getMap() != null)){
+          startAnimation(routeNum);
+          return;
+        }
+        return function(response, status){
+          if(status == google.maps.DirectionsStatus.OK){
 
-            var bounds = new google.maps.LatLngBounds();
-            var route = response.routes[0];
-            startLocation[routeNum] = new Object();
-            endLocation[routeNum] = new Object();
+            var bounds = new google.maps.LatLngBounds();
+            var route = response.routes[0];
+            startLocation[routeNum] = new Object();
+            endLocation[routeNum] = new Object();
 
-            polyline[routeNum] = new google.maps.Polyline({
-            path: [],
-                strokeColor: '#1784cd',
-                strokeWeight: 3 
-                });
-            poly2[routeNum] = new google.maps.Polyline({
-                path: [],
-                strokeColor: '#1784cd',
-                strokeWeight: 3
-                });    
-
-
-            var path = response.routes[0].overview_path;
-                var legs = response.routes[0].legs;
+            polyline[routeNum] = new google.maps.Polyline({
+            path: [],
+                strokeColor: '#1784cd',
+                strokeWeight: 3 
+                });
+            poly2[routeNum] = new google.maps.Polyline({
+                path: [],
+                strokeColor: '#1784cd',
+                strokeWeight: 3
+                });    
 
 
-                disp = new google.maps.DirectionsRenderer(rendererOptions);     
-                disp.setMap(multiVm.map);
+            var path = response.routes[0].overview_path;
+                var legs = response.routes[0].legs;
 
-                disp.setDirections(response);
 
-                //create resources markers
-                for (i = 0; i < legs.length; i++) {
+                disp = new google.maps.DirectionsRenderer(rendererOptions);     
+                disp.setMap(multiVm.map);
 
-                  if (i == 0) { 
-                    startLocation[routeNum].latlng = legs[i].start_location;
-                    startLocation[routeNum].address = legs[i].start_address;
-                    // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-                    marker[routeNum] = createMarker(legs[i].start_location,"start",legs[i].start_address,"green");
-                  }
-                  endLocation[routeNum].latlng = legs[i].end_location;
-                  endLocation[routeNum].address = legs[i].end_address;
-                  var steps = legs[i].steps;
+                disp.setDirections(response);
 
-                  for (j = 0; j < steps.length; j++) {
-                    var nextSegment = steps[j].path;                
-                    var nextSegment = steps[j].path;
+                //create resources markers
+                for (i = 0; i < legs.length; i++) {
 
-                    for (k = 0;k < nextSegment.length; k++) {
+                  if (i == 0) { 
+                    startLocation[routeNum].latlng = legs[i].start_location;
+                    startLocation[routeNum].address = legs[i].start_address;
+                    // marker = google.maps.Marker({map:map,position: startLocation.latlng});
+                    marker[routeNum] = createMarker(legs[i].start_location, type);
+                  }
+                  endLocation[routeNum].latlng = legs[i].end_location;
+                  endLocation[routeNum].address = legs[i].end_address;
+                  var steps = legs[i].steps;
 
-                        polyline[routeNum].getPath().push(nextSegment[k]);
-                        //bounds.extend(nextSegment[k]);
-                    }
+                  for (j = 0; j < steps.length; j++) {
+                    var nextSegment = steps[j].path;                
+                    var nextSegment = steps[j].path;
 
-                  }
-                }               
-          }
+                    for (k = 0;k < nextSegment.length; k++) {
 
-          polyline[routeNum].setMap(multiVm.map);             
+                        polyline[routeNum].getPath().push(nextSegment[k]);
+                        //bounds.extend(nextSegment[k]);
+                    }
 
-          //map.fitBounds(bounds);
+                  }
+                }               
+          }
+          polyline[routeNum].setMap(multiVm.map);             
 
-          $timeout(function(){
-            startAnimation(routeNum)
-          }, 25000);     
-        }
-      } 
-    }
+          //map.fitBounds(bounds);
+
+          $timeout(function(){
+            startAnimation(routeNum)
+          }, 25000);     
+        }
+      } 
+    }
 
     var eol = [];
     var lastVertex = 1;
