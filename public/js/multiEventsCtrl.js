@@ -441,19 +441,16 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     // open progress menu
     multiVm.progrssMenuOpen();
 
-    searchAni();
-    
-    multiVm.getFaciLoc().then(getTasks);
-
+    searchAni()
+    .then(multiVm.getFaciLoc)
+    .then(getTasks);
     
     multiVm.panelShow = "true";
   } 
 
 
   searchAni = function(){
-    console.log("DSS");
     var defer = $q.defer();
-
     for(var i = 0; i < multiVm.eventObj.length; ++i){
       searchCircle(multiVm.eventObj[i], i);
     }
@@ -461,7 +458,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
     
     return defer.promise;
   }
-
 
   multiVm.getFaciLoc = function(){
 
@@ -493,9 +489,7 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
       }).then(function success(response) {
 
         console.log(response.data);
-
         multiVm.simID = response.data.sim_id;
-
           for(var i = 0; i < response.data.facilities.length; ++i){
             if(response.data.facilities[i].type == "hospital"){
               putHospital(response.data.facilities[i]);
@@ -569,7 +563,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
         if(keys.indexOf(key) === -1){
           keys.push(key);
           multiVm.distinctFac.push(item);
-
         }
       });
 
@@ -763,7 +756,6 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
   };
 
   // create marker for vehcile
-
    function createMarker(latlng, type) {
     var markerIcon;
     if(type == 'hospital')
@@ -782,7 +774,8 @@ app.controller('multiEventCtrl', function(NgMap, $q, $compile, $scope, $mdDialog
 
 
     return tempMarker;
-  }
+  } 
+
 
   // put police station marker to polica station
   function putPolice(facilityObj, label, type){
