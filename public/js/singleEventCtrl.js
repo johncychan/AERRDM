@@ -1586,8 +1586,6 @@ app.controller('singleEventCtrl', function(NgMap, $q, $compile, $scope, $rootSco
       }
       var p = polyline[index].GetPointAtDistance(d);
 
-      window.localStorage['updateLoc'] = angular.toJson(p);
-
       marker[index].setPosition(p);
       updatePoly(index,d);
       timerHandle[index] =  $timeout(function() {

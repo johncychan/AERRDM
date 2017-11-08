@@ -16,6 +16,8 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
     var count = 0;
     resourceNum = facilityVm.resource.length;
 
+    console.log(resourceNum);
+
     var timerHandle = [];
     var polyline = [];
     var poly2 = [];
@@ -32,6 +34,9 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
 
     var loc = facilityVm.selectedFacility.Location;
     console.log(facilityVm.selectedFacility.Type);
+
+
+    var vehicleIsExist = false;
 
 	NgMap.getMap("map").then(function(map){
         facilityVm.map = map;
@@ -93,10 +98,9 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
         marker.setMap(facilityVm.map);
         facilityVm.map.setCenter(loc);
 
-        // setRoutes();
+        setRoutes();
 
         function setRoutes(){
-
               var directionDisplay = new Array();
               var startLocLength;
 
@@ -155,43 +159,44 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                     disp.setDirections(response);
 
                     /** create resources markers */
-                    for (i = 0; i < legs.length; i++) {
+                    for (i = 0; i < legs.length; i++){
 
-                      if (i == 0) { 
-                        startLocation[routeNum].latlng = legs[i].start_location;
-                        startLocation[routeNum].address = legs[i].start_address;
-                      }
-                      endLocation[routeNum].latlng = legs[i].end_location;
-                      endLocation[routeNum].address = legs[i].end_address;
-                      var steps = legs[i].steps;
-
-                      for (j = 0; j < steps.length; j++) {
-                        var nextSegment = steps[j].path;                
-                        var nextSegment = steps[j].path;
-
-                        for (k = 0;k < nextSegment.length; k++) {
-
-                            polyline[routeNum].getPath().push(nextSegment[k]);
+                        if (i == 0) { 
+                            startLocation[routeNum].latlng = legs[i].start_location;
+                            startLocation[routeNum].address = legs[i].start_address;
                         }
-                      }
+                        endLocation[routeNum].latlng = legs[i].end_location;
+                        endLocation[routeNum].address = legs[i].end_address;
+                        var steps = legs[i].steps;
+
+                        for (j = 0; j < steps.length; j++) {
+                            var nextSegment = steps[j].path;                
+                            var nextSegment = steps[j].path;
+
+                            for (k = 0;k < nextSegment.length; k++) {
+                                polyline[routeNum].getPath().push(nextSegment[k]);
+                            }
+                        }
                     }               
-              }
-              polyline[routeNum].setMap(facilityVm.map);  
-              for(var i = 0; i < resourceNum; ++i){
-                resourceMarkers[i] = createMarker(loc, facilityVm.resource.Type);
-              }           
+                }
+                polyline[routeNum].setMap(facilityVm.map); 
+                // if(!vehicleIsExist){
+                //     for(var i = 0; i < resourceNum; ++i){
+                //         resourceMarkers[i] = createMarker(loc, facilityVm.resource.Type);
+                //     }
+                //     vehicleIsExist = true;
+                // }
 
+                console.log(resourceMarkers);
 
-              console.log(resourceMarkers);
-
-              $timeout(function(){
-                startAnimation(routeNum)
-              }, 6000);  
+                $timeout(function(){
+                    startAnimation(routeNum)
+                }, 500);  
             }
           } 
         }
 
-        function createMarker(latlng, type) {
+        function createMarker(latlng, type){
             var markerIcon;
             if(facilityVm.selectedFacility.Type == 'Hospital')
               markerIcon = "./img/ambulance.svg";
@@ -219,7 +224,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
             animate(index, 50);
         }
 
-        function animate(index,d) {
+        function animate(index,d){
             markerStarted = true;
             current_point = d;
             if (d > eol[index]) {
@@ -228,12 +233,9 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                 count++;
                 return;
               }
+
               var p = polyline[index].GetPointAtDistance(d);
 
-            // console.log(window.localStorage['updateLoc']);
-
-            // var cp = angular.fromJson(window.localStorage['updateLoc']);
-            // console.log(cp);
             resourceMarkers[index].setPosition(p);
             updatePoly(index,d);
             timerHandle[index] =  $timeout(function() {
