@@ -14,8 +14,8 @@ The title of the project: Automatic Emergency Rescue Resource Deployment in Metr
 
 **Weicheng Yin && John Chan**: Public folder (web frontend)
 
-* Weicheng Yin: Javascript (Logic)
-* John Chan: CSS (Decoration / UI)
+* Weicheng Yin: JavaScript (Logic) & Communication with server and mobile app
+* Chun-Yu Chan John: CSS (UI/UX) & JavaScript (present data)
 
 **Claudio Villella**: Remaining folders (server)
 
