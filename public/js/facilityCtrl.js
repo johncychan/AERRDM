@@ -29,6 +29,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
     var maxStep = 5; /** max distance per move */
     facilityVm.step = 0.1; /** metres */
     var playStop = true; /** true = play, false = stop */
+    facilityVm.vehicleStatus = [];
 
     var tick = 100; /** milliseconds */
 
@@ -120,6 +121,7 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                   destination: eventLocation,
                   travelMode: travelMode
                 };
+                facilityVm.vehicleStatus[i] = "On move";
                 directionsService.route(requests[i], makeRouteCallback(i, directionDisplay[i]));
               }
 
@@ -231,6 +233,10 @@ app.controller('facilityCtrl', function(NgMap, $compile, $scope, $mdDialog, $htt
                 resourceMarkers[index].setPosition(endLocation[index].latlng);
                 /** if vehicle arrived, count plus 1 */
                 count++;
+                facilityVm.vehicleStatus[index] = "Arrived";
+                if(count == resourceNum){
+                    //end
+                }
                 return;
               }
 
